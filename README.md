@@ -1,29 +1,38 @@
-# Create T3 App
+d'Gallery - a File storage app using nextjs,clerk auth, convex for backend
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Note:
 
-## What's next? How do I make an app with this?
+- pnpm is locked at 9.0.6 or higher
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+##### lint staged
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+there will be a linting and typescript check every commit to ensure a type safe codebase before pushing the code to github or before deploying it
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+##### about commits
 
-## Learn More
+commits is following the [commit lint package.](https://www.npmjs.com/package/@commitlint/)
+this is the [conventional commits docs](https://www.conventionalcommits.org/en/v1.0.0/#summary) where you can only pass the values:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+(case sensitive)
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```
+  'build',
+  'chore',
+  'ci',
+  'docs',
+  'feat',
+  'fix',
+  'perf',
+  'refactor',
+  'revert',
+  'style',
+  'test'
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+example:
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+```
+echo "foo: some message" # fails
+echo "FIX: some message" # fails
+echo "fix: some message" # passes
+```
