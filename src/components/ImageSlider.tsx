@@ -1,6 +1,6 @@
 "use client";
 
-import { Circle } from "lucide-react";
+import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
 import { useState, Fragment } from "react";
 
@@ -24,12 +24,22 @@ export function ImageSlider({ url }: { url: string[] }) {
 
   return (
     <div className="relative size-full">
-      <div className="absolute top-1/2 z-10 flex w-full justify-between text-gray-950">
-        <button onClick={handlePreviousImage} type="button">
-          &lt;
+      <div className="absolute top-1/2 z-10 flex w-full items-center justify-between text-gray-950">
+        <button
+          onClick={handlePreviousImage}
+          type="button"
+          data-hidden={imageIndex === 0}
+          className=" mx-2 rounded-full text-gray-100 hover:bg-gray-300 hover:shadow-gray-950 hover:drop-shadow-lg data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0"
+        >
+          <ChevronLeft className="size-8 " />
         </button>
-        <button className="" onClick={handleNextImage} type="button">
-          &gt;
+        <button
+          onClick={handleNextImage}
+          type="button"
+          data-hidden={imageIndex === url.length - 1}
+          className=" mx-2 rounded-full  text-gray-100 hover:bg-gray-300 hover:shadow-gray-950 hover:drop-shadow-lg data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0"
+        >
+          <ChevronRight className="size-8" />
         </button>
       </div>
 
