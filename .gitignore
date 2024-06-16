@@ -41,3 +41,13 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# public
+/public/AZKi.png
+/public/furina-white.jpg
+/public/furina.jpeg
+/public/watame.png
+/AZKi.png
+/furina-white.jpg
+/furina.jpeg
+/watame.png

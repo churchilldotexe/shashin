@@ -1,4 +1,4 @@
-d'Gallery - a File storage app using nextjs,clerk auth, convex for backend
+Shashin - An image storage and Social Gallery
 
 Note:
 
