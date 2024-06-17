@@ -1,6 +1,8 @@
-export function Header() {
+import { type HTMLAttributes } from "react";
+
+export function Header(props: HTMLAttributes<HTMLElement>) {
   return (
-    <header>
+    <header {...props}>
       <nav>
         <ul>
           <li>Home</li>

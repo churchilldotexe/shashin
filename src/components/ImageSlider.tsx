@@ -26,12 +26,12 @@ export function ImageSlider({ url }: { url: string[] }) {
 
   return (
     <div className="relative size-full">
-      <div className="absolute top-1/2 z-10 flex w-full items-center justify-between text-gray-950">
+      <div className="group absolute inset-0 z-10 flex size-full items-center justify-between text-gray-950">
         <button
           onClick={handlePreviousImage}
           type="button"
           data-hidden={imageIndex === 0}
-          className="mx-2 rounded-full text-gray-100 hover:bg-gray-300 hover:shadow-gray-950 hover:drop-shadow-lg data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0"
+          className="mx-2 rounded-full text-primary-foreground opacity-0 hover:bg-background hover:shadow-background hover:drop-shadow-lg group-hover:z-10 group-hover:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0"
         >
           <ChevronLeft className="size-8 " />
         </button>
@@ -39,7 +39,7 @@ export function ImageSlider({ url }: { url: string[] }) {
           onClick={handleNextImage}
           type="button"
           data-hidden={imageIndex === url.length - 1}
-          className=" mx-2 rounded-full  text-gray-100 hover:bg-gray-300 hover:shadow-gray-950 hover:drop-shadow-lg data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0"
+          className=" mx-2 rounded-full text-primary-foreground opacity-0 hover:bg-background hover:shadow-background hover:drop-shadow-lg group-hover:z-10 group-hover:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0"
         >
           <ChevronRight className="size-8" />
         </button>
@@ -48,7 +48,7 @@ export function ImageSlider({ url }: { url: string[] }) {
       <div className="flex size-full overflow-hidden">
         {url.map((image) => (
           <Fragment key={image}>
-            <div className="relative aspect-video size-full shrink-0   ">
+            <div className="relative aspect-video size-full shrink-0 ">
               <Image
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 100vw"
                 src={image}
@@ -68,7 +68,7 @@ export function ImageSlider({ url }: { url: string[] }) {
           <button
             type="button"
             key={index}
-            className=" text-stone-400 data-[index=true]:text-sky-500"
+            className=" text-primary-foreground data-[index=true]:text-primary"
             data-index={Boolean(imageIndex === index)}
             onClick={() => {
               setImageIndex(index);
