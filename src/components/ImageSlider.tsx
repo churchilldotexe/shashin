@@ -31,15 +31,15 @@ export function ImageSlider({ url }: { url: string[] }) {
           onClick={handlePreviousImage}
           type="button"
           data-hidden={imageIndex === 0}
-          className="mx-2 rounded-full text-primary-foreground opacity-0 hover:bg-background hover:shadow-background hover:drop-shadow-lg group-hover:z-10 group-hover:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0"
+          className="mx-2 rounded-full bg-secondary text-secondary-foreground  opacity-0 shadow-md shadow-background drop-shadow-lg active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
         >
-          <ChevronLeft className="size-8 " />
+          <ChevronLeft className="size-8" />
         </button>
         <button
           onClick={handleNextImage}
           type="button"
           data-hidden={imageIndex === url.length - 1}
-          className=" mx-2 rounded-full text-primary-foreground opacity-0 hover:bg-background hover:shadow-background hover:drop-shadow-lg group-hover:z-10 group-hover:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0"
+          className="mx-2 rounded-full bg-secondary text-secondary-foreground  opacity-0 shadow-md shadow-background drop-shadow-lg active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
         >
           <ChevronRight className="size-8" />
         </button>
@@ -50,11 +50,11 @@ export function ImageSlider({ url }: { url: string[] }) {
           <Fragment key={image}>
             <div className="relative aspect-video size-full shrink-0 ">
               <Image
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 100vw"
+                // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 100vw"
                 src={image}
                 alt={image}
                 style={{ translate: `${-100 * imageIndex}%` }}
-                className="size-full rounded-lg object-cover object-center transition-all duration-300 ease-linear "
+                className="size-full rounded-lg object-contain object-center transition-all duration-300 ease-linear "
                 fill
               />
             </div>
@@ -62,23 +62,25 @@ export function ImageSlider({ url }: { url: string[] }) {
         ))}
       </div>
 
-      <div className="absolute bottom-0 flex w-full items-center justify-center gap-4 py-4 ">
-        {url.map((_, index) => (
-          // NOTE: fix the Key attribute later to a database data ID
-          <button
-            type="button"
-            key={index}
-            className=" text-primary-foreground data-[index=true]:text-primary"
-            data-index={Boolean(imageIndex === index)}
-            onClick={() => {
-              setImageIndex(index);
-            }}
-            aria-label={`button for image number ${index + 1}`}
-          >
-            <Circle className="size-2 fill-current" />
-          </button>
-        ))}
-      </div>
+      {Boolean(url.length > 1) && (
+        <div className="absolute bottom-0 my-4 flex w-full items-center justify-center gap-4 ">
+          {url.map((_, index) => (
+            // NOTE: fix the Key attribute later to a database data ID
+            <button
+              type="button"
+              key={index}
+              className="z-20 text-secondary data-[index=true]:text-primary"
+              data-index={Boolean(imageIndex === index)}
+              onClick={() => {
+                setImageIndex(index);
+              }}
+              aria-label={`button for image number ${index + 1}`}
+            >
+              <Circle className="size-2 fill-current md:size-3" />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
