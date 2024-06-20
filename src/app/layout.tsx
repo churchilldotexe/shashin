@@ -18,13 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable} dark`}>
-      <body className="container mx-auto grid grid-cols-[auto,1fr,auto]">
+      <body className="container mx-auto grid grid-cols-[auto,1fr,auto]  items-start">
         {/* TODO: mobile first: header with nav must be a toggle button in mobile first (drop down list icon only?) when md: note dropdown but show icon only */}
         {/* TODO: footer: can be shown in the bottom (grow the children) */}
 
-        <Header className="w-fit" />
-        <main className="mx-auto size-full ">{children}</main>
-        <aside>{overview}</aside>
+        <Header className="sticky top-0 h-dvh w-fit " />
+        <main className="size-full">{children}</main>
+        <aside className="sticky top-0 h-dvh">{overview}</aside>
       </body>
     </html>
   );

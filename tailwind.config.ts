@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 import { fontFamily } from "tailwindcss/defaultTheme";
 const config = {
@@ -52,7 +53,11 @@ const config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function ({ addVariant }) {
+      addVariant("hocus-visible", ["&:hover", "&:focus:visible"]);
+    }),
+  ],
 } satisfies Config;
 
 export default config;
