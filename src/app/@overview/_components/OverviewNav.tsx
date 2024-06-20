@@ -11,8 +11,8 @@ export default function OverviewNav() {
       <Link
         href="/"
         scroll={false}
-        className={cn("px-4 py-2 text-lg hover:bg-gray-200/50 dark:hover:bg-white/20", {
-          " scale-105 rounded bg-gray-200/50 text-accent-foreground shadow-md shadow-gray-950 transition-transform delay-700 active:scale-105 dark:bg-white/20 dark:shadow-secondary":
+        className={cn("hocus-visible:border-border rounded-md border border-white/0 p-2 ", {
+          "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
             selectedSegment === null,
         })}
       >
@@ -22,8 +22,8 @@ export default function OverviewNav() {
       <Link
         href="/recent"
         scroll={false}
-        className={cn("px-4 py-2 text-lg hover:bg-gray-200/50 dark:hover:bg-white/20 ", {
-          " scale-105 rounded bg-gray-200/50 text-accent-foreground shadow-md shadow-gray-950 transition-transform delay-700 dark:bg-white/20 dark:shadow-secondary":
+        className={cn("hocus-visible:border-border rounded-md border border-white/0 p-2 ", {
+          "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
             selectedSegment === "recent",
         })}
       >
@@ -32,3 +32,11 @@ export default function OverviewNav() {
     </div>
   );
 }
+
+// className={cn(
+//   "hocus-visible:border-border rounded-md border border-white/0 p-2 ",
+//   {
+//     "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
+//       pathname === `${route}`,
+//   }
+// )}
