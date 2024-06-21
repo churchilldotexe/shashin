@@ -31,7 +31,7 @@ export function ImageSlider({ url }: { url: string[] }) {
           onClick={handlePreviousImage}
           type="button"
           data-hidden={imageIndex === 0}
-          className="mx-2 rounded-full bg-secondary text-secondary-foreground  opacity-0 shadow-md shadow-background drop-shadow-lg active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
+          className="mx-2 rounded bg-gradient-to-r from-background/70 to-background/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
         >
           <ChevronLeft className="size-8" />
         </button>
@@ -39,9 +39,9 @@ export function ImageSlider({ url }: { url: string[] }) {
           onClick={handleNextImage}
           type="button"
           data-hidden={imageIndex === url.length - 1}
-          className="mx-2 rounded-full bg-secondary text-secondary-foreground  opacity-0 shadow-md shadow-background drop-shadow-lg active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
+          className="mx-2 rounded bg-gradient-to-l from-background/70 to-background/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:z-10 group-hover:opacity-100 group-focus-visible:z-10 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-hover:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0"
         >
-          <ChevronRight className="size-8" />
+          <ChevronRight className="size-8 " />
         </button>
       </div>
 
