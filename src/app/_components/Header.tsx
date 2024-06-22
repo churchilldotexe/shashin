@@ -1,5 +1,6 @@
 "use client";
 
+import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -26,7 +27,21 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   return (
     <header className={cn("flex flex-col justify-between", className)} {...props}>
-      <nav>
+      <div className="p-2">
+        <div className="grid grid-cols-3 ">
+          <div className="justify-self-start">User</div>
+          <div className="justify-self-center">Shashin</div>
+          <div className="justify-self-end">
+            <DisplayModeDropDown />
+          </div>
+        </div>
+        <div className="sticky flex items-center justify-evenly ">
+          <div>Home</div>
+          <span className="  h-6 border border-border shadow-inner " />
+          <div>Gallery</div>
+        </div>
+      </div>
+      <nav className="hidden">
         <div>
           <Link href={"/"} className="hover:underline">
             Shashin
@@ -77,7 +92,7 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
           </ul>
         </div>
       </nav>
-      <div>User Information</div>
+      <div className="hidden">User Information</div>
     </header>
   );
 }

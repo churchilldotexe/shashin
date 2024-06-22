@@ -7,7 +7,6 @@ import { useState, Fragment } from "react";
 // FIX: url should be able to receive 1 or more items
 // -- returning from DRIZZLE is an array
 export function ImageSlider({ url }: { url: string[] }) {
-  // TODO: make it more beautiful.. focus on designing the front page first(for signed in and welcome page(for unsigned in))
   const [imageIndex, setImageIndex] = useState<number>(0);
   const handleNextImage = () => {
     if (imageIndex === url.length - 1) {

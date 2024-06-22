@@ -20,18 +20,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="container mx-auto grid grid-cols-[auto,1fr,auto] items-start">
+      <body className="container mx-auto grid items-start md:grid-cols-[auto,1fr,auto]">
         {/* TODO: mobile first: header with nav must be a toggle button in mobile first (drop down list icon only?) when md: note dropdown but show icon only */}
-
+        {/*  TODO:  focus on designing the front page first(for signed in and welcome page(for unsigned in)) */}
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Header className="sticky top-0 h-dvh w-fit " />
+          <Header className="sticky top-0 w-full md:h-dvh md:w-fit " />
           <main className="size-full">{children}</main>
-          <aside className="sticky top-0 h-dvh">
+          <aside className="sticky top-0 hidden h-dvh">
             <div>
               <DisplayModeDropDown />
             </div>
