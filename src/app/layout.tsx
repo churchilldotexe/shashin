@@ -31,7 +31,7 @@ export default function RootLayout({
         >
           <Header className="sticky top-0 w-full md:h-dvh md:w-fit " />
           <main className="size-full">{children}</main>
-          <aside className="sticky top-0 hidden h-dvh">
+          <aside className="sticky top-0 hidden h-dvh md:flex">
             <div>
               <DisplayModeDropDown />
             </div>
