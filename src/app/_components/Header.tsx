@@ -38,10 +38,13 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
             return (
               <li
                 key={route}
-                className={cn("rounded-md border border-white/0 p-2 hocus-visible:border-border ", {
-                  "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
-                    pathname === `${route}`,
-                })}
+                className={cn(
+                  "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border ",
+                  {
+                    "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
+                      pathname === `${route}`,
+                  }
+                )}
               >
                 <Link href={route} className="capitalize">
                   {routeName}
@@ -57,7 +60,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
                   <li
                     key={subRoute}
                     className={cn(
-                      "rounded-md border border-white/0 p-2 hocus-visible:border-border ",
+                      "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border",
                       {
                         "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
                           pathname === `${subRoute}`,

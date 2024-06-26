@@ -11,10 +11,13 @@ export default function OverviewNav() {
       <Link
         href="/"
         scroll={false}
-        className={cn("hocus-visible:border-border rounded-md border border-white/0 p-2 ", {
-          "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
-            selectedSegment === null,
-        })}
+        className={cn(
+          "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border ",
+          {
+            "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
+              selectedSegment === null,
+          }
+        )}
       >
         Overview
       </Link>
@@ -22,21 +25,16 @@ export default function OverviewNav() {
       <Link
         href="/recent"
         scroll={false}
-        className={cn("hocus-visible:border-border rounded-md border border-white/0 p-2 ", {
-          "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
-            selectedSegment === "recent",
-        })}
+        className={cn(
+          "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border ",
+          {
+            "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
+              selectedSegment === "recent",
+          }
+        )}
       >
         recent
       </Link>
     </div>
   );
 }
-
-// className={cn(
-//   "hocus-visible:border-border rounded-md border border-white/0 p-2 ",
-//   {
-//     "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
-//       pathname === `${route}`,
-//   }
-// )}
