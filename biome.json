@@ -1,0 +1,76 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "ignore": ["./node_modules/**", "./.next/**", "**/node_modules", "**/.next/"]
+  },
+  "organizeImports": { "enabled": true },
+  "linter": {
+    "enabled": true,
+    "rules": { "recommended": true },
+    "ignore": ["./node_modules/**", "./.next/**", "**/node_modules", "**/.next/"]
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "double",
+      "attributePosition": "auto"
+    }
+  },
+  "overrides": [
+    { "include": ["*.js", "*.jsx", "*.cjs"] },
+    {
+      "include": ["*.ts", "*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": { "noBlankTarget": "error", "useButtonType": "error" },
+          "complexity": {
+            "noUselessCatch": "error",
+            "noUselessFragments": "warn",
+            "noUselessTernary": "error",
+            "useLiteralKeys": "error"
+          },
+          "correctness": {
+            "noChildrenProp": "off",
+            "noInvalidUseBeforeDeclaration": "error",
+            "noUnreachable": "error",
+            "noUnusedVariables": "off",
+            "useJsxKeyInIterable": "error"
+          },
+          "style": {
+            "noVar": "error",
+            "useCollapsedElseIf": "error",
+            "useConsistentArrayType": {
+              "level": "error",
+              "options": { "syntax": "shorthand" }
+            },
+            "useConst": "error",
+            "useExportType": "error",
+            "useFragmentSyntax": "error",
+            "useImportType": "warn"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "warn",
+            "noDoubleEquals": "error",
+            "noDuplicateObjectKeys": "error",
+            "noEmptyInterface": "error",
+            "noExplicitAny": "error",
+            "noSelfCompare": "error",
+            "useAwait": "off"
+          }
+        }
+      }
+    }
+  ]
+}

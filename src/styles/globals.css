@@ -58,3 +58,20 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* * { */
+/*    outline: solid 1px red; */
+/* } */
+
+.custom-overlay[open] > summary::before {
+  position: fixed;
+  inset: 0;
+  content: "";
+  width: 100dvw;
+  height: 100dvw;
+  z-index: 999;
+}
+
+.custom-overlay:not([open]) > div {
+  display: none;
+}

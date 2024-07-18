@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  type ReactNode,
-  createContext,
-  useRef,
-  type RefObject,
-  useContext,
   type HTMLAttributes,
+  type ReactNode,
+  type RefObject,
+  createContext,
+  useContext,
+  useRef,
 } from "react";
 
 type DialogContextTypes = {

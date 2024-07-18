@@ -54,7 +54,7 @@ const config = {
     },
   },
   plugins: [
-    plugin(function ({ addVariant }) {
+    plugin(({ addVariant }) => {
       addVariant("hocus-visible", ["&:hover", "&:focus:visible"]);
     }),
   ],
