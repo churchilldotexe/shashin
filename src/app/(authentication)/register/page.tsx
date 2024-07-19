@@ -24,20 +24,31 @@ function LoginButton() {
 export default function LoginPage() {
   const [_, action] = useFormState(registerFormActions, {});
 
+  // TODO: clear the field when and only when it is successful
+  // - doing server action redirect is good too.
+  // - but if fails the input should not be deleted but instead send the error message
   return (
     <PageSection>
       <Form className="space-y-4" action={action}>
-        <label htmlFor="username">Username:</label>
-        <Input name="userName" id="username" type="text" required />
+        <fieldset>
+          <label htmlFor="username">Username:</label>
+          <Input name="userName" id="username" type="text" required />
+        </fieldset>
 
-        <label htmlFor="displayName">Display Name:</label>
-        <Input name="displayName" id="displayName" type="text" required />
+        <fieldset>
+          <label htmlFor="displayName">Display Name:</label>
+          <Input name="displayName" id="displayName" type="text" required />
+        </fieldset>
 
-        <label htmlFor="email">Email:</label>
-        <Input name="email" id="email" type="email" required />
+        <fieldset>
+          <label htmlFor="email">Email:</label>
+          <Input name="email" id="email" type="email" required />
+        </fieldset>
 
-        <label htmlFor="password">Password:</label>
-        <Input name="password" id="password" type="password" required />
+        <fieldset>
+          <label htmlFor="password">Password:</label>
+          <Input name="password" id="password" type="password" required />
+        </fieldset>
         <div>
           {/* NOTE: feature- forgot password */}
           <div>

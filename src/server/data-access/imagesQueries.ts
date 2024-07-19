@@ -22,6 +22,7 @@ const createImageSchema = z.object({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
+
 export type createImageType = z.infer<typeof createImageSchema>;
 const createImageSchemaArr = z.array(createImageSchema);
 
@@ -69,7 +70,6 @@ export async function getMyImages() {
     args: {},
   });
 
-  console.log(myImages.rows, "rowwsdfssdf");
   const parsedImages = getMyImagesSchema.safeParse(myImages.rows);
 
   if (parsedImages.success === false) {

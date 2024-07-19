@@ -21,6 +21,5 @@ export async function registerFormActions(
 
   const { displayName, email, userName, password } = parsedFormData.data;
   await createUser({ displayName, email, userName, hashedPassword: password });
-  console.log("user creation success");
   return { message: "all good" };
 }

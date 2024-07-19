@@ -122,7 +122,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     };
 
     return (
-      <fieldset style={{ position: "relative", display: "grid" }}>
+      <div style={{ position: "relative", display: "grid" }}>
         <input
           ref={ref}
           onBlur={(e) => {
@@ -149,7 +149,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
             {error}
           </div>
         )}
-      </fieldset>
+      </div>
     );
   });
 
@@ -185,7 +185,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     });
 
     return (
-      <fieldset style={{ position: "relative", display: "grid" }}>
+      <div style={{ position: "relative", display: "grid" }}>
         <textarea
           ref={ref}
           {...props}
@@ -212,7 +212,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
             {error}
           </div>
         )}
-      </fieldset>
+      </div>
     );
   });
 
