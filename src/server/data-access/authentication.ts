@@ -1,8 +1,9 @@
 import "server-only";
 
-import crypto, { randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
+import { generateHashPassword, generateSalt } from "@/lib/auth";
 import type { Row } from "@libsql/client";
-import { ZodError, z } from "zod";
+import { ZodError } from "zod";
 import {
   type CreateUserTypes,
   type GetUserTypes,
@@ -11,23 +12,11 @@ import {
 } from "../db/schema/users";
 import { turso } from "../turso";
 
-// for better password protection
-const generateSalt = () => {
-  return crypto.randomBytes(16).toString("hex");
-};
-
-// for User security
-const generateHashPassword = (password: string, salt: string) => {
-  return crypto.pbkdf2Sync(password, salt, 10000, 64, "sha512").toString("hex");
-};
-
 export async function createUser(userInfo: Omit<CreateUserTypes, "salt">) {
   const parsedUserInfo = createUserSchema.omit({ salt: true }).safeParse(userInfo);
   if (parsedUserInfo.success === false) {
     throw new ZodError(parsedUserInfo.error.errors);
   }
-
-  console.log("parsedUserInfo", parsedUserInfo.data);
 
   const { hashedPassword: password, userName, email, displayName } = parsedUserInfo.data;
   // NOTE: do a query for username and email makesure it is unique
@@ -39,7 +28,7 @@ export async function createUser(userInfo: Omit<CreateUserTypes, "salt">) {
       sql: `INSERT INTO
             users
               (user_name, email, display_name, hashed_password,id, salt)
-          VALUES
+            VALUES
               (:userName, :email, :displayName, :hashedPassword, :id, :salt)`,
       args: { userName, email, displayName, hashedPassword, id, salt },
     });
@@ -115,5 +104,9 @@ export async function verifyUser(password: string, userName: string) {
 
   if (generatedHashedPassword === dbHashedPassword) {
     console.log("User authenticated");
+    //TODO: setup JWT check docs for SERVER ACTION cookie writing
+    // setup middleware JWT checking on protected ROUTE
+    // Try to find out how to read the userId with JWT and make that as a query authentication...
+    // meaning--> every server action youll read a JWT and decrypt the userdID and use it as a query key
   }
 }
