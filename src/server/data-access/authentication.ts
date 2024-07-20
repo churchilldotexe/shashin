@@ -1,15 +1,19 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { generateHashPassword, generateSalt } from "@/lib/auth";
-import type { Row } from "@libsql/client";
-import { ZodError } from "zod";
 import {
-  type CreateUserTypes,
-  type GetUserTypes,
-  createUserSchema,
-  getUserSchema,
-} from "../db/schema/users";
+  generateFingerprint,
+  generateHashPassword,
+  generateSalt,
+  getAuthenticatedId,
+  signAndSetAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "@/lib/auth";
+import type { Row } from "@libsql/client";
+import { headers } from "next/headers";
+import { ZodError } from "zod";
+import { type CreateUserTypes, createUserSchema, getUserSchema } from "../db/schema/users";
 import { turso } from "../turso";
 
 export async function createUser(userInfo: Omit<CreateUserTypes, "salt">) {
@@ -45,19 +49,25 @@ const getUserQuerySchema = getUserSchema.pick({
   userName: true,
 });
 
-export async function getUser({ userName }: Pick<GetUserTypes, "userName">) {
+export async function getUserInfo() {
+  const { userId } = await getAuthenticatedId();
   try {
     const rawUserInfo = await turso.execute({
       sql: `
         SELECT 
           id,email,display_name,user_name, hashed_password 
         FROM users
-        WHERE user_name= :userName
+        WHERE  id= :userId
         `,
-      args: { userName },
+      args: { userId },
     });
 
-    const { display_name: displayName, id, email } = rawUserInfo.rows[0] as Row;
+    const {
+      display_name: displayName,
+      id,
+      email,
+      user_name: userName,
+    } = rawUserInfo.rows[0] as Row;
 
     const parsedUserInfo = getUserQuerySchema.safeParse({
       displayName,
@@ -67,46 +77,90 @@ export async function getUser({ userName }: Pick<GetUserTypes, "userName">) {
     });
 
     if (parsedUserInfo.success === false) {
-      console.log(parsedUserInfo.error.errors);
+      throw new ZodError(parsedUserInfo.error.errors);
     }
 
-    console.log(parsedUserInfo.data);
     return parsedUserInfo.data;
   } catch (error) {
     //TODO: handle a proper error
-    console.log("error here", error as Error);
     throw new Error("an error Occured while getting the users Info ");
   }
 }
 
-const verifyUserSchema = getUserSchema.pick({
+const DBDataSchema = getUserSchema.pick({
   hashedPassword: true,
   salt: true,
+  id: true,
+  refreshToken: true,
 });
 
-export async function verifyUser(password: string, userName: string) {
+const UpdateRefreshTokenAndFingerPrintSchema = getUserSchema.pick({
+  id: true,
+  refreshToken: true,
+  tokenFingerprint: true,
+});
+
+export async function authenticateUser(password: string, userName: string) {
   const rawDbData = await turso.execute({
-    sql: " SELECT hashed_password, salt FROM users where user_name = :userName ",
+    sql: " SELECT hashed_password, salt, id, refresh_token FROM users where user_name = :userName ",
     args: { userName },
   });
 
-  const parsedDbHashedPassword = verifyUserSchema.safeParse({
+  const parsedDbHashedPassword = DBDataSchema.safeParse({
     hashedPassword: rawDbData.rows[0]?.hashed_password,
     salt: rawDbData.rows[0]?.salt,
+    id: rawDbData.rows[0]?.id,
+    refreshToken: rawDbData.rows[0]?.refresh_token,
   });
 
   if (parsedDbHashedPassword.success === false) {
     throw new ZodError(parsedDbHashedPassword.error.errors);
   }
 
-  const { hashedPassword: dbHashedPassword, salt } = parsedDbHashedPassword.data;
+  const { hashedPassword: dbHashedPassword, salt, id, refreshToken } = parsedDbHashedPassword.data;
   const generatedHashedPassword = generateHashPassword(password, salt);
 
   if (generatedHashedPassword === dbHashedPassword) {
-    console.log("User authenticated");
-    //TODO: setup JWT check docs for SERVER ACTION cookie writing
-    // setup middleware JWT checking on protected ROUTE
-    // Try to find out how to read the userId with JWT and make that as a query authentication...
-    // meaning--> every server action youll read a JWT and decrypt the userdID and use it as a query key
+    await signAndSetAccessToken(id);
+
+    if (refreshToken === null ?? verifyRefreshToken(refreshToken as string) === undefined) {
+      const signedRefreshToken = await signRefreshToken(id);
+
+      const headersList = headers();
+      const ip = headersList.get("x-forwarded-for") as string;
+      const userAgent = headersList.get("user-agent") as string;
+      const tokenFingerprint = await generateFingerprint({ userAgent, ip });
+
+      const parsedTokenData = UpdateRefreshTokenAndFingerPrintSchema.safeParse({
+        refreshToken: signedRefreshToken,
+        tokenFingerprint,
+        id,
+      });
+
+      if (parsedTokenData.success === false) {
+        throw new ZodError(parsedTokenData.error.errors);
+      }
+
+      const {
+        tokenFingerprint: fingerPrint,
+        id: userId,
+        refreshToken: JWTRefreshToken,
+      } = parsedTokenData.data;
+
+      try {
+        await turso.execute({
+          sql: `
+            UPDATE users
+            SET refresh_token = :JWTRefreshToken, token_fingerprint= :fingerPrint
+            WHERE id= :userId
+            `,
+          args: { JWTRefreshToken, fingerPrint, userId },
+        });
+      } catch (error) {
+        throw new Error("Verification failed");
+      }
+    }
+    return "validated";
   }
+  return;
 }
