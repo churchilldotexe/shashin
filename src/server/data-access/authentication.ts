@@ -8,10 +8,12 @@ import {
   getAuthenticatedId,
   signAndSetAccessToken,
   signRefreshToken,
+  verifyAccessToken,
   verifyRefreshToken,
 } from "@/lib/auth";
 import type { Row } from "@libsql/client";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { ZodError } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../db/schema/users";
 import { turso } from "../turso";
@@ -123,6 +125,7 @@ export async function authenticateUser(password: string, userName: string) {
   if (generatedHashedPassword === dbHashedPassword) {
     await signAndSetAccessToken(id);
 
+    // to lesses/avoid DB query if refreshToken is still valid
     if (refreshToken === null ?? verifyRefreshToken(refreshToken as string) === undefined) {
       const signedRefreshToken = await signRefreshToken(id);
 
@@ -163,4 +166,75 @@ export async function authenticateUser(password: string, userName: string) {
     return "validated";
   }
   return;
+}
+
+const tokenDataFromDBSchema = getUserSchema.pick({
+  refreshToken: true,
+  tokenFingerprint: true,
+});
+
+export async function refreshAccessToken({
+  userAgent,
+  ip,
+  userId,
+}: {
+  userId: string;
+  ip: string;
+  userAgent: string;
+}) {
+  try {
+    const tokenDataFromDB = await turso.execute({
+      sql: `
+        SELECT 
+          refresh_token,token_fingerprint  
+        FROM users 
+        WHERE id= :userId
+      `,
+      args: { userId },
+    });
+
+    const parsedTokenData = tokenDataFromDBSchema.safeParse({
+      refreshToken: tokenDataFromDB.rows[0]?.refresh_token,
+      tokenFingerprint: tokenDataFromDB.rows[0]?.token_fingerprint,
+    });
+
+    if (parsedTokenData.success === false) {
+      throw new ZodError(parsedTokenData.error.errors);
+    }
+
+    const { tokenFingerprint, refreshToken } = parsedTokenData.data;
+
+    //to prevent AccessToken from cookie for being compromised
+    const generatedFingerPrint = await generateFingerprint({ ip, userAgent });
+
+    if (tokenFingerprint === null ?? tokenFingerprint !== generatedFingerPrint) {
+      redirect("/login");
+    }
+
+    const verifiedRefreshToken = await verifyRefreshToken(refreshToken as string);
+
+    // to ensure that refresh token is valid
+    if (!verifiedRefreshToken) {
+      redirect("/login");
+    }
+    await signAndSetAccessToken(userId);
+  } catch (error) {
+    redirect("/login");
+  }
+}
+
+export async function removeTokenInfoFromDB() {
+  const accessToken = cookies().get("accessToken")?.value;
+  const verifiedId = await verifyAccessToken(accessToken);
+  console.log("verified", verifiedId?.userId);
+  if (!verifiedId) {
+    redirect("/login");
+  }
+
+  await turso.execute({
+    sql: `
+
+`,
+    args: { id: verifiedId.userId },
+  });
 }

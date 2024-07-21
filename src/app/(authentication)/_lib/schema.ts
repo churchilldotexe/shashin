@@ -4,6 +4,7 @@ import { z } from "zod";
 export const loginFormSchema = z.object({
   userName: z.string().min(5, "Username must be 5 characters or more"),
   password: z.string().min(8, "Password must be atleast 8 characters or more"),
+  callbackUrl: z.string().min(1),
 });
 
 export const registerUserFormSchema = z.object({

@@ -1,18 +1,18 @@
-import { randomUUID } from "node:crypto";
-import { auth } from "@clerk/nextjs/server";
+// biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
+import { randomUUID } from "crypto";
 import "server-only";
 import { ZodError, z } from "zod";
 import { turso } from "../turso";
 
 // NOTE: add new column to the table.. create a public and private post.. private post make the images private
 
-export const isAuthenticated = () => {
-  const user = auth();
-  if (user.userId === null) {
-    return null;
-  }
-  return user;
-};
+// export const isAuthenticated = () => {
+//   const user = auth();
+//   if (user.userId === null) {
+//     return null;
+//   }
+//   return user;
+// };
 
 const getPostSchema = z.array(
   z.object({
@@ -30,7 +30,7 @@ const getPostSchema = z.array(
 //1. add boolean to the post table to toggle private/public(easier)
 // 2. when toggled add a foreign key to new table for public post)
 export async function getPost() {
-  isAuthenticated();
+  // isAuthenticated();
 
   const post = await turso.execute({
     sql: `SELECT 
@@ -68,14 +68,17 @@ const createPostSchema = z.object({
 export type createPostSchemaType = z.infer<typeof createPostSchema>;
 
 export async function createPost(postsValue: createPostSchemaType) {
-  const user = auth();
-  if (user === null) {
-    throw new Error("no Authorization. Must be logged in to post");
-  }
+  // const user = auth();
+  // if (user === null) {
+  //   throw new Error("no Authorization. Must be logged in to post");
+  // }
 
   const uuid = randomUUID();
 
-  const parsedPostValue = createPostSchema.safeParse({ ...postsValue, id: uuid });
+  const parsedPostValue = createPostSchema.safeParse({
+    ...postsValue,
+    id: uuid,
+  });
   if (parsedPostValue.success === false) {
     throw new ZodError(parsedPostValue.error.errors);
   }

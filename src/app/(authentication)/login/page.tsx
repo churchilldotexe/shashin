@@ -3,6 +3,7 @@
 import { PageSection } from "@/components/PageSection";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
 import { loginFormAction } from "../_lib/actions/login-actions";
 import { loginFormSchema } from "../_lib/schema";
@@ -21,6 +22,8 @@ function LoginButton() {
 export default function LoginPage() {
   const [_, action] = useFormState(loginFormAction, {});
 
+  const searchParamsValue = useSearchParams().get("callbackUrl");
+  const callbackUrl = searchParamsValue ?? "/";
   return (
     <PageSection>
       <Form className="space-y-4" action={action}>
@@ -38,6 +41,8 @@ export default function LoginPage() {
           </div>
           <LoginButton />
         </div>
+        <Input name="callbackUrl" value={callbackUrl} type="hidden" />
+        {/* TODO: add a function for remember 30days (radio btn)*/}
       </Form>
     </PageSection>
   );

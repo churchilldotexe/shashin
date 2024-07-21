@@ -2,6 +2,7 @@
 
 import { getUserInfo, authenticateUser } from "@/server/data-access/authentication";
 import { loginFormSchema } from "../schema";
+import { redirect } from "next/navigation";
 
 export async function loginFormAction(
   initialData: { message?: string },
@@ -17,5 +18,5 @@ export async function loginFormAction(
 
   await authenticateUser(parsedFormData.data.password, parsedFormData.data.userName);
 
-  return { message: "okok" };
+  redirect(parsedFormData.data.callbackUrl);
 }

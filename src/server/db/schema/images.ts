@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+// biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
+import { randomUUID } from "crypto";
 import { relations, sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";

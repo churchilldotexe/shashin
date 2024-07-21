@@ -1,6 +1,6 @@
 import "server-only";
-import { throws } from "node:assert";
-import crypto, { createHash } from "node:crypto";
+// biome-ignore lint/style/useNodejsImportProtocol: <being used as data: and file: >
+import crypto, { createHash } from "crypto";
 import { env } from "@/env";
 import { SignJWT, decodeJwt, jwtVerify } from "jose";
 import { cookies } from "next/headers";
@@ -29,9 +29,9 @@ export async function signRefreshToken(userId: string): Promise<string> {
     .sign(REFRESH_TOKEN_SECRET);
 }
 
-export async function verifyAccessToken(token: string) {
+export async function verifyAccessToken(token: string | undefined) {
   try {
-    const verified = await jwtVerify(token, ACCESS_TOKEN_SECRET);
+    const verified = await jwtVerify(token as string, ACCESS_TOKEN_SECRET);
     return verified.payload as { userId: string };
   } catch (error) {
     return;
@@ -56,6 +56,7 @@ export async function decodeToken(token: string) {
 }
 
 // to ensure the cookie is in the same device
+// caveat:changing network same device(mobile)
 export async function generateFingerprint({
   ip,
   userAgent,

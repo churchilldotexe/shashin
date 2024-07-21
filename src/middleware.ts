@@ -1,7 +1,21 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { type NextRequest, NextResponse } from "next/server";
+import { verifyAccessToken } from "./lib/auth";
 
-export default clerkMiddleware();
+export async function middleware(req: NextRequest) {
+  const accessToken = req.cookies.get("accessToken")?.value;
+  if (accessToken === undefined) {
+    const prevPath = encodeURIComponent(req.nextUrl.pathname);
+    return NextResponse.redirect(new URL(`/login?callbackUrl=${prevPath}`, req.url));
+  }
+
+  const verifiedId = await verifyAccessToken(accessToken);
+  if (verifiedId === undefined) {
+    const prevPath = encodeURIComponent(req.nextUrl.pathname);
+    return NextResponse.redirect(new URL(`/api/refresh?callbackUrl=${prevPath}`, req.url));
+  }
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!login|register|api|.*\\..*|_next).*)", "/"],
 };
