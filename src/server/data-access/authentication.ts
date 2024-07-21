@@ -208,6 +208,7 @@ export async function refreshAccessToken({
     const generatedFingerPrint = await generateFingerprint({ ip, userAgent });
 
     if (tokenFingerprint === null ?? tokenFingerprint !== generatedFingerPrint) {
+      await removeTokenInfoFromDB();
       redirect("/login");
     }
 
@@ -233,8 +234,12 @@ export async function removeTokenInfoFromDB() {
 
   await turso.execute({
     sql: `
-
-`,
+        UPDATE users
+        SET refresh_token=NULL, token_fingerprint=NULL
+        WHERE id = :id 
+        `,
     args: { id: verifiedId.userId },
   });
+
+  cookies().delete("accessToken");
 }

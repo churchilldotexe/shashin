@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils/cn";
 import { Images } from "lucide-react";
 import { type HTMLAttributes, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
+import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
-import { postImageAction } from "../postImageAction";
 
 const { Form, Input, Textarea, errorMessage } = GenerateFormComponents({
   schema: formSchema,

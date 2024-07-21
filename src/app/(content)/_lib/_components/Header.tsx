@@ -3,10 +3,11 @@
 import Dialog from "@/components/ui/Dialog";
 import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils/cn";
-import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { HTMLAttributes } from "react";
+import { type HTMLAttributes, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { logoutAction } from "../Actions";
 
 const routes = ["/", "/my-posts", "/bookmarks", "/gallery"] as const;
 const gallerySubRoutes = ["/gallery/albums", "/gallery/images", "/gallery/favorites"] as const;
@@ -83,6 +84,8 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
 }
 
 export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
+  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <header className={cn("flex flex-col justify-between", className)} {...props}>
       <div className="p-3 md:hidden">
@@ -105,8 +108,25 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
         </Dialog>
       </div>
       <NavContent className="hidden md:flex" />
-      <div className=" hidden justify-end p-4 md:flex">
-        <UserButton />
+      <div className=" hidden justify-end p-4 md:flex flex-col items-center">
+        {/* TODO: change this to the actual user avatar */}
+        <div>user</div>
+        {/* TODO: logout btn: 
+          [x] - server action --> async onclick --> envoke action function
+          [x] - in server action -> remove cookie from DB (eventho cx hit the 15days remember me)
+          [x] - remove DB refresh token and fingerprint
+          [] - reroute to /login
+          */}
+        <button
+          type="button"
+          onClick={async () => {
+            setLoading(true);
+            await logoutAction();
+            setLoading(false);
+          }}
+        >
+          {loading ? "loggingOut" : "Logout "}
+        </button>
       </div>
     </header>
   );

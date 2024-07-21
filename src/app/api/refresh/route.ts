@@ -1,6 +1,5 @@
 import { decodeToken } from "@/lib/auth";
 import { refreshAccessToken } from "@/server/data-access/authentication";
-import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
@@ -23,7 +22,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const callbackUrl = searchParams.get("callbackUrl");
   const reRouteURL = callbackUrl ?? "/";
-
   const accessToken = req.cookies.get("accessToken")?.value;
 
   const ip = req.headers.get("x-forwarded-for") as string;
@@ -41,10 +39,5 @@ export async function GET(req: NextRequest) {
     userAgent,
   });
 
-  const response = NextResponse.redirect(new URL(reRouteURL, req.url));
-  response.headers.set("Cache-Control", "no-store, max-age=0");
-  response.headers.set("Pragma", "no-cache");
-  response.headers.set("Expires", "0");
-
-  return response;
+  return NextResponse.redirect(new URL(reRouteURL, req.url));
 }

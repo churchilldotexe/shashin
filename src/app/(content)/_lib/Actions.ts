@@ -1,5 +1,6 @@
 "use server";
 
+import { removeTokenInfoFromDB } from "@/server/data-access/authentication";
 import { createImage, type createImageType } from "@/server/data-access/imagesQueries";
 import { createPost } from "@/server/data-access/postsQueries";
 import { revalidatePath } from "next/cache";
@@ -50,4 +51,11 @@ export async function postImageAction(
   await createImage(imageData);
   revalidatePath("/");
   redirect("/");
+}
+
+export async function logoutAction() {
+  console.log("logout waiting");
+  await removeTokenInfoFromDB();
+  console.log("logoutAction from server hello");
+  redirect("/login");
 }

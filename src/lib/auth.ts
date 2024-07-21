@@ -11,7 +11,8 @@ const REFRESH_TOKEN_SECRET = new TextEncoder().encode(env.REFRESH_TOKEN_SECRET);
 export async function signAndSetAccessToken(userId: string) {
   const signedJWT = await new SignJWT({ userId })
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime("15 mins")
+    .setExpirationTime("15 secs")
+    // .setExpirationTime("15 mins")
     .sign(ACCESS_TOKEN_SECRET);
 
   cookies().set({
