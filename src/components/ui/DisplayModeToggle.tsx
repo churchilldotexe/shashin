@@ -37,7 +37,7 @@ export function DisplayModeDropDown() {
 
   return (
     <details
-      className=" custom-overlay relative"
+      className="custom-overlay relative"
       open={isOpen}
       onToggle={(e) => {
         setIsOpen(e.currentTarget.open);
