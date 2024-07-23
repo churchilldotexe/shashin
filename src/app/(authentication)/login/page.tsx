@@ -2,19 +2,26 @@
 
 import { PageSection } from "@/components/PageSection";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
 import { loginFormAction } from "../_lib/actions/login-actions";
+import AuthComponent from "../_lib/components/AuthComponent";
 import { loginFormSchema } from "../_lib/schema";
 
 const { Form, Input } = GenerateFormComponents({ schema: loginFormSchema });
 
 function LoginButton() {
   const { pending } = useFormStatus();
+
   return (
-    <button type="submit" disabled={pending}>
-      {pending ? "logging in..." : "Login"}
+    <button
+      className="py-1 w-full rounded-md bg-primary text-primary-foreground"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "loading..." : "Log In"}
     </button>
   );
 }
@@ -25,25 +32,64 @@ export default function LoginPage() {
   const searchParamsValue = useSearchParams().get("callbackUrl");
   const callbackUrl = searchParamsValue ?? "/";
   return (
-    <PageSection>
+    <AuthComponent>
       <Form className="space-y-4" action={action}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <Input name="userName" id="username" type="text" required />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <Input name="password" id="password" type="password" required />
-        </div>
-        <div>
-          <div>
-            <Link href="/register">Sign up</Link> <span>for an account</span>
-          </div>
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="userName"
+            id="username"
+            type="text"
+            placeholder="Username"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="username"
+          >
+            Username
+          </label>
+        </fieldset>
+
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="password"
+            id="password"
+            type="text"
+            placeholder="password"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="password"
+          >
+            Password
+          </label>
+        </fieldset>
+
+        <div className=" space-y-1">
           <LoginButton />
+          <div className="text-sm">
+            Already have an account?{" "}
+            <Link className="underline text-primary" href={"/login"}>
+              Sign in
+            </Link>
+          </div>
         </div>
         <Input name="callbackUrl" value={callbackUrl} type="hidden" />
         {/* TODO: add a function for remember 30days (radio btn)*/}
       </Form>
-    </PageSection>
+    </AuthComponent>
   );
 }

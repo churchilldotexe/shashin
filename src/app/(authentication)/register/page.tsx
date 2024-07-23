@@ -1,12 +1,12 @@
 "use client";
 
-import { PageSection } from "@/components/PageSection";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { registerFormActions } from "../_lib/actions/register-actions";
+import AuthComponent from "../_lib/components/AuthComponent";
 import { registerUserFormSchema } from "../_lib/schema";
-import Image from "next/image";
 
 const { Form, Input } = GenerateFormComponents({
   schema: registerUserFormSchema,
@@ -16,66 +16,120 @@ function LoginButton() {
   const { pending } = useFormStatus();
 
   return (
-    <button type="submit" disabled={pending}>
-      {pending ? "loading..." : "Login"}
+    <button
+      className="py-1 w-full rounded-md bg-primary text-primary-foreground"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "loading..." : "Sign Up"}
     </button>
   );
 }
 
-const images = ["/AZKi.png", "/furina-white.jpg", "/furina.jpeg", "/watame.png"];
-
 export default function LoginPage() {
   const [_, action] = useFormState(registerFormActions, {});
 
-  // TODO: clear the field when and only when it is successful
-  // - doing server action redirect is good too.
-  // - but if fails the input should not be deleted but instead send the error message
   return (
-    <PageSection>
-      <div className="rounded-lg  grid grid-cols-[1fr,auto] place-items-center">
-        <div className="size-full relative flex items-center justify-center rounded-lg backdrop-blur-lg shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]  ">
-          <h1 className="text-5xl p-4">Shashin</h1>
-          {/* <Image */}
-          {/*   src="/AZKi.png" */}
-          {/*   className="absolute top-4 right-0 size-40 rounded-lg object-contain object-center" */}
-          {/*   alt="landing page image" */}
-          {/*   width={500} */}
-          {/*   height={500} */}
-          {/* /> */}
-        </div>
-        {/* shadow-[0_8px_6px_0_rgba(255,255,255,0.1)_inset,-10px_-10px_10px_black_inset] */}
-        <Form
-          className="space-y-4 p-8 rounded-xl shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_white_inset]  dark:shadow-[0_8px_6px_0_rgba(250,250,250,0.1)_inset,-8px_-6px_12px_black_inset] "
-          action={action}
-        >
-          <fieldset>
-            <label htmlFor="username">Username:</label>
-            <Input name="userName" id="username" type="text" required />
-          </fieldset>
+    <AuthComponent>
+      <Form className="flex flex-col gap-4" action={action}>
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="userName"
+            id="username"
+            type="text"
+            placeholder="Username"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="username"
+          >
+            Username
+          </label>
+        </fieldset>
 
-          <fieldset>
-            <label htmlFor="displayName">Display Name:</label>
-            <Input name="displayName" id="displayName" type="text" required />
-          </fieldset>
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="displayName"
+            id="displayName"
+            type="text"
+            placeholder="displayName"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="displayName"
+          >
+            Display Name
+          </label>
+        </fieldset>
 
-          <fieldset>
-            <label htmlFor="email">Email:</label>
-            <Input name="email" id="email" type="email" required />
-          </fieldset>
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="email"
+            id="email"
+            type="text"
+            placeholder="email"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="email"
+          >
+            Email
+          </label>
+        </fieldset>
 
-          <fieldset>
-            <label htmlFor="password">Password:</label>
-            <Input name="password" id="password" type="password" required />
-          </fieldset>
-          <div>
-            {/* NOTE: feature- forgot password */}
-            <div>
-              already have an account? <Link href={"/login"}>Sign in</Link>
-            </div>
-            <LoginButton />
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer border p-2 rounded outline-none placeholder-transparent "
+            name="password"
+            id="password"
+            type="text"
+            placeholder="password"
+            required
+          />
+          <label
+            className={cn(
+              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
+              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+            )}
+            htmlFor="password"
+          >
+            Password
+          </label>
+        </fieldset>
+
+        <div className=" space-y-1">
+          <LoginButton />
+          <div className="text-sm">
+            Already have an account?{" "}
+            <Link className="underline text-primary" href={"/login"}>
+              Sign in
+            </Link>
           </div>
-        </Form>
-      </div>
-    </PageSection>
+        </div>
+      </Form>
+    </AuthComponent>
   );
 }

@@ -4,8 +4,6 @@
 
 @layer base {
   :root {
-    /* --background: 210 40% 98%; */
-    /* --background: 210 40% 98%; */
     --background: 0 0% 98%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -29,9 +27,7 @@
   }
 
   .dark {
-    /* 0 0% 3.9% */
     --background: 0 0% 3.9%;
-    /* --background: 20 14.3% 4.1%; */
     --foreground: 0 0% 95%;
     --card: 24 9.8% 10%;
     --card-foreground: 0 0% 95%;
@@ -80,24 +76,96 @@
   display: none;
 }
 
-.grid-area-1_1 {
-  grid-area: 1/1;
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 30deg;
+  inherits: false;
 }
 
-.sphere {
-  background: var(--muted);
-  box-shadow:
-    0 0 100px rgba(0, 0, 0, 0.5) inset,
-    0 0 100px rgba(0, 0, 0, 0.8) inset,
-    0 0 200px rgba(0, 0, 0, 0.3) inset,
-    0 0 50px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(53deg, #f8fafc, #334155);
+@property --angle2 {
+  syntax: "<angle>";
+  initial-value: 320deg;
+  inherits: false;
 }
 
-.text_sphere {
-  text-shadow:
-    0 0 100px rgba(0, 0, 0, 0.5) inset,
-    0 0 100px rgba(0, 0, 0, 0.8) inset,
-    0 0 200px rgba(0, 0, 0, 0.3) inset,
-    0 0 50px rgba(0, 0, 0, 0.5);
+.css-border-animateAt30deg::after,
+.css-border-animateAt30deg::before,
+.css-border-animateAt330deg::after,
+.css-border-animateAt330deg::before {
+  box-sizing: content-box;
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 100%;
+  width: 100%;
+  padding: 0.1em;
+  translate: -50% -50%;
+  z-index: -2;
+  border-radius: 0.5rem;
 }
+
+.css-border-animateAt30deg::after,
+.css-border-animateAt30deg::before {
+  background-image: conic-gradient(
+    from var(--angle),
+    hsl(var(--primary)),
+    transparent 15%
+  );
+  animation: 14s spin linear infinite;
+}
+
+.css-border-animateAt330deg::after,
+.css-border-animateAt330deg::before {
+  background-image: conic-gradient(
+    from var(--angle2),
+    transparent 90%,
+    hsl(var(--primary))
+  );
+  animation: 14s reverse-spin linear infinite;
+}
+
+.css-border-animateAt30deg::before,
+.css-border-animateAt330deg::before {
+  filter: blur(0.5rem);
+  /* opacity: 0.5; */
+}
+
+@keyframes spin {
+  0% {
+    --angle: 40deg;
+    opacity: 1;
+  }
+  46% {
+    --angle: -320deg;
+    opacity: 1;
+  }
+  50% {
+    --angle: -320deg;
+    opacity: 0;
+  }
+  94% {
+    --angle: -325deg;
+    opacity: 0;
+  }
+  100% {
+    --angle: -330deg;
+    opacity: 0;
+  }
+}
+
+@keyframes reverse-spin {
+  0%,
+ 45% {
+    --angle2: -45deg;
+    opacity: 0;
+  }
+  52% {
+    --angle2: -10deg;
+    opacity: 1;
+  }
+100%{
+  --angle2: 311deg
+}
+}
+
