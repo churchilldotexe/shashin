@@ -41,7 +41,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
               <li
                 key={route}
                 className={cn(
-                  "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border ",
+                  "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
                   {
                     "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
                       pathname === `${route}`,
@@ -62,7 +62,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
                   <li
                     key={subRoute}
                     className={cn(
-                      "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border",
+                      "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95",
                       {
                         "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
                           pathname === `${subRoute}`,
@@ -102,13 +102,13 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
             <span className=" h-6 border border-border shadow-inner " />
             <div>Gallery</div>
           </div>
-          <Dialog.Content className="ml-0 mt-0 size-fit overflow-x-clip">
+          <Dialog.Content className="mt-0 ml-0 size-fit overflow-x-clip">
             <NavContent />
           </Dialog.Content>
         </Dialog>
       </div>
       <NavContent className="hidden md:flex" />
-      <div className=" hidden justify-end p-4 md:flex flex-col items-center">
+      <div className=" hidden flex-col items-center justify-end p-4 md:flex">
         {/* TODO: change this to the actual user avatar */}
         <div>user</div>
         {/* TODO: logout btn: 

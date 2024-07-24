@@ -17,7 +17,7 @@ function LoginButton() {
 
   return (
     <button
-      className="py-1 w-full rounded-md bg-primary text-primary-foreground"
+      className="w-full rounded-md bg-primary py-1 text-primary-foreground"
       type="submit"
       disabled={pending}
     >
@@ -35,7 +35,7 @@ export default function LoginPage() {
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="userName"
             id="username"
             type="text"
@@ -44,9 +44,9 @@ export default function LoginPage() {
           />
           <label
             className={cn(
-              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
-              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
-              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
             )}
             htmlFor="username"
           >
@@ -58,7 +58,7 @@ export default function LoginPage() {
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border w-full p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="displayName"
             id="displayName"
             type="text"
@@ -67,9 +67,9 @@ export default function LoginPage() {
           />
           <label
             className={cn(
-              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
-              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
-              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+              " -top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
             )}
             htmlFor="displayName"
           >
@@ -81,7 +81,7 @@ export default function LoginPage() {
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="email"
             id="email"
             type="text"
@@ -90,9 +90,9 @@ export default function LoginPage() {
           />
           <label
             className={cn(
-              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
-              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
-              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
             )}
             htmlFor="email"
           >
@@ -104,7 +104,7 @@ export default function LoginPage() {
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
             type="text"
@@ -113,9 +113,9 @@ export default function LoginPage() {
           />
           <label
             className={cn(
-              "absolute text-lg leading-none px-1 backdrop-blur-sm cursor-text left-1.5  -top-2.5 transition-all ",
-              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:backdrop-blur-sm peer-focus:text-lg peer-focus:leading-none peer-focus:text-foreground ",
-              "peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-placeholder-shown:backdrop-blur-none peer-placeholder-shown:text-gray-400"
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
             )}
             htmlFor="password"
           >
@@ -128,7 +128,7 @@ export default function LoginPage() {
           <LoginButton />
           <div className="text-sm">
             Already have an account?{" "}
-            <Link className="underline text-primary" href={"/login"}>
+            <Link className="text-primary underline" href={"/login"}>
               Sign in
             </Link>
           </div>

@@ -50,12 +50,12 @@ export function DisplayModeDropDown() {
       </summary>
       <div
         className={cn(
-          "absolute left-[-150%] z-[1000] flex -translate-x-1/2 flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
+          "-translate-x-1/2 absolute left-[-150%] z-[1000] flex flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
         )}
       >
         <button
-          className="flex items-center gap-2 p-3 hocus-visible:bg-secondary"
+          className="flex items-center gap-2 hocus-visible:bg-secondary p-3"
           onClick={() => {
             handleDropDownToggle("light");
           }}
@@ -64,7 +64,7 @@ export function DisplayModeDropDown() {
           <Sun className="size-4" /> Light
         </button>
         <button
-          className="flex items-center gap-2 p-3 hocus-visible:bg-secondary"
+          className="flex items-center gap-2 hocus-visible:bg-secondary p-3"
           onClick={() => {
             handleDropDownToggle("dark");
           }}
@@ -73,7 +73,7 @@ export function DisplayModeDropDown() {
           <Moon className="size-4" /> Dark
         </button>
         <button
-          className="flex items-center gap-2 p-3 hocus-visible:bg-secondary"
+          className="flex items-center gap-2 hocus-visible:bg-secondary p-3"
           onClick={() => {
             handleDropDownToggle("system");
           }}

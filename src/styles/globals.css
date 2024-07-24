@@ -78,13 +78,13 @@
 
 @property --angle {
   syntax: "<angle>";
-  initial-value: 30deg;
+  initial-value: 80deg;
   inherits: false;
 }
 
 @property --angle2 {
   syntax: "<angle>";
-  initial-value: 320deg;
+  initial-value: 280.5deg;
   inherits: false;
 }
 
@@ -110,7 +110,7 @@
   background-image: conic-gradient(
     from var(--angle),
     hsl(var(--primary)),
-    transparent 15%
+    transparent 5%
   );
   animation: 14s spin linear infinite;
 }
@@ -119,7 +119,7 @@
 .css-border-animateAt330deg::before {
   background-image: conic-gradient(
     from var(--angle2),
-    transparent 90%,
+    transparent 95%,
     hsl(var(--primary))
   );
   animation: 14s reverse-spin linear infinite;
@@ -133,39 +133,60 @@
 
 @keyframes spin {
   0% {
-    --angle: 40deg;
+    --angle: 80deg;
     opacity: 1;
   }
-  46% {
-    --angle: -320deg;
+  47% {
     opacity: 1;
+  }
+  48% {
+    opacity: 0.9;
+  }
+  49% {
+    opacity: 0;
   }
   50% {
-    --angle: -320deg;
+    --angle: -280deg;
     opacity: 0;
   }
-  94% {
-    --angle: -325deg;
+  98% {
     opacity: 0;
+  }
+  99% {
+    opacity: 0.9;
   }
   100% {
-    --angle: -330deg;
-    opacity: 0;
+    --angle: -640deg;
+    opacity: 1;
   }
 }
 
 @keyframes reverse-spin {
-  0%,
- 45% {
-    --angle2: -45deg;
+  0% {
+    --angle2: 280deg;
     opacity: 0;
   }
-  52% {
-    --angle2: -10deg;
+  48% {
+    opacity: 0;
+  }
+  49% {
+    opacity: 0.9;
+  }
+  50% {
+    --angle2: 640deg;
     opacity: 1;
   }
-100%{
-  --angle2: 311deg
+  97% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.9;
+  }
+  99% {
+    opacity: 0;
+  }
+  100% {
+    --angle2: 1000deg;
+    opacity: 0;
+  }
 }
-}
-

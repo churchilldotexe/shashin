@@ -54,8 +54,6 @@ export async function postImageAction(
 }
 
 export async function logoutAction() {
-  console.log("logout waiting");
   await removeTokenInfoFromDB();
-  console.log("logoutAction from server hello");
   redirect("/login");
 }
