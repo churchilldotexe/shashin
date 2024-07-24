@@ -3,11 +3,14 @@ import {
   type Dispatch,
   type FocusEvent,
   type FormHTMLAttributes,
+  type HTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
   type SetStateAction,
   type TextareaHTMLAttributes,
+  createContext,
   forwardRef,
+  useContext,
   useState,
 } from "react";
 import type { ZodRawShape, z } from "zod";
@@ -31,22 +34,31 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
   type SchemaTypes = z.infer<T>;
   type Keys = keyof SchemaTypes;
 
-  const errorMessage: Record<Keys, string | undefined> = {} as Record<Keys, string | undefined>;
+  type ErrorContextType = {
+    error: Record<Keys, string | undefined>;
+    setError: Dispatch<SetStateAction<Record<keyof z.TypeOf<T>, string | undefined>>>;
+  };
+
+  const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
+
+  function useErrorContext() {
+    const context = useContext(ErrorContext);
+    if (context === undefined) {
+      throw new Error("this component must be inside the Form component");
+    }
+    return context;
+  }
 
   const validateInput = ({
+    setError,
     name,
     files,
     value,
-    setError,
-    schemaName,
-    error,
   }: {
-    error: string | undefined;
     name: string;
     files?: FileList | null;
     value?: unknown;
-    setError: Dispatch<SetStateAction<string | undefined>>;
-    schemaName: keyof z.TypeOf<T>;
+    setError: Dispatch<SetStateAction<Record<keyof z.TypeOf<T>, string | undefined>>>;
   }) => {
     const inputSchema = schema.shape[name];
     if (inputSchema === undefined) {
@@ -54,22 +66,30 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     }
     const validatedFile = inputSchema.safeParse(files ?? value);
     if (validatedFile.success === false) {
-      setError(validatedFile.error.formErrors.formErrors[0]);
       if (validatedFile.error.formErrors.formErrors[0] !== undefined) {
-        errorMessage[schemaName] = error;
-        // errorMessage[schemaName] = validatedFile.error.formErrors.formErrors[0];
+        setError((prev) => ({
+          ...prev,
+          [name]: validatedFile.error.formErrors.formErrors[0],
+        }));
       }
     } else {
-      setError(undefined);
-      errorMessage[schemaName] = error;
+      setError((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
     }
   };
 
   const Form = forwardRef<HTMLFormElement, FormType>(function Form({ children, ...props }, ref) {
+    const [error, setError] = useState<Record<Keys, string | undefined>>(
+      {} as Record<Keys, string | undefined>
+    );
     return (
-      <form ref={ref} {...props}>
-        {children}
-      </form>
+      <ErrorContext.Provider value={{ setError, error }}>
+        <form ref={ref} {...props}>
+          {children}
+        </form>
+      </ErrorContext.Provider>
     );
   });
 
@@ -93,7 +113,8 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     },
     ref
   ) {
-    const [error, setError] = useState<string | undefined>(undefined);
+    // const [error, setError] = useState<Error>(undefined);
+    const { error, setError } = useErrorContext();
 
     const { inputStyles } = popUpPosition({
       position,
@@ -107,30 +128,24 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
 
       if (inputType === "file") {
         validateInput({
-          error,
-          schemaName: name,
+          setError,
           name: e.target.name,
           value: e.target.value,
-          setError,
           files: e.target.files,
         });
       } else if (inputType === "checkbox" || inputType === "radio") {
         if (e.target.checked) {
           validateInput({
-            error,
-            schemaName: name,
+            setError,
             name: e.target.name,
             value: e.target.value,
-            setError,
           });
         }
       } else {
         validateInput({
-          error,
-          schemaName: name,
+          setError,
           name: e.target.name,
           value: e.target.value,
-          setError,
         });
       }
     };
@@ -148,7 +163,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
                 if (onChange !== undefined) {
                   onChange(e);
                 }
-                if (error) {
+                if (error[name]) {
                   onBlurValidation(e);
                 } else {
                   return;
@@ -159,10 +174,10 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
               style={{ width: "100%" }}
             />
 
-            {Boolean(error) && (
+            {Boolean(error[name]) && (
               <div style={inputStyles.divStyle}>
                 <span style={inputStyles.spanStyle} />
-                {error}
+                {error[name]}
               </div>
             )}
           </div>
@@ -177,7 +192,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
                 if (onChange !== undefined) {
                   onChange(e);
                 }
-                if (error) {
+                if (error[name]) {
                   onBlurValidation(e);
                 } else {
                   return;
@@ -212,15 +227,13 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     },
     ref
   ) {
-    const [error, setError] = useState<string | undefined>(undefined);
+    const { setError, error } = useErrorContext();
 
     const onBlurValidation = (
       e: FocusEvent<HTMLTextAreaElement, Element> | ChangeEvent<HTMLTextAreaElement>
     ) => {
       e.preventDefault();
       validateInput({
-        error,
-        schemaName: name,
         name: e.target.name,
         value: e.target.value,
         setError,
@@ -248,7 +261,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
                 if (onChange !== undefined) {
                   onChange(e);
                 }
-                if (error) {
+                if (error[name]) {
                   onBlurValidation(e);
                 } else {
                   return;
@@ -256,10 +269,10 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
               }}
             />
 
-            {Boolean(error) && (
+            {Boolean(error[name]) && (
               <div style={textAreaStyles.divStyle}>
                 <span style={textAreaStyles.spanStyle} />
-                {error}
+                {error[name]}
               </div>
             )}
           </div>
@@ -275,7 +288,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
               if (onChange !== undefined) {
                 onChange(e);
               }
-              if (error) {
+              if (error[name]) {
                 onBlurValidation(e);
               } else {
                 return;
@@ -287,5 +300,44 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     );
   });
 
-  return { Form, Input, Textarea, errorMessage };
+  type ErrorMessagePropType = {
+    name: Keys;
+    useDefaultStyling?: boolean;
+    position?: Position;
+    errorMessageVariant?: ValidationMessageVariant;
+    children?: ReactNode;
+  } & HTMLAttributes<HTMLDivElement>;
+
+  const ErrorMessage = forwardRef<HTMLDivElement, ErrorMessagePropType>(function ErrorMessage(
+    {
+      position = "bottomLeft",
+      errorMessageVariant = "error",
+      useDefaultStyling = true,
+      name,
+      children,
+      ...props
+    },
+    ref
+  ) {
+    const { error } = useErrorContext();
+
+    const { textAreaStyles } = popUpPosition({
+      position,
+      variant: errorMessageVariant,
+    });
+
+    return useDefaultStyling ? (
+      <div ref={ref} {...props}>
+        {error[name] ?? children}
+      </div>
+    ) : (
+      Boolean(error[name] ?? children) && (
+        <div ref={ref} style={textAreaStyles.divStyle} {...props}>
+          {error[name] ?? children}
+        </div>
+      )
+    );
+  });
+
+  return { Form, Input, Textarea, ErrorMessage };
 }

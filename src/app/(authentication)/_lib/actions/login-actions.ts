@@ -24,7 +24,8 @@ export async function loginFormAction(
 
   const isAuthenticated = await authenticateUser(
     parsedFormData.data.password,
-    parsedFormData.data.userName
+    parsedFormData.data.userName,
+    parsedFormData.data.rememberMe
   );
 
   if (isAuthenticated === undefined) {

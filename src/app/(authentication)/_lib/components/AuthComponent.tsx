@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 const images = ["/AZKi.png", "/furina-white.jpg", "/furina.jpeg", "/watame.png"];
 
 export default function AuthComponent({ children }: { children: ReactNode }) {
+  //TODO: mobile (try to figure out to set media queries for animated330deg.. meaning when in md and up should be able to have full rotation with no invi
   return (
     <PageSection>
       <div className="grid size-full grid-cols-2 place-items-center rounded-lg">

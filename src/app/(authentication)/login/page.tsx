@@ -85,8 +85,13 @@ export default function LoginPage() {
           </ErrorMessage>
         </fieldset>
 
-        <div className=" space-y-1">
-          <LoginButton />
+        <LoginButton />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <fieldset className="flex gap-2">
+            <Input id="rememberMe" type="checkbox" name="rememberMe" value="true" />
+            <label htmlFor="rememberMe">Remember me for 30 days?</label>
+          </fieldset>
+
           <div className="text-sm">
             Dont have an Account?{" "}
             <Link className="text-primary underline" href={"/login"}>
@@ -95,7 +100,6 @@ export default function LoginPage() {
           </div>
         </div>
         <Input name="callbackUrl" value={callbackUrl} type="hidden" />
-        {/* TODO: add a function for remember 30days (radio btn)*/}
       </Form>
     </AuthComponent>
   );

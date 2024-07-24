@@ -104,7 +104,8 @@ const UpdateRefreshTokenAndFingerPrintSchema = getUserSchema.pick({
 
 export async function authenticateUser(
   password: string,
-  userName: string
+  userName: string,
+  rememberMe: boolean
 ): Promise<{ userName?: string; password?: string } | undefined> {
   const rawDbData = await turso.execute({
     sql: " SELECT hashed_password, salt, id, refresh_token FROM users where user_name = :userName ",
@@ -126,7 +127,7 @@ export async function authenticateUser(
   const generatedHashedPassword = generateHashPassword(password, salt);
 
   if (generatedHashedPassword === dbHashedPassword) {
-    await signAndSetAccessToken(id);
+    await signAndSetAccessToken(id, rememberMe);
 
     // to lesses/avoid DB query if refreshToken is still valid
     if (refreshToken === null ?? verifyRefreshToken(refreshToken as string) === undefined) {
