@@ -1,6 +1,5 @@
 "use client";
 
-import { PageSection } from "@/components/PageSection";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
@@ -10,7 +9,9 @@ import { loginFormAction } from "../_lib/actions/login-actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { loginFormSchema } from "../_lib/schema";
 
-const { Form, Input } = GenerateFormComponents({ schema: loginFormSchema });
+const { Form, Input, ErrorMessage } = GenerateFormComponents({
+  schema: loginFormSchema,
+});
 
 function LoginButton() {
   const { pending } = useFormStatus();
@@ -27,17 +28,17 @@ function LoginButton() {
 }
 
 export default function LoginPage() {
-  const [_, action] = useFormState(loginFormAction, {});
+  const [state, action] = useFormState(loginFormAction, {});
 
   const searchParamsValue = useSearchParams().get("callbackUrl");
   const callbackUrl = searchParamsValue ?? "/";
   return (
     <AuthComponent>
-      <Form className="space-y-4" action={action}>
+      <Form className="space-y-4 w-full  " action={action}>
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
             name="userName"
             id="username"
             type="text"
@@ -54,16 +55,19 @@ export default function LoginPage() {
           >
             Username
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
+            {state.userName}
+          </ErrorMessage>
         </fieldset>
 
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
             name="password"
             id="password"
             type="text"
-            placeholder="password"
+            placeholder="Password"
             required
           />
           <label
@@ -76,14 +80,17 @@ export default function LoginPage() {
           >
             Password
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
+            {state.password}
+          </ErrorMessage>
         </fieldset>
 
         <div className=" space-y-1">
           <LoginButton />
           <div className="text-sm">
-            Already have an account?{" "}
+            Dont have an Account?{" "}
             <Link className="underline text-primary" href={"/login"}>
-              Sign in
+              Sign Up
             </Link>
           </div>
         </div>

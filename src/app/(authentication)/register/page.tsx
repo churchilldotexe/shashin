@@ -8,7 +8,7 @@ import { registerFormActions } from "../_lib/actions/register-actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { registerUserFormSchema } from "../_lib/schema";
 
-const { Form, Input } = GenerateFormComponents({
+const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: registerUserFormSchema,
 });
 
@@ -31,11 +31,11 @@ export default function LoginPage() {
 
   return (
     <AuthComponent>
-      <Form className="flex flex-col gap-4" action={action}>
+      <Form className="flex flex-col gap-y-6" action={action}>
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
             name="userName"
             id="username"
             type="text"
@@ -52,12 +52,13 @@ export default function LoginPage() {
           >
             Username
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName" />
         </fieldset>
 
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer border w-full p-2 rounded outline-none placeholder-transparent "
             name="displayName"
             id="displayName"
             type="text"
@@ -74,12 +75,13 @@ export default function LoginPage() {
           >
             Display Name
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName" />
         </fieldset>
 
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
             name="email"
             id="email"
             type="text"
@@ -96,12 +98,13 @@ export default function LoginPage() {
           >
             Email
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="email" />
         </fieldset>
 
         <fieldset className="relative ">
           <Input
             showErrors={false}
-            className="peer border p-2 rounded outline-none placeholder-transparent "
+            className="peer w-full border p-2 rounded outline-none placeholder-transparent "
             name="password"
             id="password"
             type="text"
@@ -118,6 +121,7 @@ export default function LoginPage() {
           >
             Password
           </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password" />
         </fieldset>
 
         <div className=" space-y-1">

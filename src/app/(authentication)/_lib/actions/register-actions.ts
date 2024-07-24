@@ -15,7 +15,6 @@ export async function registerFormActions(
   const rawFormData = Object.fromEntries(formData.entries());
   const parsedFormData = registerUserFormSchema.safeParse(rawFormData);
   if (parsedFormData.success === false) {
-    console.log(parsedFormData.error.errors);
     return { error: parsedFormData.error.formErrors.fieldErrors };
   }
 
