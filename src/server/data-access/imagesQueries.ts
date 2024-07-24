@@ -73,7 +73,6 @@ export async function getMyImages() {
   const parsedImages = getMyImagesSchema.safeParse(myImages.rows);
 
   if (parsedImages.success === false) {
-    console.log(parsedImages.error.errors);
     return null;
   }
 

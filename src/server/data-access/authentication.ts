@@ -102,7 +102,10 @@ const UpdateRefreshTokenAndFingerPrintSchema = getUserSchema.pick({
   tokenFingerprint: true,
 });
 
-export async function authenticateUser(password: string, userName: string) {
+export async function authenticateUser(
+  password: string,
+  userName: string
+): Promise<{ userName?: string; password?: string } | undefined> {
   const rawDbData = await turso.execute({
     sql: " SELECT hashed_password, salt, id, refresh_token FROM users where user_name = :userName ",
     args: { userName },
@@ -116,7 +119,7 @@ export async function authenticateUser(password: string, userName: string) {
   });
 
   if (parsedDbHashedPassword.success === false) {
-    throw new ZodError(parsedDbHashedPassword.error.errors);
+    return { userName: "Invalid username. try Registering" };
   }
 
   const { hashedPassword: dbHashedPassword, salt, id, refreshToken } = parsedDbHashedPassword.data;
@@ -160,12 +163,12 @@ export async function authenticateUser(password: string, userName: string) {
           args: { JWTRefreshToken, fingerPrint, userId },
         });
       } catch (error) {
-        throw new Error("Verification failed");
+        return { password: "verification failed. Try again" };
       }
     }
-    return "validated";
+    return;
   }
-  return;
+  return { password: "Invalid Password. You may try again" };
 }
 
 const tokenDataFromDBSchema = getUserSchema.pick({
@@ -227,7 +230,6 @@ export async function refreshAccessToken({
 export async function removeTokenInfoFromDB() {
   const accessToken = cookies().get("accessToken")?.value;
   const verifiedId = await verifyAccessToken(accessToken);
-  console.log("verified", verifiedId?.userId);
   if (!verifiedId) {
     redirect("/login");
   }
