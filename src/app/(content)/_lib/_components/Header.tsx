@@ -88,7 +88,7 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
 
   return (
     <header className={cn("flex flex-col justify-between", className)} {...props}>
-      <div className="p-3 md:hidden">
+      <div className="p-3 shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white] md:hidden dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]">
         <Dialog>
           <div className="grid grid-cols-3 ">
             <Dialog.Trigger>User</Dialog.Trigger>
@@ -107,7 +107,7 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
           </Dialog.Content>
         </Dialog>
       </div>
-      <NavContent className="hidden md:flex" />
+      <NavContent className="hidden shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white] md:flex dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]" />
       <div className=" hidden flex-col items-center justify-end p-4 md:flex">
         {/* TODO: change this to the actual user avatar */}
         <div>user</div>

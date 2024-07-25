@@ -13,7 +13,8 @@
     "prepare": "husky install",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "biome:fix": "biome lint --write"
   },
   "dependencies": {
     "@libsql/client": "^0.7.0",

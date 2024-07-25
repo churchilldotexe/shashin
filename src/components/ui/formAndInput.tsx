@@ -108,6 +108,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
       errorMessageVariant = "error",
       position = "bottomMiddle",
       onChange,
+      onBlur,
       name,
       ...props
     },
@@ -157,6 +158,9 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
             <input
               ref={ref}
               onBlur={(e) => {
+                if (onBlur !== undefined) {
+                  onBlur(e);
+                }
                 onBlurValidation(e);
               }}
               onChange={(e) => {
@@ -186,6 +190,9 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
             <input
               ref={ref}
               onBlur={(e) => {
+                if (onBlur !== undefined) {
+                  onBlur(e);
+                }
                 onBlurValidation(e);
               }}
               onChange={(e) => {
@@ -223,6 +230,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
       position = "bottomMiddle",
       onChange,
       name,
+      onBlur,
       ...props
     },
     ref
@@ -254,6 +262,9 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
               {...props}
               name={name as string}
               onBlur={(e) => {
+                if (onBlur !== undefined) {
+                  onBlur(e);
+                }
                 onBlurValidation(e);
               }}
               style={{ width: "100%" }}
@@ -282,6 +293,9 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
             {...props}
             name={name as string}
             onBlur={(e) => {
+              if (onBlur !== undefined) {
+                onBlur(e);
+              }
               onBlurValidation(e);
             }}
             onChange={(e) => {

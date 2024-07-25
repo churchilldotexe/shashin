@@ -17,7 +17,7 @@ export default function RootLayout({
   overview: React.ReactNode;
 }) {
   return (
-    <div className="container mx-auto flex flex-col justify-center md:flex-row">
+    <div className="container mx-auto flex flex-col justify-center gap-4 md:flex-row">
       {/* TODO: mobile first: header with nav must be a toggle button in mobile first (drop down list icon only?) when md: note dropdown but show icon only */}
       {/*  TODO:  focus on designing the front page first(for signed in and welcome page(for unsigned in)) */}
       <Header className="sticky top-0 w-full md:h-dvh md:w-fit" />
@@ -26,7 +26,7 @@ export default function RootLayout({
         <div>
           <DisplayModeDropDown />
         </div>
-        <div>{overview}</div>
+        <div className="">{overview}</div>
       </aside>
       {/* TODO: Homepage here for signed out Users*/}
       {/* NOTE: when user logged in/signed up do an UPSERT for user table where if not yet reg add to user table and get basic info of the user to be displayed to his profile */}

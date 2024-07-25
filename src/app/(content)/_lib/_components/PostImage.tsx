@@ -8,7 +8,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
 
-const { Form, Input, Textarea, errorMessage } = GenerateFormComponents({
+const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
 
@@ -47,11 +47,16 @@ function CharacterLimitIndicator({
   );
 }
 
-function Button() {
+function PostButton() {
   const { pending } = useFormStatus();
+
   return (
-    <button type="submit" disabled={pending}>
-      {pending ? "posting" : "post"}
+    <button
+      className="rounded-md bg-primary px-2 py-1 text-primary-foreground"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "loading..." : "Post"}
     </button>
   );
 }
@@ -59,9 +64,11 @@ function Button() {
 export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   const [_, action] = useFormState(postImageAction, {});
   const formRef = useRef<HTMLFormElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
   const [isDragged, setIsDragged] = useState<boolean>(false);
+  const [isShared, setIsShared] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -73,11 +80,20 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
             textCount={textAreaInput.length}
           />
           <Textarea
-            className={cn("resize-none p-2 outline-none", {
+            ref={textAreaRef}
+            className={cn("resize-none rounded-b-md p-2 outline-none ", {
               "border border-green-500 bg-indigo-500 ": isDragged,
             })}
             rows={5}
             name="description"
+            onBlur={() => {
+              if (textAreaRef.current !== null) {
+                textAreaRef.current.style.height = "auto";
+                textAreaRef.current.rows = 0;
+                textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+                console.log(textAreaRef.current.scrollHeight, "scrollheight");
+              }
+            }}
             onChange={(e) => {
               setTextAreaInput(e.target.value);
             }}
@@ -106,22 +122,52 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
             }}
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between py-2">
           {/* TODO: after the user chose an image, mount/ display the image through image slider component. Remember that the component needs an array */}
-          <label className="cursor-pointer" htmlFor="imageFile">
-            <Images />
-            <span className="sr-only">Select Image</span>
-            <Input
-              id="imageFile"
-              ref={fileInputRef}
-              className="sr-only"
-              name="images"
-              type="file"
-              multiple
-              accept={ACCEPTED_FILE_TYPE.join(",")}
-            />
-          </label>
-          <Button />
+          <div className="flex gap-2">
+            <fieldset>
+              <legend className="sr-only">Image Upload</legend>
+              <label className="cursor-pointer" htmlFor="imageFile">
+                <Images />
+                <span className="sr-only">Select Image</span>
+                <Input
+                  id="imageFile"
+                  ref={fileInputRef}
+                  className="sr-only"
+                  name="images"
+                  type="file"
+                  multiple
+                  accept={ACCEPTED_FILE_TYPE.join(",")}
+                  required
+                />
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <legend className="sr-only">Sharing Options</legend>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="shareToggle"
+                  className="flex h-5 w-10 items-center rounded-full bg-gray-400 data-[is-check=true]:bg-green-500"
+                  data-is-check={isShared}
+                >
+                  <input
+                    type="checkbox"
+                    id="shareToggle"
+                    name="isShared"
+                    className="peer sr-only"
+                    checked={isShared}
+                    onChange={() => setIsShared(!isShared)}
+                  />
+                  <span className="ml-[.15em] size-4 rounded-full bg-gray-400 peer-checked:mr-[.15em] peer-checked:ml-auto" />
+                  <span className="sr-only">{isShared ? "Shared" : "Share"}</span>
+                </label>
+                <span>{isShared ? "Shared" : "Share to Public?"}</span>
+              </div>
+            </fieldset>
+          </div>
+
+          <PostButton />
         </div>
         {/* TODO: add new input (select) for private and public.. (may do a switch btn for public or private same with dstorage)*/}
       </Form>
