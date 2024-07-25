@@ -3,7 +3,6 @@ import Image from "next/image";
 
 export default async function ImagesPage() {
   const myImages = await getMyImages();
-  console.log(myImages);
   return (
     <section>
       {myImages?.map((image) => (

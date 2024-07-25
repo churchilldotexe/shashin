@@ -3,10 +3,11 @@
 import Dialog from "@/components/ui/Dialog";
 import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils/cn";
-import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { HTMLAttributes } from "react";
+import { type HTMLAttributes, useState } from "react";
+import { useFormStatus } from "react-dom";
+import { logoutAction } from "../Actions";
 
 const routes = ["/", "/my-posts", "/bookmarks", "/gallery"] as const;
 const gallerySubRoutes = ["/gallery/albums", "/gallery/images", "/gallery/favorites"] as const;
@@ -40,7 +41,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
               <li
                 key={route}
                 className={cn(
-                  "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border ",
+                  "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
                   {
                     "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
                       pathname === `${route}`,
@@ -61,7 +62,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
                   <li
                     key={subRoute}
                     className={cn(
-                      "rounded-md border border-white/0 p-2 active:scale-95 hocus-visible:border-border",
+                      "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95",
                       {
                         "scale-105 bg-gradient-to-br from-white/10 to-white/0 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)]":
                           pathname === `${subRoute}`,
@@ -83,6 +84,8 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
 }
 
 export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
+  const [loading, setLoading] = useState<boolean>(false);
+
   return (
     <header className={cn("flex flex-col justify-between", className)} {...props}>
       <div className="p-3 md:hidden">
@@ -99,14 +102,31 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
             <span className=" h-6 border border-border shadow-inner " />
             <div>Gallery</div>
           </div>
-          <Dialog.Content className="ml-0 mt-0 size-fit overflow-x-clip">
+          <Dialog.Content className="mt-0 ml-0 size-fit overflow-x-clip">
             <NavContent />
           </Dialog.Content>
         </Dialog>
       </div>
       <NavContent className="hidden md:flex" />
-      <div className=" hidden justify-end p-4 md:flex">
-        <UserButton />
+      <div className=" hidden flex-col items-center justify-end p-4 md:flex">
+        {/* TODO: change this to the actual user avatar */}
+        <div>user</div>
+        {/* TODO: logout btn: 
+          [x] - server action --> async onclick --> envoke action function
+          [x] - in server action -> remove cookie from DB (eventho cx hit the 15days remember me)
+          [x] - remove DB refresh token and fingerprint
+          [] - reroute to /login
+          */}
+        <button
+          type="button"
+          onClick={async () => {
+            setLoading(true);
+            await logoutAction();
+            setLoading(false);
+          }}
+        >
+          {loading ? "loggingOut" : "Logout "}
+        </button>
       </div>
     </header>
   );

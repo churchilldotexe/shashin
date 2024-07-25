@@ -3,11 +3,14 @@ import {
   type Dispatch,
   type FocusEvent,
   type FormHTMLAttributes,
+  type HTMLAttributes,
   type InputHTMLAttributes,
   type ReactNode,
   type SetStateAction,
   type TextareaHTMLAttributes,
+  createContext,
   forwardRef,
+  useContext,
   useState,
 } from "react";
 import type { ZodRawShape, z } from "zod";
@@ -31,20 +34,31 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
   type SchemaTypes = z.infer<T>;
   type Keys = keyof SchemaTypes;
 
-  const errorMessage: Record<Keys, string | undefined> = {} as Record<Keys, string | undefined>;
+  type ErrorContextType = {
+    error: Record<Keys, string | undefined>;
+    setError: Dispatch<SetStateAction<Record<keyof z.TypeOf<T>, string | undefined>>>;
+  };
+
+  const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
+
+  function useErrorContext() {
+    const context = useContext(ErrorContext);
+    if (context === undefined) {
+      throw new Error("this component must be inside the Form component");
+    }
+    return context;
+  }
 
   const validateInput = ({
+    setError,
     name,
     files,
     value,
-    setError,
-    schemaName,
   }: {
     name: string;
     files?: FileList | null;
     value?: unknown;
-    setError: Dispatch<SetStateAction<string | undefined>>;
-    schemaName: keyof z.TypeOf<T>;
+    setError: Dispatch<SetStateAction<Record<keyof z.TypeOf<T>, string | undefined>>>;
   }) => {
     const inputSchema = schema.shape[name];
     if (inputSchema === undefined) {
@@ -52,25 +66,35 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     }
     const validatedFile = inputSchema.safeParse(files ?? value);
     if (validatedFile.success === false) {
-      setError(validatedFile.error.formErrors.formErrors[0]);
       if (validatedFile.error.formErrors.formErrors[0] !== undefined) {
-        errorMessage[schemaName] = validatedFile.error.formErrors.formErrors[0];
+        setError((prev) => ({
+          ...prev,
+          [name]: validatedFile.error.formErrors.formErrors[0],
+        }));
       }
     } else {
-      setError(undefined);
-      errorMessage[schemaName] = undefined;
+      setError((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
     }
   };
 
   const Form = forwardRef<HTMLFormElement, FormType>(function Form({ children, ...props }, ref) {
+    const [error, setError] = useState<Record<Keys, string | undefined>>(
+      {} as Record<Keys, string | undefined>
+    );
     return (
-      <form ref={ref} {...props}>
-        {children}
-      </form>
+      <ErrorContext.Provider value={{ setError, error }}>
+        <form ref={ref} {...props}>
+          {children}
+        </form>
+      </ErrorContext.Provider>
     );
   });
 
   type InputType = {
+    showErrors?: boolean;
     position?: Position;
     errorMessageVariant?: ValidationMessageVariant;
   } & Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "required"> & {
@@ -79,10 +103,18 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     };
 
   const Input = forwardRef<HTMLInputElement, InputType>(function Inputs(
-    { errorMessageVariant = "error", position = "bottomMiddle", onChange, name, ...props },
+    {
+      showErrors = true,
+      errorMessageVariant = "error",
+      position = "bottomMiddle",
+      onChange,
+      name,
+      ...props
+    },
     ref
   ) {
-    const [error, setError] = useState<string | undefined>(undefined);
+    // const [error, setError] = useState<Error>(undefined);
+    const { error, setError } = useErrorContext();
 
     const { inputStyles } = popUpPosition({
       position,
@@ -96,64 +128,87 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
 
       if (inputType === "file") {
         validateInput({
-          schemaName: name,
+          setError,
           name: e.target.name,
           value: e.target.value,
-          setError,
           files: e.target.files,
         });
       } else if (inputType === "checkbox" || inputType === "radio") {
         if (e.target.checked) {
           validateInput({
-            schemaName: name,
+            setError,
             name: e.target.name,
             value: e.target.value,
-            setError,
           });
         }
       } else {
         validateInput({
-          schemaName: name,
+          setError,
           name: e.target.name,
           value: e.target.value,
-          setError,
         });
       }
     };
 
     return (
-      <fieldset style={{ position: "relative", display: "grid" }}>
-        <input
-          ref={ref}
-          onBlur={(e) => {
-            onBlurValidation(e);
-          }}
-          onChange={(e) => {
-            if (onChange !== undefined) {
-              onChange(e);
-            }
-            if (error) {
-              onBlurValidation(e);
-            } else {
-              return;
-            }
-          }}
-          name={name as string}
-          {...props}
-          style={{ width: "100%" }}
-        />
+      <>
+        {showErrors ? (
+          <div style={{ position: "relative", display: "grid" }}>
+            <input
+              ref={ref}
+              onBlur={(e) => {
+                onBlurValidation(e);
+              }}
+              onChange={(e) => {
+                if (onChange !== undefined) {
+                  onChange(e);
+                }
+                if (error[name]) {
+                  onBlurValidation(e);
+                } else {
+                  return;
+                }
+              }}
+              name={name as string}
+              {...props}
+              style={{ width: "100%" }}
+            />
 
-        {Boolean(error) && (
-          <div style={inputStyles.divStyle}>
-            <span style={inputStyles.spanStyle} />
-            {error}
+            {Boolean(error[name]) && (
+              <div style={inputStyles.divStyle}>
+                <span style={inputStyles.spanStyle} />
+                {error[name]}
+              </div>
+            )}
           </div>
+        ) : (
+          <>
+            <input
+              ref={ref}
+              onBlur={(e) => {
+                onBlurValidation(e);
+              }}
+              onChange={(e) => {
+                if (onChange !== undefined) {
+                  onChange(e);
+                }
+                if (error[name]) {
+                  onBlurValidation(e);
+                } else {
+                  return;
+                }
+              }}
+              name={name as string}
+              {...props}
+            />
+          </>
         )}
-      </fieldset>
+      </>
     );
   });
 
   type TextareaProp = {
+    showErrors?: boolean;
     position?: Position;
     errorMessageVariant?: ValidationMessageVariant;
   } & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name" | "required"> & {
@@ -162,17 +217,23 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     };
 
   const Textarea = forwardRef<HTMLTextAreaElement, TextareaProp>(function TextAreas(
-    { errorMessageVariant = "error", position = "bottomMiddle", onChange, name, ...props },
+    {
+      showErrors = true,
+      errorMessageVariant = "error",
+      position = "bottomMiddle",
+      onChange,
+      name,
+      ...props
+    },
     ref
   ) {
-    const [error, setError] = useState<string | undefined>(undefined);
+    const { setError, error } = useErrorContext();
 
     const onBlurValidation = (
       e: FocusEvent<HTMLTextAreaElement, Element> | ChangeEvent<HTMLTextAreaElement>
     ) => {
       e.preventDefault();
       validateInput({
-        schemaName: name,
         name: e.target.name,
         value: e.target.value,
         setError,
@@ -185,36 +246,98 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     });
 
     return (
-      <fieldset style={{ position: "relative", display: "grid" }}>
-        <textarea
-          ref={ref}
-          {...props}
-          name={name as string}
-          onBlur={(e) => {
-            onBlurValidation(e);
-          }}
-          style={{ width: "100%" }}
-          onChange={(e) => {
-            if (onChange !== undefined) {
-              onChange(e);
-            }
-            if (error) {
-              onBlurValidation(e);
-            } else {
-              return;
-            }
-          }}
-        />
+      <>
+        {showErrors ? (
+          <div style={{ position: "relative", display: "grid" }}>
+            <textarea
+              ref={ref}
+              {...props}
+              name={name as string}
+              onBlur={(e) => {
+                onBlurValidation(e);
+              }}
+              style={{ width: "100%" }}
+              onChange={(e) => {
+                if (onChange !== undefined) {
+                  onChange(e);
+                }
+                if (error[name]) {
+                  onBlurValidation(e);
+                } else {
+                  return;
+                }
+              }}
+            />
 
-        {Boolean(error) && (
-          <div style={textAreaStyles.divStyle}>
-            <span style={textAreaStyles.spanStyle} />
-            {error}
+            {Boolean(error[name]) && (
+              <div style={textAreaStyles.divStyle}>
+                <span style={textAreaStyles.spanStyle} />
+                {error[name]}
+              </div>
+            )}
           </div>
+        ) : (
+          <textarea
+            ref={ref}
+            {...props}
+            name={name as string}
+            onBlur={(e) => {
+              onBlurValidation(e);
+            }}
+            onChange={(e) => {
+              if (onChange !== undefined) {
+                onChange(e);
+              }
+              if (error[name]) {
+                onBlurValidation(e);
+              } else {
+                return;
+              }
+            }}
+          />
         )}
-      </fieldset>
+      </>
     );
   });
 
-  return { Form, Input, Textarea, errorMessage };
+  type ErrorMessagePropType = {
+    name: Keys;
+    useDefaultStyling?: boolean;
+    position?: Position;
+    errorMessageVariant?: ValidationMessageVariant;
+    children?: ReactNode;
+  } & HTMLAttributes<HTMLDivElement>;
+
+  const ErrorMessage = forwardRef<HTMLDivElement, ErrorMessagePropType>(function ErrorMessage(
+    {
+      position = "bottomLeft",
+      errorMessageVariant = "error",
+      useDefaultStyling = true,
+      name,
+      children,
+      ...props
+    },
+    ref
+  ) {
+    const { error } = useErrorContext();
+
+    const { textAreaStyles } = popUpPosition({
+      position,
+      variant: errorMessageVariant,
+    });
+
+    return useDefaultStyling ? (
+      <div ref={ref} {...props}>
+        {error[name] ?? children}
+      </div>
+    ) : (
+      Boolean(error[name] ?? children) && (
+        <div ref={ref} style={textAreaStyles.divStyle} {...props}>
+          {error[name] ?? children}
+        </div>
+      )
+    );
+  });
+
+  return { Form, Input, Textarea, ErrorMessage };
 }

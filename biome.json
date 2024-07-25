@@ -12,7 +12,19 @@
   "organizeImports": { "enabled": true },
   "linter": {
     "enabled": true,
-    "rules": { "recommended": true },
+    "rules": {
+      "recommended": true,
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "unsafe",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cva", "tw"]
+          }
+        }
+      }
+    },
     "ignore": ["./node_modules/**", "./.next/**", "**/node_modules", "**/.next/"]
   },
   "javascript": {

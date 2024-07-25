@@ -1,4 +1,5 @@
-import { randomUUID } from "node:crypto";
+// biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
+import { randomUUID } from "crypto";
 import { sql } from "drizzle-orm";
 import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -8,10 +9,11 @@ const users = sqliteTable("users", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => randomUUID()),
-  userName: text("user_name", { length: 255 }).notNull(),
+  userName: text("user_name", { length: 255 }).unique().notNull(),
   email: text("email", { length: 255 }).unique().notNull(),
   displayName: text("display_name", { length: 255 }).notNull(),
   hashedPassword: text("hashed_password").notNull(),
+  salt: text("salt").notNull(),
   refreshToken: text("refresh_token"),
   tokenFingerprint: text("token_fingerprint"),
   createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),

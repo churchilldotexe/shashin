@@ -20,7 +20,7 @@ export function DropDown({ children }: { children: ReactNode }) {
     >
       <div
         className={cn(
-          "absolute left-[-150%] z-[1000] flex -translate-x-1/2 flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
+          "-translate-x-1/2 absolute left-[-150%] z-[1000] flex flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
         )}
       >

@@ -1,44 +1,107 @@
 "use client";
 
-import { PageSection } from "@/components/PageSection";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { TransitionLink } from "@/components/utils/TransitionLink";
+import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useFormState, useFormStatus } from "react-dom";
 import { loginFormAction } from "../_lib/actions/login-actions";
+import AuthComponent from "../_lib/components/AuthComponent";
 import { loginFormSchema } from "../_lib/schema";
 
-const { Form, Input } = GenerateFormComponents({ schema: loginFormSchema });
+const { Form, Input, ErrorMessage } = GenerateFormComponents({
+  schema: loginFormSchema,
+});
 
 function LoginButton() {
   const { pending } = useFormStatus();
+
   return (
-    <button type="submit" disabled={pending}>
-      {pending ? "logging in..." : "Login"}
+    <button
+      className="w-full rounded-md bg-primary py-1 text-primary-foreground"
+      type="submit"
+      disabled={pending}
+    >
+      {pending ? "loading..." : "Log In"}
     </button>
   );
 }
 
 export default function LoginPage() {
-  const [_, action] = useFormState(loginFormAction, {});
+  const [state, action] = useFormState(loginFormAction, {});
 
+  const searchParamsValue = useSearchParams().get("callbackUrl");
+  const callbackUrl = searchParamsValue ?? "/";
   return (
-    <PageSection>
-      <Form className="space-y-4" action={action}>
-        <div>
-          <label htmlFor="username">Username:</label>
-          <Input name="userName" id="username" type="text" required />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <Input name="password" id="password" type="password" required />
-        </div>
-        <div>
-          <div>
-            <Link href="/register">Sign up</Link> <span>for an account</span>
+    <AuthComponent>
+      <Form className="w-full space-y-4 " action={action}>
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
+            name="userName"
+            id="username"
+            type="text"
+            placeholder="Username"
+            required
+          />
+          <label
+            className={cn(
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
+            )}
+            htmlFor="username"
+          >
+            Username
+          </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
+            {state.userName}
+          </ErrorMessage>
+        </fieldset>
+
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
+            name="password"
+            id="password"
+            type="text"
+            placeholder="Password"
+            required
+          />
+          <label
+            className={cn(
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
+            )}
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
+            {state.password}
+          </ErrorMessage>
+        </fieldset>
+
+        <LoginButton />
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <fieldset className="flex gap-2">
+            <Input id="rememberMe" type="checkbox" name="rememberMe" value="true" />
+            <label htmlFor="rememberMe">Remember me for 30 days?</label>
+          </fieldset>
+
+          <div className="text-sm">
+            Dont have an Account?{" "}
+            <TransitionLink className="text-primary underline" href={"/register"}>
+              Sign Up
+            </TransitionLink>
           </div>
-          <LoginButton />
         </div>
+        <Input name="callbackUrl" value={callbackUrl} type="hidden" />
       </Form>
-    </PageSection>
+    </AuthComponent>
   );
 }

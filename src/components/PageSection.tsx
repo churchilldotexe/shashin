@@ -10,7 +10,7 @@ export function PageSection({
 }: { children: ReactNode } & HTMLAttributes<HTMLElement>) {
   return (
     <section
-      className={cn("flex min-h-screen w-full flex-col items-center justify-center", className)}
+      className={cn("flex min-h-[100dvh] w-full flex-col items-center justify-center", className)}
       {...props}
     >
       {children}

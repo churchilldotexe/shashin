@@ -1,16 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import "server-only";
-import { randomUUID } from "node:crypto";
+// biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
+import { randomUUID } from "crypto";
 import { ZodError, z } from "zod";
 import { turso } from "../turso";
 
-function hasAccess({ errorMsg }: { errorMsg: string }) {
-  const user = auth();
-  if (user.userId === null) {
-    throw new Error(errorMsg);
-  }
-  return user;
-}
+// function hasAccess({ errorMsg }: { errorMsg: string }) {
+//   const user = auth();
+//   if (user.userId === null) {
+//     throw new Error(errorMsg);
+//   }
+//   return user;
+// }
 
 const createImageSchema = z.object({
   url: z.string().url().min(1).max(250),
@@ -22,11 +22,12 @@ const createImageSchema = z.object({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
+
 export type createImageType = z.infer<typeof createImageSchema>;
 const createImageSchemaArr = z.array(createImageSchema);
 
 export async function createImage(imageData: createImageType[]) {
-  hasAccess({ errorMsg: "user must be logged in to post image" });
+  // hasAccess({ errorMsg: "user must be logged in to post image" });
 
   const parsedImage = createImageSchemaArr.safeParse(imageData);
   if (parsedImage.success === false) {
@@ -60,7 +61,7 @@ const getMyImagesSchema = z.array(
 
 // NOTE: Must integrate with the USER ID
 export async function getMyImages() {
-  hasAccess({ errorMsg: "user must be logged in to query the images" });
+  // hasAccess({ errorMsg: "user must be logged in to query the images" });
 
   const myImages = await turso.execute({
     sql: `
@@ -69,11 +70,9 @@ export async function getMyImages() {
     args: {},
   });
 
-  console.log(myImages.rows, "rowwsdfssdf");
   const parsedImages = getMyImagesSchema.safeParse(myImages.rows);
 
   if (parsedImages.success === false) {
-    console.log(parsedImages.error.errors);
     return null;
   }
 
