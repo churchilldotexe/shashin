@@ -9,10 +9,12 @@ export default function AuthComponent({ children }: { children: ReactNode }) {
   //TODO: mobile (try to figure out to set media queries for animated330deg.. meaning when in md and up should be able to have full rotation with no invi
   return (
     <PageSection>
-      <div className="grid size-full grid-cols-2 place-items-center rounded-lg">
-        <div className="css-border-animateAt30deg relative flex size-full items-center justify-center rounded-lg bg-neutral-50/5 shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white] dark:bg-neutral-950/5 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ">
-          <span className="absolute inset-0 z-[-1] m-auto h-[99%] w-[99.5%] rounded-lg bg-background " />
-          <h1 className="p-4 text-5xl">Shashin</h1>
+      <div className="grid size-full place-items-center rounded-lg px-2 sm:px-6 md:grid-cols-2 md:px-0">
+        <div className="css-border-animateAt30deg relative hidden size-full items-center justify-center rounded-lg bg-neutral-50/5 shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white] md:flex dark:bg-neutral-950/5 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ">
+          <span className="absolute inset-0 z-[-1] m-auto h-[99%] w-[99%] rounded-lg bg-background lg:w-[99.5%] " />
+          <h1 className="  p-4 rounded-lg text-5xl font-extrabold backdrop-blur-sm text_stroke_outline">
+            Shashin
+          </h1>
           {/* <Image */}
           {/*   src="/AZKi.png" */}
           {/*   className="absolute top-4 right-0 size-40 rounded-lg object-contain object-center" */}
@@ -21,8 +23,12 @@ export default function AuthComponent({ children }: { children: ReactNode }) {
           {/*   height={500} */}
           {/* /> */}
         </div>
-        <div className="css-border-animateAt330deg size-full rounded-xl bg-neutral-50/5 p-8 shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_white_inset] backdrop-blur-lg dark:bg-neutral-950/5 dark:shadow-[0_8px_6px_0_rgba(250,250,250,0.1)_inset,-8px_-6px_12px_black_inset] ">
+
+        <div className="css-border-animateAt330deg relative size-full rounded-xl bg-neutral-50/5 p-8 shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_white_inset] backdrop-blur-lg dark:bg-neutral-950/5 dark:shadow-[0_8px_6px_0_rgba(250,250,250,0.1)_inset,-8px_-6px_12px_black_inset] ">
           <span className="absolute inset-0 z-[-1] m-auto h-[99%] w-[99.5%] rounded-lg bg-background shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_white_inset] dark:shadow-[0_8px_6px_0_rgba(250,250,250,0.1)_inset,-8px_-6px_12px_black_inset]" />
+          <h1 className="absolute rounded-lg top-[-13%] left-1/2 -translate-x-1/2 text-5xl font-extrabold backdrop-blur-sm text_stroke_outline  md:hidden ">
+            Shashin
+          </h1>
           {children}
         </div>
       </div>

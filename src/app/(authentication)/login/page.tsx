@@ -1,6 +1,7 @@
 "use client";
 
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -94,9 +95,9 @@ export default function LoginPage() {
 
           <div className="text-sm">
             Dont have an Account?{" "}
-            <Link className="text-primary underline" href={"/login"}>
+            <TransitionLink className="text-primary underline" href={"/register"}>
               Sign Up
-            </Link>
+            </TransitionLink>
           </div>
         </div>
         <Input name="callbackUrl" value={callbackUrl} type="hidden" />

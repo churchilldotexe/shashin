@@ -6,6 +6,7 @@
   :root {
     --background: 0 0% 98%;
     --foreground: 240 10% 3.9%;
+    --foreground-shadow: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
@@ -63,6 +64,19 @@
 /*    outline: solid 1px red; */
 /* } */
 
+#auth-layout {
+  transition-property: opacity, background, transform, filter;
+  transition-timing-function: ease-in-out;
+  transition-duration: 500ms;
+}
+
+.page-transition {
+  opacity: 0;
+  background: hsl(var(--background));
+  transform: scaleX(100) scaleY(100);
+  filter: blur(1.5rem);
+}
+
 .custom-overlay[open] > summary::before {
   position: fixed;
   inset: 0;
@@ -76,6 +90,11 @@
   display: none;
 }
 
+.text_stroke_outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 2px;
+}
+
 @property --angle {
   syntax: "<angle>";
   initial-value: 80deg;
@@ -84,7 +103,7 @@
 
 @property --angle2 {
   syntax: "<angle>";
-  initial-value: 280.5deg;
+  initial-value: 280deg;
   inherits: false;
 }
 
@@ -105,16 +124,6 @@
   border-radius: 0.5rem;
 }
 
-.css-border-animateAt30deg::after,
-.css-border-animateAt30deg::before {
-  background-image: conic-gradient(
-    from var(--angle),
-    hsl(var(--primary)),
-    transparent 5%
-  );
-  animation: 14s spin linear infinite;
-}
-
 .css-border-animateAt330deg::after,
 .css-border-animateAt330deg::before {
   background-image: conic-gradient(
@@ -122,13 +131,59 @@
     transparent 95%,
     hsl(var(--primary))
   );
-  animation: 14s reverse-spin linear infinite;
+  animation: 7s mobile-spin linear infinite;
 }
 
 .css-border-animateAt30deg::before,
 .css-border-animateAt330deg::before {
   filter: blur(0.5rem);
   /* opacity: 0.5; */
+}
+
+@keyframes mobile-spin {
+  0% {
+    --angle2: 280deg;
+    opacity: 1;
+  }
+  14% {
+    filter: blur(0);
+  }
+  15% {
+    filter: blur(5px);
+  }
+  17% {
+    filter: blur(15px);
+  }
+  32% {
+    filter: blur(15px);
+  }
+  33% {
+    filter: blur(5px);
+  }
+  34% {
+    filter: blur(0);
+  }
+  100% {
+    --angle2: 640deg;
+    opacity: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .css-border-animateAt30deg::after,
+  .css-border-animateAt30deg::before {
+    background-image: conic-gradient(
+      from var(--angle),
+      hsl(var(--primary)),
+      transparent 5%
+    );
+    animation: 14s spin linear infinite;
+  }
+
+  .css-border-animateAt330deg::after,
+  .css-border-animateAt330deg::before {
+    animation: 14s reverse-spin linear infinite;
+  }
 }
 
 @keyframes spin {

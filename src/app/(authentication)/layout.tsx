@@ -3,5 +3,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="container ">{children}</main>;
+  return (
+    <main className="container" id="auth-layout">
+      {children}
+    </main>
+  );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
@@ -128,9 +129,9 @@ export default function LoginPage() {
           <LoginButton />
           <div className="text-sm">
             Already have an account?{" "}
-            <Link className="text-primary underline" href={"/login"}>
+            <TransitionLink className="text-primary underline " href={"/login"}>
               Sign in
-            </Link>
+            </TransitionLink>
           </div>
         </div>
       </Form>
