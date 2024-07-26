@@ -67,7 +67,7 @@ export default function LoginPage() {
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
-            type="text"
+            type="password"
             placeholder="Password"
             required
           />
