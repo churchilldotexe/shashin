@@ -8,7 +8,7 @@ import { cookies } from "next/headers";
 const ACCESS_TOKEN_SECRET = new TextEncoder().encode(env.ACCESS_TOKEN_SECRET);
 const REFRESH_TOKEN_SECRET = new TextEncoder().encode(env.REFRESH_TOKEN_SECRET);
 
-export async function signAndSetAccessToken(userId: string, rememberMe: boolean) {
+export async function signAndSetAccessToken(userId: string, rememberMe = false) {
   const signedJWT = await new SignJWT({ userId })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("15 mins")

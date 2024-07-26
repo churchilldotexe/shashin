@@ -39,7 +39,6 @@ export async function createUser(userInfo: Omit<CreateUserTypes, "salt">) {
       args: { userName, email, displayName, hashedPassword, id, salt },
     });
   } catch (error) {
-    //TODO: handle this error properly // handle conflict
     throw new Error("unable to to create the user");
   }
 }
@@ -84,7 +83,6 @@ export async function getUserInfo() {
 
     return parsedUserInfo.data;
   } catch (error) {
-    //TODO: handle a proper error
     throw new Error("an error Occured while getting the users Info ");
   }
 }
