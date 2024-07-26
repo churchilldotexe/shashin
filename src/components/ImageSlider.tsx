@@ -1,11 +1,16 @@
 "use client";
 
+import { cn } from "@/lib/utils/cn";
 import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
-import { Fragment, useState } from "react";
+import { Fragment, type HTMLAttributes, forwardRef, useState } from "react";
 
 // FIX:  the indexing where the button should showup in mobile devices
-export function ImageSlider({ url }: { url: string[] }) {
+
+export const ImageSlider = forwardRef<
+  HTMLDivElement,
+  { url: string[] } & HTMLAttributes<HTMLDivElement>
+>(function Slider({ url, className, ...props }, ref) {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const handleNextImage = () => {
     if (imageIndex === url.length - 1) {
@@ -23,7 +28,7 @@ export function ImageSlider({ url }: { url: string[] }) {
   };
 
   return (
-    <div className="relative size-full">
+    <div ref={ref} className={cn("relative size-full", className)} {...props}>
       <div className="flex size-full overflow-hidden">
         {url.map((image) => (
           <Fragment key={image}>
@@ -80,4 +85,4 @@ export function ImageSlider({ url }: { url: string[] }) {
       )}
     </div>
   );
-}
+});

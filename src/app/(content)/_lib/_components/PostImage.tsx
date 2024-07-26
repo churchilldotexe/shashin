@@ -1,14 +1,15 @@
 "use client";
 
+import { ImageSlider } from "@/components/ImageSlider";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { cn } from "@/lib/utils/cn";
-import { Images } from "lucide-react";
-import { type HTMLAttributes, useRef, useState } from "react";
+import { Globe, GlobeLock, Images } from "lucide-react";
+import { type ChangeEvent, type DragEvent, type HTMLAttributes, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
 
-const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
+const { Form, Input, Textarea } = GenerateFormComponents({
   schema: formSchema,
 });
 
@@ -63,13 +64,57 @@ function PostButton() {
 
 export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   const [_, action] = useFormState(postImageAction, {});
-  const formRef = useRef<HTMLFormElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
   const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
   const [isDragged, setIsDragged] = useState<boolean>(false);
   const [isShared, setIsShared] = useState<boolean>(false);
+  const [objectUrls, setObjectUrls] = useState<string[]>([]);
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (fileList: FileList | null) => {
+    if (fileList === null) {
+      return;
+    }
+    if (textAreaRef.current !== null) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.rows = 0;
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+    }
+    const files = Array.from(fileList);
+    const newUrls = files.map((file) => URL.createObjectURL(file));
+    setObjectUrls((prevUrls) => {
+      for (const url of prevUrls) {
+        URL.revokeObjectURL(url);
+      }
+      return newUrls;
+    });
+  };
+
+  const handleDroppedImage = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (fileInputRef.current === null) {
+      return;
+    }
+    fileInputRef.current.files = event.dataTransfer.files;
+    handleImageChange(event.dataTransfer.files);
+    setIsDragged(false);
+  };
+
+  const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    setTextAreaInput(event.target.value);
+    if (objectUrls.length > 0) {
+      if (textAreaRef.current !== null) {
+        textAreaRef.current.style.height = "auto";
+        textAreaRef.current.rows = 0;
+        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      }
+    }
+  };
 
   return (
     <div className={cn("w-full", className)} {...props}>
@@ -79,33 +124,11 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
             characterLimit={characterLimit}
             textCount={textAreaInput.length}
           />
-          <Textarea
-            ref={textAreaRef}
-            className={cn("resize-none rounded-b-md p-2 outline-none ", {
-              "border border-green-500 bg-indigo-500 ": isDragged,
+          <div
+            className={cn({
+              "bg-indigo-500 outline outline-green-500": isDragged,
             })}
-            rows={5}
-            name="description"
-            onBlur={() => {
-              if (textAreaRef.current !== null) {
-                textAreaRef.current.style.height = "auto";
-                textAreaRef.current.rows = 0;
-                textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-                console.log(textAreaRef.current.scrollHeight, "scrollheight");
-              }
-            }}
-            onChange={(e) => {
-              setTextAreaInput(e.target.value);
-            }}
-            onDrop={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (fileInputRef.current === null) {
-                return;
-              }
-              fileInputRef.current.files = e.dataTransfer.files;
-              setIsDragged(false);
-            }}
+            onDrop={(e) => handleDroppedImage(e)}
             onDragOver={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -120,10 +143,25 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               e.preventDefault();
               setIsDragged(false);
             }}
-          />
+          >
+            <fieldset>
+              <legend className="sr-only">Description</legend>
+              <Textarea
+                ref={textAreaRef}
+                className={cn("resize-none rounded-b-md p-2 outline-none ", {
+                  "bg-indigo-500": isDragged,
+                })}
+                placeholder="Describe your image. No image yet? Try dragging and dropping one here..."
+                rows={5}
+                name="description"
+                onChange={(e) => handleTextAreaChange(e)}
+              />
+            </fieldset>
+
+            {objectUrls.length > 0 && <ImageSlider className="m-auto size-1/2" url={objectUrls} />}
+          </div>
         </div>
         <div className="flex items-center justify-between py-2">
-          {/* TODO: after the user chose an image, mount/ display the image through image slider component. Remember that the component needs an array */}
           <div className="flex gap-2">
             <fieldset>
               <legend className="sr-only">Image Upload</legend>
@@ -138,6 +176,9 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   type="file"
                   multiple
                   accept={ACCEPTED_FILE_TYPE.join(",")}
+                  onChange={(e) => {
+                    handleImageChange(e.target.files);
+                  }}
                   required
                 />
               </label>
@@ -148,8 +189,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="shareToggle"
-                  className="flex h-5 w-10 items-center rounded-full bg-gray-400 data-[is-check=true]:bg-green-500"
-                  data-is-check={isShared}
+                  className="flex cursor-pointer items-center rounded-full "
                 >
                   <input
                     type="checkbox"
@@ -159,17 +199,17 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                     checked={isShared}
                     onChange={() => setIsShared(!isShared)}
                   />
-                  <span className="ml-[.15em] size-4 rounded-full bg-gray-400 peer-checked:mr-[.15em] peer-checked:ml-auto" />
+                  <Globe className="transition-all peer-checked:hidden " />
+                  <GlobeLock className="hidden transition-all peer-checked:block " />
                   <span className="sr-only">{isShared ? "Shared" : "Share"}</span>
                 </label>
-                <span>{isShared ? "Shared" : "Share to Public?"}</span>
+                <span>{isShared ? "Only Me" : "Everyone can see"}</span>
               </div>
             </fieldset>
           </div>
 
           <PostButton />
         </div>
-        {/* TODO: add new input (select) for private and public.. (may do a switch btn for public or private same with dstorage)*/}
       </Form>
     </div>
   );
