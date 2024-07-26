@@ -27,4 +27,5 @@ export const formSchema = z.object({
       (files) => Array.from(files).every((file) => ACCEPTED_FILE_TYPE.includes(file.type)),
       "Can only Accept an Image file"
     ),
+  shareToPublic: z.string().default("").pipe(z.coerce.boolean()),
 });

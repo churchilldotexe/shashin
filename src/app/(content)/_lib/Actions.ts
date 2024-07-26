@@ -25,6 +25,7 @@ export async function postImageAction(
     // throw new Error("invalid form data");
     return { message: "invalid form data" };
   }
+  console.log(parsedFormData.data);
   const { description } = parsedFormData.data;
 
   const post = await createPost({ description });

@@ -68,7 +68,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
   const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
   const [isDragged, setIsDragged] = useState<boolean>(false);
-  const [isShared, setIsShared] = useState<boolean>(false);
+  const [isSharedToPublic, setIsSharedToPublic] = useState<boolean>(true);
   const [objectUrls, setObjectUrls] = useState<string[]>([]);
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -191,19 +191,23 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   htmlFor="shareToggle"
                   className="flex cursor-pointer items-center rounded-full "
                 >
-                  <input
+                  <Input
+                    showErrors={false}
                     type="checkbox"
                     id="shareToggle"
-                    name="isShared"
+                    name="shareToPublic"
                     className="peer sr-only"
-                    checked={isShared}
-                    onChange={() => setIsShared(!isShared)}
+                    checked={isSharedToPublic}
+                    onChange={() => setIsSharedToPublic(!isSharedToPublic)}
                   />
-                  <Globe className="transition-all peer-checked:hidden " />
-                  <GlobeLock className="hidden transition-all peer-checked:block " />
-                  <span className="sr-only">{isShared ? "Shared" : "Share"}</span>
+
+                  <GlobeLock className="transition-all peer-checked:hidden " />
+                  <Globe className="hidden transition-all peer-checked:block " />
+                  <span className="sr-only">
+                    {isSharedToPublic ? "Everyone can see" : "Only Me"}
+                  </span>
                 </label>
-                <span>{isShared ? "Only Me" : "Everyone can see"}</span>
+                <span>{isSharedToPublic ? "Everyone can see" : "Only Me"}</span>
               </div>
             </fieldset>
           </div>
