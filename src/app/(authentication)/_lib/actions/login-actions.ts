@@ -1,6 +1,7 @@
 "use server";
 
-import { authenticateUser } from "@/server/data-access/authentication";
+import { authenticateUser } from "@/server/use-cases/auth/authentication";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { z } from "zod";
 import { loginFormSchema } from "../schema";
@@ -22,13 +23,20 @@ export async function loginFormAction(
     };
   }
 
-  const isAuthenticated = await authenticateUser(
-    parsedFormData.data.password,
-    parsedFormData.data.userName,
-    parsedFormData.data.rememberMe
-  );
+  const headersList = headers();
+  const ip = headersList.get("x-forwarded-for") as string;
+  const userAgent = headersList.get("user-agent") as string;
+  const { password, rememberMe, userName } = parsedFormData.data;
 
-  if (isAuthenticated === undefined) {
+  const isAuthenticated = await authenticateUser({
+    password,
+    rememberMe,
+    userName,
+    ip,
+    userAgent,
+  });
+
+  if (isAuthenticated === "success") {
     redirect(parsedFormData.data.callbackUrl);
   } else {
     return {

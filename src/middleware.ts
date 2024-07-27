@@ -1,4 +1,4 @@
-import { verifyAccessToken } from "@/lib/auth";
+import { verifyAccessToken } from "@/server/use-cases/auth/tokenManagement";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
@@ -19,31 +19,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // matcher: ["/((?!api|.*\\..*|_next).*)", "/"],
   matcher: ["/((?!login|register|api|.*\\..*|_next).*)", "/"],
 };
-
-// import { verifyAccessToken } from "@/lib/auth";
-// import { type NextRequest, NextResponse } from "next/server";
-//
-// export async function middleware(req: NextRequest) {
-//   const accessToken = req.cookies.get("accessToken")?.value;
-//
-//   if (accessToken) {
-//     // User is logged in, try to verify the token
-//     const verifiedId = await verifyAccessToken(accessToken);
-//
-//     if (verifiedId !== undefined) {
-//       // Token is valid, redirect to home page
-//       return NextResponse.redirect(new URL("/", req.url));
-//     }
-//     // If token is invalid, let them proceed to login/register
-//   }
-//
-//   // If no token or invalid token, allow access to login/register
-//   return NextResponse.next();
-// }
-//
-// export const config = {
-//   matcher: ["/login", "/register"],
-// };

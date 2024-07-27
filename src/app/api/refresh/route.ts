@@ -1,5 +1,5 @@
-import { decodeToken } from "@/lib/auth";
-import { refreshAccessToken } from "@/server/data-access/authentication";
+import { decodeToken, refreshAccessToken } from "@/server/use-cases/auth/tokenManagement";
+import { redirect } from "next/navigation";
 import { type NextRequest, NextResponse } from "next/server";
 
 /**
@@ -33,11 +33,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL(`/login?callbackUrl=${reRouteURL}`, req.url));
   }
 
-  await refreshAccessToken({
-    userId: decodedToken.userId,
-    ip,
-    userAgent,
-  });
+  try {
+    await refreshAccessToken({
+      userId: decodedToken.userId,
+      ip,
+      userAgent,
+    });
+  } catch (error) {
+    redirect("/login");
+  }
 
   return NextResponse.redirect(new URL(reRouteURL, req.url));
 }

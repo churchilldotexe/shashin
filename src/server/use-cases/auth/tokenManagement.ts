@@ -2,6 +2,7 @@ import "server-only";
 // biome-ignore lint/style/useNodejsImportProtocol: <being used as data: and file: >
 import crypto, { createHash } from "crypto";
 import { env } from "@/env";
+import { getRefreshAndFingerprintToken, updateTokensFromDB } from "@/server/data-access/users";
 import { SignJWT, decodeJwt, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
@@ -88,3 +89,48 @@ export const getAuthenticatedId = async () => {
   }
   return userId;
 };
+
+// TODO: move to tokenManagement
+export async function refreshAccessToken({
+  userAgent,
+  ip,
+  userId,
+}: {
+  userId: string;
+  ip: string;
+  userAgent: string;
+}) {
+  const tokenData = await getRefreshAndFingerprintToken(userId);
+  if (tokenData === undefined) {
+    throw new Error("Unable to find refresh token");
+  }
+  const { tokenFingerprint, refreshToken } = tokenData;
+
+  //to prevent AccessToken from cookie for being compromised
+  const generatedFingerPrint = await generateFingerprint({ ip, userAgent });
+
+  if (tokenFingerprint === null ?? tokenFingerprint !== generatedFingerPrint) {
+    await removeTokenInfoFromDB();
+    throw new Error("Fingerprint didnt match");
+  }
+
+  const verifiedRefreshToken = await verifyRefreshToken(refreshToken as string);
+
+  // to ensure that refresh token is valid
+  if (!verifiedRefreshToken) {
+    throw new Error("invalid token");
+  }
+  await signAndSetAccessToken(userId);
+}
+
+// TODO: move to tokenManagement
+export async function removeTokenInfoFromDB() {
+  const accessToken = cookies().get("accessToken")?.value;
+  const verifiedId = await verifyAccessToken(accessToken);
+  if (!verifiedId) {
+    return false;
+  }
+
+  await updateTokensFromDB(verifiedId.userId);
+  return true;
+}

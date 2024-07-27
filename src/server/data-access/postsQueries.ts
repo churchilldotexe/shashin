@@ -2,7 +2,7 @@
 import { randomUUID } from "crypto";
 import "server-only";
 import { ZodError, z } from "zod";
-import { turso } from "../turso";
+import { turso } from "../database/turso";
 
 // NOTE: add new column to the table.. create a public and private post.. private post make the images private
 

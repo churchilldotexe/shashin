@@ -1,9 +1,10 @@
 "use server";
 
-import { removeTokenInfoFromDB } from "@/server/data-access/authentication";
 import { createImage, type createImageType } from "@/server/data-access/imagesQueries";
 import { createPost } from "@/server/data-access/postsQueries";
+import { removeTokenInfoFromDB } from "@/server/use-cases/auth/tokenManagement";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
 import { formSchema } from "./formschema";
@@ -55,6 +56,11 @@ export async function postImageAction(
 }
 
 export async function logoutAction() {
-  await removeTokenInfoFromDB();
-  redirect("/login");
+  const isTokenRemovedFromDB = await removeTokenInfoFromDB();
+  if (isTokenRemovedFromDB === false) {
+    redirect("/login");
+  } else {
+    cookies().delete("accessToken");
+    redirect("/login");
+  }
 }

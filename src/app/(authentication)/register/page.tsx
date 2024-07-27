@@ -4,6 +4,7 @@ import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
+import { useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { registerFormActions } from "../_lib/actions/register-actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -28,7 +29,10 @@ function LoginButton() {
 }
 
 export default function LoginPage() {
-  const [_, action] = useFormState(registerFormActions, {});
+  const [state, action] = useFormState(registerFormActions, {});
+  console.log(state);
+  const [isMatched, setIsMatched] = useState<boolean>(true);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <AuthComponent>
@@ -53,7 +57,9 @@ export default function LoginPage() {
           >
             Username
           </label>
-          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName" />
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
+            {state.userName}
+          </ErrorMessage>
         </fieldset>
 
         <fieldset className="relative ">
@@ -76,7 +82,9 @@ export default function LoginPage() {
           >
             Display Name
           </label>
-          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName" />
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName">
+            {state.displayName}
+          </ErrorMessage>
         </fieldset>
 
         <fieldset className="relative ">
@@ -99,11 +107,14 @@ export default function LoginPage() {
           >
             Email
           </label>
-          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="email" />
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="email">
+            {state.email}
+          </ErrorMessage>
         </fieldset>
 
         <fieldset className="relative ">
           <Input
+            ref={passwordInputRef}
             showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
@@ -122,7 +133,45 @@ export default function LoginPage() {
           >
             Password
           </label>
-          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password" />
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
+            {state.password}
+          </ErrorMessage>
+        </fieldset>
+
+        <fieldset className="relative ">
+          <Input
+            showErrors={false}
+            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
+            name="verifiedPassword"
+            id="verifiedPassword"
+            type="password"
+            placeholder="Verify password"
+            required
+            onBlur={(e) => {
+              if (passwordInputRef.current === null) {
+                return;
+              }
+              if (passwordInputRef.current.value !== e.target.value) {
+                setIsMatched(false);
+              } else {
+                setIsMatched(true);
+              }
+            }}
+          />
+          <label
+            className={cn(
+              "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
+              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
+              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
+            )}
+            htmlFor="password"
+          >
+            Verify Password
+          </label>
+          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
+            {isMatched ? null : "Passwords didn't match. Please reverify."}
+            {state.verifiedPassword}
+          </ErrorMessage>
         </fieldset>
 
         <div className=" space-y-1">

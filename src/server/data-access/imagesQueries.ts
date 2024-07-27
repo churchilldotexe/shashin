@@ -2,7 +2,7 @@ import "server-only";
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { ZodError, z } from "zod";
-import { turso } from "../turso";
+import { turso } from "../database/turso";
 
 // function hasAccess({ errorMsg }: { errorMsg: string }) {
 //   const user = auth();
