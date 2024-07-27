@@ -93,34 +93,17 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     );
   });
 
-  type InputType = {
-    showErrors?: boolean;
-    position?: Position;
-    errorMessageVariant?: ValidationMessageVariant;
-  } & Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "required"> & {
-      name: Keys;
-      required?: boolean;
-    };
+  type InputType = Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "required"> & {
+    name: Keys;
+    required?: boolean;
+  };
 
   const Input = forwardRef<HTMLInputElement, InputType>(function Inputs(
-    {
-      showErrors = true,
-      errorMessageVariant = "error",
-      position = "bottomMiddle",
-      onChange,
-      onBlur,
-      name,
-      ...props
-    },
+    { onChange, onBlur, name, ...props },
     ref
   ) {
-    // const [error, setError] = useState<Error>(undefined);
     const { error, setError } = useErrorContext();
 
-    const { inputStyles } = popUpPosition({
-      position,
-      variant: errorMessageVariant,
-    });
     const onBlurValidation = (
       e: FocusEvent<HTMLInputElement, Element> | ChangeEvent<HTMLInputElement>
     ) => {
@@ -152,87 +135,37 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     };
 
     return (
-      <>
-        {showErrors ? (
-          <div style={{ position: "relative", display: "grid" }}>
-            <input
-              ref={ref}
-              onBlur={(e) => {
-                if (onBlur !== undefined) {
-                  onBlur(e);
-                }
-                onBlurValidation(e);
-              }}
-              onChange={(e) => {
-                if (onChange !== undefined) {
-                  onChange(e);
-                }
-                if (error[name]) {
-                  onBlurValidation(e);
-                } else {
-                  return;
-                }
-              }}
-              name={name as string}
-              {...props}
-              style={{ width: "100%" }}
-            />
-
-            {Boolean(error[name]) && (
-              <div style={inputStyles.divStyle}>
-                <span style={inputStyles.spanStyle} />
-                {error[name]}
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <input
-              ref={ref}
-              onBlur={(e) => {
-                if (onBlur !== undefined) {
-                  onBlur(e);
-                }
-                onBlurValidation(e);
-              }}
-              onChange={(e) => {
-                if (onChange !== undefined) {
-                  onChange(e);
-                }
-                if (error[name]) {
-                  onBlurValidation(e);
-                } else {
-                  return;
-                }
-              }}
-              name={name as string}
-              {...props}
-            />
-          </>
-        )}
-      </>
+      <input
+        ref={ref}
+        onBlur={(e) => {
+          if (onBlur !== undefined) {
+            onBlur(e);
+          }
+          onBlurValidation(e);
+        }}
+        onChange={(e) => {
+          if (onChange !== undefined) {
+            onChange(e);
+          }
+          if (error[name]) {
+            onBlurValidation(e);
+          } else {
+            return;
+          }
+        }}
+        name={name as string}
+        {...props}
+      />
     );
   });
 
-  type TextareaProp = {
-    showErrors?: boolean;
-    position?: Position;
-    errorMessageVariant?: ValidationMessageVariant;
-  } & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name" | "required"> & {
-      name: Keys;
-      required?: boolean;
-    };
+  type TextareaProp = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name" | "required"> & {
+    name: Keys;
+    required?: boolean;
+  };
 
   const Textarea = forwardRef<HTMLTextAreaElement, TextareaProp>(function TextAreas(
-    {
-      showErrors = true,
-      errorMessageVariant = "error",
-      position = "bottomMiddle",
-      onChange,
-      name,
-      onBlur,
-      ...props
-    },
+    { onChange, name, onBlur, ...props },
     ref
   ) {
     const { setError, error } = useErrorContext();
@@ -248,69 +181,28 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
       });
     };
 
-    const { textAreaStyles } = popUpPosition({
-      position,
-      variant: errorMessageVariant,
-    });
-
     return (
-      <>
-        {showErrors ? (
-          <div style={{ position: "relative", display: "grid" }}>
-            <textarea
-              ref={ref}
-              {...props}
-              name={name as string}
-              onBlur={(e) => {
-                if (onBlur !== undefined) {
-                  onBlur(e);
-                }
-                onBlurValidation(e);
-              }}
-              style={{ width: "100%" }}
-              onChange={(e) => {
-                if (onChange !== undefined) {
-                  onChange(e);
-                }
-                if (error[name]) {
-                  onBlurValidation(e);
-                } else {
-                  return;
-                }
-              }}
-            />
-
-            {Boolean(error[name]) && (
-              <div style={textAreaStyles.divStyle}>
-                <span style={textAreaStyles.spanStyle} />
-                {error[name]}
-              </div>
-            )}
-          </div>
-        ) : (
-          <textarea
-            ref={ref}
-            {...props}
-            name={name as string}
-            onBlur={(e) => {
-              if (onBlur !== undefined) {
-                onBlur(e);
-              }
-              onBlurValidation(e);
-            }}
-            onChange={(e) => {
-              if (onChange !== undefined) {
-                onChange(e);
-              }
-              if (error[name]) {
-                onBlurValidation(e);
-              } else {
-                return;
-              }
-            }}
-          />
-        )}
-      </>
+      <textarea
+        ref={ref}
+        {...props}
+        name={name as string}
+        onBlur={(e) => {
+          if (onBlur !== undefined) {
+            onBlur(e);
+          }
+          onBlurValidation(e);
+        }}
+        onChange={(e) => {
+          if (onChange !== undefined) {
+            onChange(e);
+          }
+          if (error[name]) {
+            onBlurValidation(e);
+          } else {
+            return;
+          }
+        }}
+      />
     );
   });
 
