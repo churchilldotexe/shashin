@@ -2,6 +2,7 @@
 import { randomUUID } from "crypto";
 import "server-only";
 import { ZodError, z } from "zod";
+import { type InsertPostSchemaTypes, insertPostSchema } from "../database/schema/posts";
 import { turso } from "../database/turso";
 
 // NOTE: add new column to the table.. create a public and private post.. private post make the images private
@@ -67,15 +68,10 @@ const createPostSchema = z.object({
 
 export type createPostSchemaType = z.infer<typeof createPostSchema>;
 
-export async function createPost(postsValue: createPostSchemaType) {
-  // const user = auth();
-  // if (user === null) {
-  //   throw new Error("no Authorization. Must be logged in to post");
-  // }
-
+export async function newPost(postsValue: InsertPostSchemaTypes) {
   const uuid = randomUUID();
 
-  const parsedPostValue = createPostSchema.safeParse({
+  const parsedPostValue = insertPostSchema.safeParse({
     ...postsValue,
     id: uuid,
   });
@@ -83,18 +79,32 @@ export async function createPost(postsValue: createPostSchemaType) {
     throw new ZodError(parsedPostValue.error.errors);
   }
 
-  const { description, id } = parsedPostValue.data;
+  const { description, id, userId } = parsedPostValue.data;
 
   await turso.execute({
     sql: `
       INSERT INTO 
         posts
-          (id, description)
+          (id, description, user_id)
       VALUES 
-          (:id, :description)
+          (:id, :description, :userId)
 `,
-    args: { id: id as string, description: description as string },
+    args: { id: id as string, description: description as string, userId },
   });
 
   return { id };
+}
+
+export async function createPublicPost(postId: string) {
+  const allPostId = await turso.execute({
+    sql: `
+      INSERT INTO 
+        all_posts
+          (post_id)
+      VALUES 
+          (:postId) 
+`,
+    args: { postId },
+  });
+  console.log("allPostId", allPostId);
 }

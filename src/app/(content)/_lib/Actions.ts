@@ -1,16 +1,19 @@
 "use server";
 
-import { createImage, type createImageType } from "@/server/data-access/imagesQueries";
-import { createPost } from "@/server/data-access/postsQueries";
 import { removeTokenInfoFromDB } from "@/server/use-cases/auth/tokenManagement";
+import { createImage } from "@/server/use-cases/images-use-cases";
+import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesAndSchema";
+import { createPost } from "@/server/use-cases/post-use-case";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
+import type { z } from "zod";
 import { formSchema } from "./formschema";
 
+type formSchemaTypes = z.infer<typeof formSchema>;
 type PostImageActionInitType = {
-  message?: string;
+  [K in keyof formSchemaTypes]?: string;
 };
 
 const utapi = new UTApi();
@@ -23,13 +26,16 @@ export async function postImageAction(
   const images = formData.getAll("images");
   const parsedFormData = formSchema.safeParse({ ...formEntries, images });
   if (parsedFormData.success === false) {
-    // throw new Error("invalid form data");
-    return { message: "invalid form data" };
+    const { images, description, shareToPublic } = parsedFormData.error.formErrors.fieldErrors;
+    return {
+      description: description?.[0] ?? undefined,
+      images: images?.[0] ?? undefined,
+      shareToPublic: shareToPublic?.[0] ?? undefined,
+    };
   }
-  console.log(parsedFormData.data);
-  const { description } = parsedFormData.data;
+  const { description, shareToPublic } = parsedFormData.data;
 
-  const post = await createPost({ description });
+  const post = await createPost(description, shareToPublic);
   const utImages = await utapi.uploadFiles(parsedFormData.data.images);
 
   const imageData = utImages.map((image) => {
@@ -48,7 +54,7 @@ export async function postImageAction(
       type,
       fileKey: key,
       postId: post.id,
-    } as createImageType;
+    } as CreateImageType;
   });
   await createImage(imageData);
   revalidatePath("/");

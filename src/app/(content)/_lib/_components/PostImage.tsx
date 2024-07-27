@@ -9,7 +9,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
 
-const { Form, Input, Textarea } = GenerateFormComponents({
+const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
 
@@ -63,7 +63,7 @@ function PostButton() {
 }
 
 export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  const [_, action] = useFormState(postImageAction, {});
+  const [state, action] = useFormState(postImageAction, {});
 
   const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
@@ -144,11 +144,11 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               setIsDragged(false);
             }}
           >
-            <fieldset>
+            <fieldset className="relative">
               <legend className="sr-only">Description</legend>
               <Textarea
                 ref={textAreaRef}
-                className={cn("resize-none rounded-b-md p-2 outline-none ", {
+                className={cn("w-full resize-none rounded-b-md p-2 outline-none ", {
                   "bg-indigo-500": isDragged,
                 })}
                 placeholder="Describe your image. No image yet? Try dragging and dropping one here..."
@@ -156,6 +156,9 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                 name="description"
                 onChange={(e) => handleTextAreaChange(e)}
               />
+              <ErrorMessage position="bottomMiddle" useDefaultStyling={false} name="description">
+                {state.description}
+              </ErrorMessage>
             </fieldset>
 
             {objectUrls.length > 0 && <ImageSlider className="m-auto size-1/2" url={objectUrls} />}
@@ -165,7 +168,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
           <div className="flex gap-2">
             <fieldset>
               <legend className="sr-only">Image Upload</legend>
-              <label className="cursor-pointer" htmlFor="imageFile">
+              <label className="relative cursor-pointer" htmlFor="imageFile">
                 <Images />
                 <span className="sr-only">Select Image</span>
                 <Input
@@ -181,6 +184,9 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   }}
                   required
                 />
+                <ErrorMessage useDefaultStyling={false} name="images">
+                  {state.images}
+                </ErrorMessage>
               </label>
             </fieldset>
 
@@ -189,10 +195,9 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="shareToggle"
-                  className="flex cursor-pointer items-center rounded-full "
+                  className="relative flex cursor-pointer items-center rounded-full "
                 >
                   <Input
-                    showErrors={false}
                     type="checkbox"
                     id="shareToggle"
                     name="shareToPublic"
@@ -200,6 +205,9 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                     checked={isSharedToPublic}
                     onChange={() => setIsSharedToPublic(!isSharedToPublic)}
                   />
+                  <ErrorMessage useDefaultStyling={false} name="shareToPublic">
+                    {state.shareToPublic}
+                  </ErrorMessage>
 
                   <GlobeLock className="transition-all peer-checked:hidden " />
                   <Globe className="hidden transition-all peer-checked:block " />

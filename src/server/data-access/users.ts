@@ -4,11 +4,9 @@ import {
   generateFingerprint,
   getAuthenticatedId,
   signAndSetAccessToken,
-  verifyAccessToken,
   verifyRefreshToken,
 } from "@/server/use-cases/auth/tokenManagement";
 import type { Row } from "@libsql/client";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ZodError, type z } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../database/schema/users";

@@ -2,33 +2,12 @@ import "server-only";
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { ZodError, z } from "zod";
+import { type InsertImageType, insertImageSchema } from "../database/schema/images";
 import { turso } from "../database/turso";
 
-// function hasAccess({ errorMsg }: { errorMsg: string }) {
-//   const user = auth();
-//   if (user.userId === null) {
-//     throw new Error(errorMsg);
-//   }
-//   return user;
-// }
+const createImageSchemaArr = z.array(insertImageSchema);
 
-const createImageSchema = z.object({
-  url: z.string().url().min(1).max(250),
-  name: z.string().min(1).max(250),
-  type: z.enum(["image/jpeg", "image/jpg", "image/bmp", "image/png", "image/gif", "image/webp"]),
-  fileKey: z.string().min(1),
-  postId: z.string().min(1),
-  id: z.string().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type createImageType = z.infer<typeof createImageSchema>;
-const createImageSchemaArr = z.array(createImageSchema);
-
-export async function createImage(imageData: createImageType[]) {
-  // hasAccess({ errorMsg: "user must be logged in to post image" });
-
+export async function insertImage(imageData: InsertImageType[]) {
   const parsedImage = createImageSchemaArr.safeParse(imageData);
   if (parsedImage.success === false) {
     throw new ZodError(parsedImage.error.errors);
@@ -36,17 +15,17 @@ export async function createImage(imageData: createImageType[]) {
 
   await turso.batch(
     parsedImage.data.map((data) => {
-      const { url, type, fileKey, postId, name } = data;
+      const { url, type, fileKey, postId, name, userId } = data;
       const id = randomUUID();
       return {
         sql: `
         INSERT INTO
           images
-            (id, url, name, type, file_key, postId)
+            (id, url, name, type, file_key, post_id, user_id)
         VALUES 
-            (:id, :url, :name, :type, :fileKey, :postId)
+            (:id, :url, :name, :type, :fileKey, :postId, :userId)
       `,
-        args: { id, url, type, fileKey, postId, name },
+        args: { id, url, type, fileKey, postId, name, userId },
       };
     }),
     "write"

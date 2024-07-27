@@ -1,6 +1,6 @@
 import "server-only";
 // biome-ignore lint/style/useNodejsImportProtocol: <being used as data: and file: >
-import crypto, { createHash } from "crypto";
+import { createHash } from "crypto";
 import { env } from "@/env";
 import { getRefreshAndFingerprintToken, updateTokensFromDB } from "@/server/data-access/users";
 import { SignJWT, decodeJwt, jwtVerify } from "jose";
@@ -71,26 +71,15 @@ export async function generateFingerprint({
   return createHash("sha256").update(`${ip}${userAgent}`).digest("hex");
 }
 
-// for better password protection
-export const generateSalt = () => {
-  return crypto.randomBytes(16).toString("hex");
-};
-
-// for User security
-export const generateHashPassword = (password: string, salt: string) => {
-  return crypto.pbkdf2Sync(password, salt, 10000, 64, "sha512").toString("hex");
-};
-
 export const getAuthenticatedId = async () => {
   const cookieStore = cookies();
   const userId = await verifyAccessToken(cookieStore.get("accessToken")?.value as string);
   if (!userId) {
-    throw new Error("Unauthorized please log in");
+    return;
   }
   return userId;
 };
 
-// TODO: move to tokenManagement
 export async function refreshAccessToken({
   userAgent,
   ip,
@@ -123,7 +112,6 @@ export async function refreshAccessToken({
   await signAndSetAccessToken(userId);
 }
 
-// TODO: move to tokenManagement
 export async function removeTokenInfoFromDB() {
   const accessToken = cookies().get("accessToken")?.value;
   const verifiedId = await verifyAccessToken(accessToken);

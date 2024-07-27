@@ -8,21 +8,9 @@ import {
   getUserName,
   updateRefreshAndFingerPrintToken,
 } from "@/server/data-access/users";
-import type { Row } from "@libsql/client";
-import { cookies, headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { ZodError } from "zod";
-import { createUserSchema, getUserSchema } from "../../database/schema/users";
-import { turso } from "../../database/turso";
 import { registerUserSchema, type registerUserSchemaTypes } from "./authenticationTypesAndSchema";
-import {
-  generateFingerprint,
-  getAuthenticatedId,
-  signAndSetAccessToken,
-  signRefreshToken,
-  verifyAccessToken,
-  verifyRefreshToken,
-} from "./tokenManagement";
+import { generateFingerprint, signRefreshToken, verifyRefreshToken } from "./tokenManagement";
 
 export async function verifyUserInfo({
   userName,
