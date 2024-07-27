@@ -1,14 +1,20 @@
 import "server-only";
 
-import { createPublicPost, newPost } from "../data-access/postsQueries";
+import { createPublicPost, getAllPublicPosts, newPost } from "../data-access/postsQueries";
 import { getAuthenticatedId } from "./auth/tokenManagement";
 
-export async function createPost(description: string | undefined, shareToPublic: boolean) {
+async function hasAccess({ errorMsg }: { errorMsg: string }) {
   const user = await getAuthenticatedId();
-
   if (user === undefined) {
-    throw new Error("Unauthorized user. Please login to post and image");
+    throw new Error(errorMsg);
   }
+  return user;
+}
+
+export async function createPost(description: string | undefined, shareToPublic: boolean) {
+  const user = await hasAccess({
+    errorMsg: "Unauthorized user. Please login to post and image",
+  });
 
   const postId = await newPost({ description, userId: user.userId });
   if (postId.id === undefined) {
@@ -19,4 +25,13 @@ export async function createPost(description: string | undefined, shareToPublic:
   }
 
   return postId;
+}
+
+export async function getPublicPosts() {
+  await hasAccess({
+    errorMsg: "Please login to view all the post",
+  });
+
+  const publicPost = await getAllPublicPosts();
+  return publicPost;
 }

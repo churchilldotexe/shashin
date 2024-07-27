@@ -1,13 +1,7 @@
 import "server-only";
 
-import {
-  generateFingerprint,
-  getAuthenticatedId,
-  signAndSetAccessToken,
-  verifyRefreshToken,
-} from "@/server/use-cases/auth/tokenManagement";
+import { getAuthenticatedId } from "@/server/use-cases/auth/tokenManagement";
 import type { Row } from "@libsql/client";
-import { redirect } from "next/navigation";
 import { ZodError, type z } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../database/schema/users";
 import { turso } from "../database/turso";
@@ -73,7 +67,12 @@ const getUserQuerySchema = getUserSchema.pick({
 });
 
 export async function getUserInfo() {
-  const { userId } = await getAuthenticatedId();
+  // FIX: refactor this put it in useCasesd for userId
+  const user = await getAuthenticatedId();
+  if (user === undefined) {
+    throw new Error("please login");
+  }
+  const { userId } = user;
   try {
     const rawUserInfo = await turso.execute({
       sql: `
@@ -203,57 +202,6 @@ export async function getRefreshAndFingerprintToken(userId: string) {
     return;
   }
   return parsedTokenData.data;
-}
-
-export async function refreshAccessToken({
-  userAgent,
-  ip,
-  userId,
-}: {
-  userId: string;
-  ip: string;
-  userAgent: string;
-}) {
-  try {
-    const tokenDataFromDB = await turso.execute({
-      sql: `
-        SELECT 
-          refresh_token,token_fingerprint  
-        FROM users 
-        WHERE id= :userId
-      `,
-      args: { userId },
-    });
-
-    const parsedTokenData = tokenDataFromDBSchema.safeParse({
-      refreshToken: tokenDataFromDB.rows[0]?.refresh_token,
-      tokenFingerprint: tokenDataFromDB.rows[0]?.token_fingerprint,
-    });
-
-    if (parsedTokenData.success === false) {
-      throw new ZodError(parsedTokenData.error.errors);
-    }
-
-    const { tokenFingerprint, refreshToken } = parsedTokenData.data;
-
-    //to prevent AccessToken from cookie for being compromised
-    const generatedFingerPrint = await generateFingerprint({ ip, userAgent });
-
-    if (tokenFingerprint === null ?? tokenFingerprint !== generatedFingerPrint) {
-      await removeTokenInfoFromDB();
-      redirect("/login");
-    }
-
-    const verifiedRefreshToken = await verifyRefreshToken(refreshToken as string);
-
-    // to ensure that refresh token is valid
-    if (!verifiedRefreshToken) {
-      redirect("/login");
-    }
-    await signAndSetAccessToken(userId);
-  } catch (error) {
-    redirect("/login");
-  }
 }
 
 export async function updateTokensFromDB(id: string) {

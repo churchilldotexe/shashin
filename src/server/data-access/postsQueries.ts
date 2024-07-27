@@ -7,14 +7,6 @@ import { turso } from "../database/turso";
 
 // NOTE: add new column to the table.. create a public and private post.. private post make the images private
 
-// export const isAuthenticated = () => {
-//   const user = auth();
-//   if (user.userId === null) {
-//     return null;
-//   }
-//   return user;
-// };
-
 const getPostSchema = z.array(
   z.object({
     description: z.string(),
@@ -107,4 +99,45 @@ export async function createPublicPost(postId: string) {
     args: { postId },
   });
   console.log("allPostId", allPostId);
+}
+
+const getAllPublicPostsSchema = z.array(
+  z.object({
+    description: z.string(),
+    id: z.string(),
+    url: z
+      .string()
+      .transform((val) => JSON.parse(val) as string)
+      .pipe(z.array(z.string().url())),
+    createdAt: z.string().pipe(z.coerce.date()),
+  })
+);
+
+export async function getAllPublicPosts() {
+  const post = await turso.execute({
+    sql: `
+        SELECT 
+            p.id AS id,
+            p.description AS description,
+            json_group_array(i.url) AS url,
+            i.created_at AS createdAt
+        FROM 
+            all_posts ap
+        JOIN 
+            posts p ON ap.post_id = p.id
+        LEFT JOIN 
+            images i ON p.id = i.post_id
+        ORDER BY 
+            p.created_at DESC;
+        `,
+    args: [],
+  });
+
+  const dbResult = post.rows;
+  console.log("dbResult", dbResult);
+  const parsedResult = getAllPublicPostsSchema.safeParse(dbResult);
+  if (parsedResult.success === false) {
+    throw new ZodError(parsedResult.error.errors);
+  }
+  return parsedResult.data;
 }
