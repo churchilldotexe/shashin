@@ -138,15 +138,17 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
       <input
         ref={ref}
         onBlur={(e) => {
-          if (onBlur !== undefined) {
-            onBlur(e);
+          if (onBlur === undefined) {
+            return;
           }
+          onBlur(e);
           onBlurValidation(e);
         }}
         onChange={(e) => {
-          if (onChange !== undefined) {
-            onChange(e);
+          if (onChange === undefined) {
+            return;
           }
+          onChange(e);
           if (error[name]) {
             onBlurValidation(e);
           } else {
@@ -187,15 +189,17 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
         {...props}
         name={name as string}
         onBlur={(e) => {
-          if (onBlur !== undefined) {
-            onBlur(e);
+          if (onBlur === undefined) {
+            return;
           }
+          onBlur(e);
           onBlurValidation(e);
         }}
         onChange={(e) => {
-          if (onChange !== undefined) {
-            onChange(e);
+          if (onChange === undefined) {
+            return;
           }
+          onChange(e);
           if (error[name]) {
             onBlurValidation(e);
           } else {
