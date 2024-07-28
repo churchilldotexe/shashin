@@ -5,8 +5,6 @@ import { ZodError, z } from "zod";
 import { type InsertPostSchemaTypes, insertPostSchema } from "../database/schema/posts";
 import { turso } from "../database/turso";
 
-// NOTE: add new column to the table.. create a public and private post.. private post make the images private
-
 const getPostSchema = z.array(
   z.object({
     description: z.string(),
@@ -19,10 +17,8 @@ const getPostSchema = z.array(
   })
 );
 
-//TODO: make a similar table for this but instead the private one (try to figure out how to separate them
-//1. add boolean to the post table to toggle private/public(easier)
-// 2. when toggled add a foreign key to new table for public post)
 export async function getPost() {
+  // FIX: must be in post-use-cases
   // isAuthenticated();
 
   const post = await turso.execute({
@@ -80,7 +76,7 @@ export async function newPost(postsValue: InsertPostSchemaTypes) {
           (id, description, user_id)
       VALUES 
           (:id, :description, :userId)
-`,
+      `,
     args: { id: id as string, description: description as string, userId },
   });
 
@@ -113,6 +109,7 @@ const getAllPublicPostsSchema = z.array(
   })
 );
 
+// TODO: fix should be separated
 export async function getAllPublicPosts() {
   const post = await turso.execute({
     sql: `
@@ -127,6 +124,10 @@ export async function getAllPublicPosts() {
             posts p ON ap.post_id = p.id
         LEFT JOIN 
             images i ON p.id = i.post_id
+          WHERE 
+            i.post_id = p.id 
+        GROUP BY
+            p.id
         ORDER BY 
             p.created_at DESC;
         `,
@@ -134,7 +135,6 @@ export async function getAllPublicPosts() {
   });
 
   const dbResult = post.rows;
-  console.log("dbResult", dbResult);
   const parsedResult = getAllPublicPostsSchema.safeParse(dbResult);
   if (parsedResult.success === false) {
     throw new ZodError(parsedResult.error.errors);

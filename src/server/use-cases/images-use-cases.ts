@@ -13,7 +13,7 @@ async function hasAccess({ errorMsg }: { errorMsg: string }) {
 
 export async function createImage(imageData: CreateImageType[]) {
   const { userId } = await hasAccess({
-    errorMsg: "user must be logged in to post image",
+    errorMsg: "user must be logged in to post an image",
   });
 
   const authenticatedImageData = imageData.map((data) => ({ ...data, userId }));

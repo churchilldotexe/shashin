@@ -10,7 +10,12 @@ import {
 } from "@/server/data-access/users";
 import { ZodError } from "zod";
 import { registerUserSchema, type registerUserSchemaTypes } from "./authenticationTypesAndSchema";
-import { generateFingerprint, signRefreshToken, verifyRefreshToken } from "./tokenManagement";
+import {
+  generateFingerprint,
+  signAndSetAccessToken,
+  signRefreshToken,
+  verifyRefreshToken,
+} from "./tokenManagement";
 
 export async function verifyUserInfo({
   userName,

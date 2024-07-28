@@ -66,46 +66,31 @@ const getUserQuerySchema = getUserSchema.pick({
   userName: true,
 });
 
-export async function getUserInfo() {
-  // FIX: refactor this put it in useCasesd for userId
-  const user = await getAuthenticatedId();
-  if (user === undefined) {
-    throw new Error("please login");
-  }
-  const { userId } = user;
-  try {
-    const rawUserInfo = await turso.execute({
-      sql: `
+export async function getUserInfo(userId: string) {
+  const rawUserInfo = await turso.execute({
+    sql: `
         SELECT 
           id,email,display_name,user_name, hashed_password 
         FROM users
         WHERE  id= :userId
         `,
-      args: { userId },
-    });
+    args: { userId },
+  });
 
-    const {
-      display_name: displayName,
-      id,
-      email,
-      user_name: userName,
-    } = rawUserInfo.rows[0] as Row;
+  const { display_name: displayName, id, email, user_name: userName } = rawUserInfo.rows[0] as Row;
 
-    const parsedUserInfo = getUserQuerySchema.safeParse({
-      displayName,
-      id,
-      email,
-      userName,
-    });
+  const parsedUserInfo = getUserQuerySchema.safeParse({
+    displayName,
+    id,
+    email,
+    userName,
+  });
 
-    if (parsedUserInfo.success === false) {
-      throw new ZodError(parsedUserInfo.error.errors);
-    }
-
-    return parsedUserInfo.data;
-  } catch (error) {
-    throw new Error("an error Occured while getting the users Info ");
+  if (parsedUserInfo.success === false) {
+    throw new ZodError(parsedUserInfo.error.errors);
   }
+
+  return parsedUserInfo.data;
 }
 
 const DBDataSchema = getUserSchema.pick({
