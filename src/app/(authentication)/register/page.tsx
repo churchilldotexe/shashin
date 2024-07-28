@@ -1,9 +1,9 @@
 "use client";
 
+import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
-import Link from "next/link";
 import { useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { registerFormActions } from "../_lib/actions/register-actions";
@@ -13,20 +13,6 @@ import { registerUserFormSchema } from "../_lib/schema";
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: registerUserFormSchema,
 });
-
-function LoginButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="w-full rounded-md bg-primary py-1 text-primary-foreground"
-      type="submit"
-      disabled={pending}
-    >
-      {pending ? "loading..." : "Sign Up"}
-    </button>
-  );
-}
 
 export default function LoginPage() {
   const [state, action] = useFormState(registerFormActions, {});
@@ -39,7 +25,6 @@ export default function LoginPage() {
       <Form className="flex flex-col gap-y-6" action={action}>
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="userName"
             id="username"
@@ -64,7 +49,6 @@ export default function LoginPage() {
 
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="displayName"
             id="displayName"
@@ -89,7 +73,6 @@ export default function LoginPage() {
 
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="email"
             id="email"
@@ -115,7 +98,6 @@ export default function LoginPage() {
         <fieldset className="relative ">
           <Input
             ref={passwordInputRef}
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
@@ -140,7 +122,6 @@ export default function LoginPage() {
 
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="verifiedPassword"
             id="verifiedPassword"
@@ -175,7 +156,7 @@ export default function LoginPage() {
         </fieldset>
 
         <div className=" space-y-1">
-          <LoginButton />
+          <PostButton className="w-full">Sign Up</PostButton>
           <div className="text-sm">
             Already have an account?{" "}
             <TransitionLink className="text-primary underline " href={"/login"}>

@@ -131,7 +131,7 @@
     transparent 95%,
     hsl(var(--primary))
   );
-  animation: 7s mobile-spin linear infinite;
+  animation: 7s mobile-rotate linear infinite;
 }
 
 .css-border-animateAt30deg::before,
@@ -140,7 +140,7 @@
   /* opacity: 0.5; */
 }
 
-@keyframes mobile-spin {
+@keyframes mobile-rotate {
   0% {
     --angle2: 280deg;
     opacity: 1;
@@ -177,7 +177,7 @@
       hsl(var(--primary)),
       transparent 5%
     );
-    animation: 14s spin linear infinite;
+    animation: 14s rotate linear infinite;
   }
 
   .css-border-animateAt330deg::after,
@@ -186,7 +186,7 @@
   }
 }
 
-@keyframes spin {
+@keyframes rotate {
   0% {
     --angle: 80deg;
     opacity: 1;

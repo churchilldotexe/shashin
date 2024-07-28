@@ -6,7 +6,7 @@ import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesA
 import { createPost } from "@/server/use-cases/post-use-case";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { RedirectType, permanentRedirect, redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
 import type { z } from "zod";
 import { formSchema } from "./formschema";
@@ -14,7 +14,7 @@ import { formSchema } from "./formschema";
 type formSchemaTypes = z.infer<typeof formSchema>;
 type PostImageActionInitType = {
   [K in keyof formSchemaTypes]?: string;
-};
+} & { message?: "success" | "failed" };
 
 const utapi = new UTApi();
 
@@ -58,7 +58,7 @@ export async function postImageAction(
   });
   await createImage(imageData);
   revalidatePath("/");
-  redirect("/");
+  return { message: "success" };
 }
 
 export async function logoutAction() {

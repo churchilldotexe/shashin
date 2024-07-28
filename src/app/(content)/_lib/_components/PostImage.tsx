@@ -1,10 +1,18 @@
 "use client";
 
 import { ImageSlider } from "@/components/ImageSlider";
+import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { cn } from "@/lib/utils/cn";
-import { Globe, GlobeLock, Images } from "lucide-react";
-import { type ChangeEvent, type DragEvent, type HTMLAttributes, useRef, useState } from "react";
+import { Globe, GlobeLock, Images, Loader, Loader2 } from "lucide-react";
+import {
+  type ChangeEvent,
+  type DragEvent,
+  type HTMLAttributes,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
@@ -12,6 +20,11 @@ import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
 const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
+
+const clearObjectUrls = (urls: string[]) => {
+  urls.forEach(URL.revokeObjectURL);
+  return [];
+};
 
 const getPercentage = ({
   baseNumber,
@@ -48,22 +61,13 @@ function CharacterLimitIndicator({
   );
 }
 
-function PostButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="rounded-md bg-primary px-2 py-1 text-primary-foreground"
-      type="submit"
-      disabled={pending}
-    >
-      {pending ? "loading..." : "Post"}
-    </button>
-  );
-}
-
 export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  const [state, action] = useFormState(postImageAction, {});
+  const [state, action] = useFormState(postImageAction, {
+    images: "",
+    description: "",
+    shareToPublic: "",
+    message: "failed",
+  });
 
   const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
@@ -75,15 +79,28 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (state.message === "success") {
+      setObjectUrls((urls) => {
+        urls.forEach(URL.revokeObjectURL);
+        return [];
+      });
+      if (textAreaRef.current !== null) {
+        textAreaRef.current.rows = 5;
+        textAreaRef.current.style.height = "100%";
+      }
+      formRef.current?.reset();
+    }
+  }, [state.message]);
+
   const handleImageChange = (fileList: FileList | null) => {
-    if (fileList === null) {
+    if (fileList === null || textAreaRef.current === null) {
       return;
     }
-    if (textAreaRef.current !== null) {
-      textAreaRef.current.style.height = "auto";
-      textAreaRef.current.rows = 0;
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-    }
+    textAreaRef.current.style.height = "auto";
+    textAreaRef.current.rows = 0;
+    textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+
     const files = Array.from(fileList);
     const newUrls = files.map((file) => URL.createObjectURL(file));
     setObjectUrls((prevUrls) => {
@@ -107,12 +124,13 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
 
   const handleTextAreaChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setTextAreaInput(event.target.value);
+    if (!textAreaRef.current) {
+      return;
+    }
     if (objectUrls.length > 0) {
-      if (textAreaRef.current !== null) {
-        textAreaRef.current.style.height = "auto";
-        textAreaRef.current.rows = 0;
-        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-      }
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.rows = 0;
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
     }
   };
 
@@ -157,7 +175,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                 onChange={(e) => handleTextAreaChange(e)}
               />
               <ErrorMessage position="bottomMiddle" useDefaultStyling={false} name="description">
-                {state.description}
+                {state?.description || ""}
               </ErrorMessage>
             </fieldset>
 
@@ -185,7 +203,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   required
                 />
                 <ErrorMessage useDefaultStyling={false} name="images">
-                  {state.images}
+                  {state?.images || ""}
                 </ErrorMessage>
               </label>
             </fieldset>
@@ -206,7 +224,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                     onChange={() => setIsSharedToPublic(!isSharedToPublic)}
                   />
                   <ErrorMessage useDefaultStyling={false} name="shareToPublic">
-                    {state.shareToPublic}
+                    {state?.shareToPublic || ""}
                   </ErrorMessage>
 
                   <GlobeLock className="transition-all peer-checked:hidden " />
@@ -220,7 +238,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
             </fieldset>
           </div>
 
-          <PostButton />
+          <PostButton>Post</PostButton>
         </div>
       </Form>
     </div>

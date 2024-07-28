@@ -28,8 +28,6 @@ export default function RootLayout({
         </div>
         <div className="">{overview}</div>
       </aside>
-      {/* TODO: Homepage here for signed out Users*/}
-      {/* NOTE: when user logged in/signed up do an UPSERT for user table where if not yet reg add to user table and get basic info of the user to be displayed to his profile */}
       {/* TODO: footer: can be shown in the bottom (grow the children) */}
     </div>
   );
