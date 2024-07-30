@@ -4,7 +4,7 @@ import { ImageSlider } from "@/components/ImageSlider";
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { cn } from "@/lib/utils/cn";
-import { Globe, GlobeLock, Images, Loader, Loader2 } from "lucide-react";
+import { Globe, GlobeLock, Images } from "lucide-react";
 import {
   type ChangeEvent,
   type DragEvent,
@@ -13,18 +13,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { postImageAction } from "../Actions";
 import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
 
 const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
-
-const clearObjectUrls = (urls: string[]) => {
-  urls.forEach(URL.revokeObjectURL);
-  return [];
-};
 
 const getPercentage = ({
   baseNumber,
@@ -166,7 +161,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               <legend className="sr-only">Description</legend>
               <Textarea
                 ref={textAreaRef}
-                className={cn("w-full resize-none rounded-b-md p-2 outline-none ", {
+                className={cn("w-full resize-none rounded-b-md border p-2 outline-none ", {
                   "bg-indigo-500": isDragged,
                 })}
                 placeholder="Describe your image. No image yet? Try dragging and dropping one here..."

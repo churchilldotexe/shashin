@@ -3,23 +3,30 @@
 import { cn } from "@/lib/utils/cn";
 import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
-import { Fragment, type HTMLAttributes, forwardRef, useState } from "react";
+import { Fragment, type HTMLAttributes, type MouseEvent, forwardRef, useState } from "react";
 
 // FIX:  the indexing where the button should showup in mobile devices
 
 export const ImageSlider = forwardRef<
   HTMLDivElement,
-  { url: string[] } & HTMLAttributes<HTMLDivElement>
->(function Slider({ url, className, ...props }, ref) {
+  {
+    url: string[];
+    unoptimized: boolean;
+  } & HTMLAttributes<HTMLDivElement>
+>(function Slider({ url, unoptimized, className, ...props }, ref) {
   const [imageIndex, setImageIndex] = useState<number>(0);
-  const handleNextImage = () => {
+  const handleNextImage = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (imageIndex === url.length - 1) {
       setImageIndex(url.length - 1);
     } else {
       setImageIndex((prevIndex) => prevIndex + 1);
     }
   };
-  const handlePreviousImage = () => {
+  const handlePreviousImage = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (imageIndex === 0) {
       setImageIndex(0);
     } else {
@@ -34,6 +41,7 @@ export const ImageSlider = forwardRef<
           <Fragment key={image}>
             <div className="relative aspect-video size-full shrink-0 ">
               <Image
+                unoptimized={unoptimized}
                 src={image}
                 alt={image}
                 style={{ translate: `${-100 * imageIndex}%` }}
@@ -47,7 +55,9 @@ export const ImageSlider = forwardRef<
 
       <div className="group absolute inset-0 flex size-full items-center justify-between text-gray-950">
         <button
-          onClick={handlePreviousImage}
+          onClick={(e) => {
+            handlePreviousImage(e);
+          }}
           type="button"
           data-hidden={imageIndex === 0}
           className="mx-2 rounded bg-gradient-to-r from-secondary/70 to-secondary/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0"
@@ -55,7 +65,9 @@ export const ImageSlider = forwardRef<
           <ChevronLeft className="size-8" />
         </button>
         <button
-          onClick={handleNextImage}
+          onClick={(e) => {
+            handleNextImage(e);
+          }}
           type="button"
           data-hidden={imageIndex === url.length - 1}
           className="mx-2 rounded bg-gradient-to-l from-secondary/70 to-secondary/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0"
@@ -70,10 +82,12 @@ export const ImageSlider = forwardRef<
             // NOTE: fix the Key attribute later to a database data ID
             <button
               type="button"
-              key={urlInfo + 1}
+              key={urlInfo}
               className=" text-secondary data-[index=true]:text-primary"
               data-index={Boolean(imageIndex === index)}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 setImageIndex(index);
               }}
               aria-label={`button for image number ${index + 1}`}

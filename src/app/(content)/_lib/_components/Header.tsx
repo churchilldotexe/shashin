@@ -30,8 +30,11 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
   return (
     <nav {...props}>
-      <div>
-        <Link href={"/"} className=" mx-auto hidden hover:underline md:block ">
+      <div className="space-y-3">
+        <Link
+          href={"/"}
+          className="text_stroke_outline mx-auto hidden rounded-lg p-2 font-extrabold text-3xl tracking-wide backdrop-blur-sm hover:underline md:block"
+        >
           Shashin
         </Link>
         <ul>
@@ -43,7 +46,7 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
                 className={cn(
                   "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
                   {
-                    " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37)_inset,-6px_-4px_10px_white_inset] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_black_inset] ":
+                    " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ":
                       pathname === `${route}`,
                   }
                 )}
@@ -107,8 +110,7 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
           </Dialog.Content>
         </Dialog>
       </div>
-      <NavContent className="hidden rounded-md bg-gradient-to-br from-white/10 to-white/0 px-1 py-2 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm md:flex dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] " />
-      {/* <NavContent className="hidden shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] rounded-md md:flex dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]" /> */}
+      <NavContent className="hidden rounded-md p-1 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] md:flex dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]" />
       <div className=" hidden flex-col items-center justify-end p-4 md:flex">
         {/* TODO: change this to the actual user avatar */}
         <div>user</div>

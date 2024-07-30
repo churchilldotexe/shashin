@@ -5,7 +5,7 @@ import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import { useSearchParams } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/login-actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { loginFormSchema } from "../_lib/schema";
@@ -15,7 +15,11 @@ const { Form, Input, ErrorMessage } = GenerateFormComponents({
 });
 
 export default function LoginPage() {
-  const [state, action] = useFormState(loginFormAction, {});
+  const [state, action] = useFormState(loginFormAction, {
+    callbackUrl: "",
+    userName: "",
+    password: "",
+  });
 
   const searchParamsValue = useSearchParams().get("callbackUrl");
   const callbackUrl = searchParamsValue ?? "/";
@@ -42,7 +46,7 @@ export default function LoginPage() {
             Username
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
-            {state.userName}
+            {state?.userName || ""}
           </ErrorMessage>
         </fieldset>
 
@@ -66,7 +70,7 @@ export default function LoginPage() {
             Password
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
-            {state.password}
+            {state?.password || ""}
           </ErrorMessage>
         </fieldset>
 

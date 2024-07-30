@@ -245,3 +245,28 @@
     opacity: 0;
   }
 }
+
+.fade-in-image {
+  --i: 1;
+  /* opacity: 0; */
+  /* animation: fading 1s ease forwards; */
+  /* animation-delay: calc(200ms * var(--i)); */
+
+  transition-property: opacity;
+  transition-duration: 1s;
+  transition-timing-function: ease-in-out;
+  transition-delay: calc(150ms * var(--i));
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* @keyframes fading { */
+/*   from { */
+/*     opacity: 0; */
+/*   } */
+/*   to { */
+/*     opacity: 1; */
+/*   } */
+/* } */

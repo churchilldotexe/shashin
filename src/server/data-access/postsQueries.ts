@@ -2,6 +2,7 @@
 import { randomUUID } from "crypto";
 import "server-only";
 import { ZodError, z } from "zod";
+import { selectImageSchema } from "../database/schema/images";
 import { type InsertPostSchemaTypes, insertPostSchema } from "../database/schema/posts";
 import { turso } from "../database/turso";
 
@@ -99,8 +100,10 @@ export async function createPublicPost(postId: string) {
 
 const getAllPublicPostsSchema = z.array(
   z.object({
+    name: z.string(),
     description: z.string(),
     id: z.string(),
+    type: selectImageSchema.shape.type,
     url: z
       .string()
       .transform((val) => JSON.parse(val) as string)
@@ -114,16 +117,19 @@ export async function getAllPublicPosts() {
   const post = await turso.execute({
     sql: `
         SELECT 
+            u.display_name as name,
             p.id AS id,
             p.description AS description,
             json_group_array(i.url) AS url,
-            i.created_at AS createdAt
+            i.created_at AS createdAt,
+            i.type AS type
         FROM 
             all_posts ap
         JOIN 
             posts p ON ap.post_id = p.id
         LEFT JOIN 
-            images i ON p.id = i.post_id
+            images i ON p.id = i.post_id,
+            users u ON p.user_id = u.id
           WHERE 
             i.post_id = p.id 
         GROUP BY
