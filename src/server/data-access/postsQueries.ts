@@ -18,6 +18,7 @@ const getPostSchema = z.array(
   })
 );
 
+// NOTE: this is for Profile page(my post)
 export async function getPost() {
   // FIX: must be in post-use-cases
   // isAuthenticated();

@@ -159,7 +159,7 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
             <span className=" h-6 border border-border shadow-inner " />
             <div>Gallery</div>
           </div>
-          <Dialog.Content className="mt-0 ml-0 size-fit overflow-x-clip">
+          <Dialog.Content className={cn("mt-0 ml-0 size-fit overflow-x-clip", "slide-from-left")}>
             <NavContent />
           </Dialog.Content>
         </Dialog>

@@ -53,11 +53,16 @@ const config = {
       },
       animation: {
         fadeIn: "fadeIn 1s ease-in forwards",
+        slideFromLeft: "slideFromLeft 5s ease-out forwards",
       },
       keyframes: {
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
+        },
+        slideFromLeft: {
+          "0": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "100" },
         },
       },
     },

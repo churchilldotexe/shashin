@@ -291,3 +291,24 @@
       transform: translate(500px)
    }
 }
+
+.slide-from-left {
+   transition-property: transform display opacity;
+   display: none;
+   transition-duration: 0.3s;
+   transition-timing-function: ease-out;
+   transition-behavior: allow-discrete;
+   transform: translateX(-100%);
+   opacity: 0;
+}
+
+.slide-from-left[open] {
+   display: block;
+   transform: translateX(0);
+   opacity: 1;
+
+   @starting-style {
+      transform: translateX(-100%);
+      opacity: 0;
+   }
+}
