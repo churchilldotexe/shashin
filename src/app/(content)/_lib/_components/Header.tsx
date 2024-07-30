@@ -90,30 +90,45 @@ export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
   const [loading, setLoading] = useState<boolean>(false);
   const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
   const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
+  const [count, setCount] = useState<number>(0);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
 
   useEffect(() => {
     const abortController = new AbortController();
 
+    // to keep track if in mobile breakpoints
     document.addEventListener(
-      "scroll",
+      "resize",
       () => {
-        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (scrollPosition > currentScrollPosition) {
-          setScrollDirection("down");
-        } else if (scrollPosition < currentScrollPosition) {
-          setScrollDirection("up");
-        }
-        setCurrentScrollPosition(scrollPosition <= 0 ? 0 : scrollPosition);
+        setIsMobile(window.innerWidth < 768);
       },
-      {
-        signal: abortController.signal,
-      }
+      { signal: abortController.signal }
     );
+
+    // to ensure that will only run in mobile breakpoints(less than 768 breakpoint)
+    if (isMobile) {
+      document.addEventListener(
+        "scroll",
+        () => {
+          const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+          if (scrollPosition > currentScrollPosition) {
+            setScrollDirection("down");
+          } else if (scrollPosition < currentScrollPosition) {
+            setScrollDirection("up");
+          }
+          setCurrentScrollPosition(scrollPosition <= 0 ? 0 : scrollPosition);
+        },
+        {
+          signal: abortController.signal,
+        }
+      );
+    }
+
     return () => {
       abortController.abort();
     };
-  }, [currentScrollPosition]);
+  }, [currentScrollPosition, isMobile]);
 
   return (
     <header
