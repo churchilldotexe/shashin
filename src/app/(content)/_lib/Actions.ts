@@ -6,7 +6,7 @@ import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesA
 import { createPost } from "@/server/use-cases/post-use-case";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { RedirectType, permanentRedirect, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
 import type { z } from "zod";
 import { formSchema } from "./formschema";

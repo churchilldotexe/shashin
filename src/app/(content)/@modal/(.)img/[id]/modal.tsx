@@ -1,7 +1,9 @@
 "use client";
 
+import { XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type ElementRef, type MouseEvent, type SyntheticEvent, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 export function Modal({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -18,10 +20,10 @@ export function Modal({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    // biome-ignore lint/a11y/useKeyWithClickEvents: <dialog Default handles keypress>
+    //biome-ignore lint/a11y/useKeyWithClickEvents: <dialog Default handles keypress>
     <dialog
       ref={dialogRef}
-      className="size-fit"
+      className="modal-transition m-auto size-[85%] bg-transparent shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] backdrop:backdrop-blur-[3px] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] "
       onClick={(e) => {
         if (e.currentTarget === e.target) {
           router.back();
@@ -36,10 +38,10 @@ export function Modal({ children }: { children: React.ReactNode }) {
         onClick={(e) => {
           onDismiss(e);
         }}
-        className="size-fit bg-primary"
+        className="absolute top-0 left-0 bg-primary p-2 font-bold"
         type="button"
       >
-        X
+        <XIcon />
       </button>
     </dialog>
   );

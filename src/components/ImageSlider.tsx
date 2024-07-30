@@ -11,9 +11,9 @@ export const ImageSlider = forwardRef<
   HTMLDivElement,
   {
     url: string[];
-    unoptimized: boolean;
+    unoptimized?: boolean;
   } & HTMLAttributes<HTMLDivElement>
->(function Slider({ url, unoptimized, className, ...props }, ref) {
+>(function Slider({ url, unoptimized = false, className, ...props }, ref) {
   const [imageIndex, setImageIndex] = useState<number>(0);
   const handleNextImage = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

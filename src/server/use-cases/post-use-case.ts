@@ -1,6 +1,11 @@
 import "server-only";
 
-import { createPublicPost, getAllPublicPosts, newPost } from "../data-access/postsQueries";
+import {
+  createPublicPost,
+  getAllPublicPosts,
+  newPost,
+  selectPublicPosts,
+} from "../data-access/postsQueries";
 import { getAuthenticatedId } from "./auth/tokenManagement";
 
 async function hasAccess({ errorMsg }: { errorMsg: string }) {
@@ -33,5 +38,14 @@ export async function getPublicPosts() {
   });
 
   const publicPost = await getAllPublicPosts();
+  return publicPost;
+}
+
+export async function getSpecificPublicPost(userId: string) {
+  await hasAccess({
+    errorMsg: "Please login to view all the post",
+  });
+
+  const publicPost = await selectPublicPosts(userId);
   return publicPost;
 }

@@ -98,21 +98,20 @@ export async function createPublicPost(postId: string) {
   console.log("allPostId", allPostId);
 }
 
-const getAllPublicPostsSchema = z.array(
-  z.object({
-    name: z.string(),
-    description: z.string(),
-    id: z.string(),
-    type: selectImageSchema.shape.type,
-    url: z
-      .string()
-      .transform((val) => JSON.parse(val) as string)
-      .pipe(z.array(z.string().url())),
-    createdAt: z.string().pipe(z.coerce.date()),
-  })
-);
+const getPublicPostsSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  id: z.string(),
+  type: selectImageSchema.shape.type,
+  url: z
+    .string()
+    .transform((val) => JSON.parse(val) as string)
+    .pipe(z.array(z.string().url())),
+  createdAt: z.string().pipe(z.coerce.date()),
+});
 
-// TODO: fix should be separated
+const getAllPublicPostsSchema = z.array(getPublicPostsSchema);
+
 export async function getAllPublicPosts() {
   const post = await turso.execute({
     sql: `
@@ -142,6 +141,38 @@ export async function getAllPublicPosts() {
 
   const dbResult = post.rows;
   const parsedResult = getAllPublicPostsSchema.safeParse(dbResult);
+  if (parsedResult.success === false) {
+    throw new ZodError(parsedResult.error.errors);
+  }
+  return parsedResult.data;
+}
+
+export async function selectPublicPosts(postId: string) {
+  const post = await turso.execute({
+    sql: `
+        SELECT 
+            u.display_name as name,
+            p.id AS id,
+            p.description AS description,
+            json_group_array(i.url) AS url,
+            i.created_at AS createdAt,
+            i.type AS type
+        FROM 
+            all_posts ap
+        JOIN 
+            posts p ON ap.post_id = p.id
+        LEFT JOIN 
+            images i ON p.id = i.post_id,
+            users u ON p.user_id = u.id
+          WHERE 
+             ap.post_id =  :postId
+        
+        `,
+    args: { postId },
+  });
+
+  const dbResult = post.rows[0];
+  const parsedResult = getPublicPostsSchema.safeParse(dbResult);
   if (parsedResult.success === false) {
     throw new ZodError(parsedResult.error.errors);
   }
