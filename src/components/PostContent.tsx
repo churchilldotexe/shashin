@@ -20,7 +20,7 @@ export default function PostContent({ postContent, className, ...props }: PostCo
   return (
     <article
       className={cn(
-        "fade-in-image size-full rounded-lg border border-border bg-background p-6 text-foreground shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]",
+        "fade-in-image size-full rounded-lg border border-border bg-background text-foreground shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] md:p-6 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]",
         className
       )}
       style={{ "--i": `${index}` } as CSSProperties}
@@ -34,7 +34,11 @@ export default function PostContent({ postContent, className, ...props }: PostCo
       </header>
       <figure>
         <figcaption>{description}</figcaption>
-        <ImageSlider className="m-auto size-[85%]" url={url} unoptimized={unoptimize} />
+        <ImageSlider
+          className="m-auto size-full md:size-[85%]"
+          url={url}
+          unoptimized={unoptimize}
+        />
       </figure>
     </article>
   );

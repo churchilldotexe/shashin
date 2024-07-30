@@ -5,8 +5,6 @@ import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
 import { Fragment, type HTMLAttributes, type MouseEvent, forwardRef, useState } from "react";
 
-// FIX:  the indexing where the button should showup in mobile devices
-
 export const ImageSlider = forwardRef<
   HTMLDivElement,
   {
@@ -53,14 +51,14 @@ export const ImageSlider = forwardRef<
         ))}
       </div>
 
-      <div className="group absolute inset-0 flex size-full items-center justify-between text-gray-950">
+      <div className="group absolute inset-0 flex size-full items-center justify-between ">
         <button
           onClick={(e) => {
             handlePreviousImage(e);
           }}
           type="button"
           data-hidden={imageIndex === 0}
-          className="mx-2 rounded bg-gradient-to-r from-secondary/70 to-secondary/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0"
+          className="height-full mx-2 rounded bg-gradient-to-r from-secondary/70 to-secondary/0 py-4 text-primary opacity-100 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0 md:opacity-0"
         >
           <ChevronLeft className="size-8" />
         </button>
@@ -70,7 +68,7 @@ export const ImageSlider = forwardRef<
           }}
           type="button"
           data-hidden={imageIndex === url.length - 1}
-          className="mx-2 rounded bg-gradient-to-l from-secondary/70 to-secondary/0 py-4 text-primary opacity-0 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0"
+          className="height-full mx-2 rounded bg-gradient-to-l from-secondary/70 to-secondary/0 py-4 text-primary opacity-100 shadow-[0_8px_6px_0_rgba(0,0,0,0.8)] backdrop-blur-sm active:scale-90 group-hover:opacity-100 group-focus-visible:opacity-100 data-[hidden=true]:cursor-default data-[hidden=true]:opacity-0 data-[hidden=true]:group-focus-visible:opacity-0 data-[hidden=true]:group-hover:opacity-0 md:opacity-0"
         >
           <ChevronRight className="size-8 " />
         </button>

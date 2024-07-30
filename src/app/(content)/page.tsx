@@ -7,7 +7,7 @@ import { PostImage } from "./_lib/_components/PostImage";
 export default async function HomePage() {
   const allPost = await getPublicPosts();
   return (
-    <PageSection className="gap-4">
+    <PageSection className="space-y-8">
       <PostImage className=" rounded-lg p-4 shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]" />
 
       <div className="flex size-full grow flex-col gap-4">

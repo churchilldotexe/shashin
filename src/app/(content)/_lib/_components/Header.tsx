@@ -5,7 +5,7 @@ import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type HTMLAttributes, useState } from "react";
+import { type HTMLAttributes, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { logoutAction } from "../Actions";
 
@@ -88,9 +88,48 @@ export function NavContent({ ...props }: HTMLAttributes<HTMLElement>) {
 
 export function Header({ className, ...props }: HTMLAttributes<HTMLElement>) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
+  const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    document.addEventListener(
+      "scroll",
+      () => {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+        if (scrollPosition > currentScrollPosition) {
+          setScrollDirection("down");
+        } else if (scrollPosition < currentScrollPosition) {
+          setScrollDirection("up");
+        }
+        setCurrentScrollPosition(scrollPosition <= 0 ? 0 : scrollPosition);
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+    return () => {
+      abortController.abort();
+    };
+  }, [currentScrollPosition]);
 
   return (
-    <header className={cn("flex flex-col justify-between", className)} {...props}>
+    <header
+      className={cn(
+        "z-10 flex transform flex-col justify-between bg-gradient-to-br from-background/70 to-background/40 backdrop-blur-sm transition-transform",
+        " md:z-0 md:transform-none md:backdrop-blur-0 md:transition-none ",
+        {
+          " -translate-y-96 md:translate-y-0 ": scrollDirection === "down",
+        },
+        {
+          " translate-y-0 ": scrollDirection === "up",
+        },
+        className
+      )}
+      {...props}
+    >
       <div className="p-3 shadow-[0_8px_6px_0_rgba(0,0,0,0.37)] md:hidden dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.10)] ">
         <Dialog>
           <div className="grid grid-cols-3 ">

@@ -20,10 +20,8 @@ export default function RootLayout({
 }) {
   return (
     <div className="container mx-auto flex flex-col justify-center gap-4 md:flex-row">
-      {/* TODO: mobile first: header with nav must be a toggle button in mobile first (drop down list icon only?) when md: note dropdown but show icon only */}
-      {/*  TODO:  focus on designing the front page first(for signed in and welcome page(for unsigned in)) */}
       <Header className="sticky top-0 w-full md:h-dvh md:w-fit" />
-      <main className="size-full max-w-5xl">
+      <main className="size-full max-w-5xl px-2 md:px-0">
         {children}
         {modal}
         <div id="modal-root" />

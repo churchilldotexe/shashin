@@ -223,12 +223,21 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   </ErrorMessage>
 
                   <GlobeLock className="transition-all peer-checked:hidden " />
-                  <Globe className="hidden transition-all peer-checked:block " />
-                  <span className="sr-only">
+                  <Globe className=" hidden transition-all peer-checked:block " />
+                  <span className={cn("sr-only")}>
                     {isSharedToPublic ? "Everyone can see" : "Only Me"}
                   </span>
                 </label>
-                <span>{isSharedToPublic ? "Everyone can see" : "Only Me"}</span>
+                <span>
+                  {isSharedToPublic ? (
+                    <>
+                      <span className="md:hidden">Public</span>
+                      <span className="hidden md:inline">Everyone can see</span>
+                    </>
+                  ) : (
+                    "Only Me"
+                  )}
+                </span>
               </div>
             </fieldset>
           </div>
