@@ -295,7 +295,7 @@
 .slide-from-left {
    transition-property: transform display opacity;
    display: none;
-   transition-duration: 0.3s;
+   transition-duration: 3s;
    transition-timing-function: ease-out;
    transition-behavior: allow-discrete;
    transform: translateX(-100%);

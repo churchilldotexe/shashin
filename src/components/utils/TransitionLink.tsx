@@ -1,7 +1,8 @@
 "use client";
+import { cn } from "@/lib/utils/cn";
 import Link, { type LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
-import type { MouseEvent as ReactMouseEvent, ReactNode } from "react";
+import { type MouseEvent as ReactMouseEvent, type ReactNode, useState } from "react";
 
 interface TransitionLinkTypes extends LinkProps {
   children: ReactNode;
@@ -22,6 +23,9 @@ export function TransitionLink({
   ...props
 }: TransitionLinkTypes) {
   const router = useRouter();
+  // const [addElement, _] = useState(() =>
+  //   document.getElementById("auth-layout")?.classList.add("page-transition-right")
+  // );
 
   const handleTransition = async (e: ReactMouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
@@ -37,7 +41,7 @@ export function TransitionLink({
     <Link
       href={href}
       onClick={(e) => handleTransition(e)}
-      className={className}
+      className={cn("", className)}
       scroll={scroll}
       {...props}
     >

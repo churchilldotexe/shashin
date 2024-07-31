@@ -1,5 +1,6 @@
 import "server-only";
-import { queryDBUserData } from "../data-access/users";
+
+import { getUserInfoById } from "../data-access/users";
 import { getAuthenticatedId } from "./auth/tokenManagement";
 
 export async function getUserInfo() {
@@ -11,7 +12,7 @@ export async function getUserInfo() {
   }
   const { userId } = user;
   try {
-    const userInfo = await queryDBUserData(userId);
+    const userInfo = await getUserInfoById(userId);
     return userInfo;
   } catch (error) {
     throw new Error("an error Occured while getting the users Info ");

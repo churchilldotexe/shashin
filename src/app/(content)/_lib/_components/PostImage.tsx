@@ -129,6 +129,13 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
     }
   };
 
+  // TODO:
+  // Select input for albums..
+  //    if no album create new album
+  //    if album exists -> give option to choose existing album
+  //     ! - should be able to only dispay USER Specific album
+  //          - itterate over the albums and put it as an option
+
   return (
     <div className={cn("w-full", className)} {...props}>
       <Form action={action} ref={formRef}>
@@ -242,7 +249,15 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
             </fieldset>
           </div>
 
-          <PostButton>Post</PostButton>
+          <div className="flex items-center gap-2">
+            <fieldset>
+              <select>
+                <option>Select an Album</option>
+                {/* TODO: itterate over the albums here */}
+              </select>
+            </fieldset>
+            <PostButton>Post</PostButton>
+          </div>
         </div>
       </Form>
     </div>
