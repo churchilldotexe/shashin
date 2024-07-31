@@ -1,3 +1,5 @@
+"use client";
+
 import {
   type ChangeEvent,
   type Dispatch,
@@ -138,22 +140,22 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
       <input
         ref={ref}
         onBlur={(e) => {
+          onBlurValidation(e);
           if (onBlur === undefined) {
             return;
           }
           onBlur(e);
-          onBlurValidation(e);
         }}
         onChange={(e) => {
-          if (onChange === undefined) {
-            return;
-          }
-          onChange(e);
           if (error[name]) {
             onBlurValidation(e);
           } else {
             return;
           }
+          if (onChange === undefined) {
+            return;
+          }
+          onChange(e);
         }}
         name={name as string}
         {...props}
@@ -189,22 +191,22 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
         {...props}
         name={name as string}
         onBlur={(e) => {
+          onBlurValidation(e);
           if (onBlur === undefined) {
             return;
           }
           onBlur(e);
-          onBlurValidation(e);
         }}
         onChange={(e) => {
-          if (onChange === undefined) {
-            return;
-          }
-          onChange(e);
           if (error[name]) {
             onBlurValidation(e);
           } else {
             return;
           }
+          if (onChange === undefined) {
+            return;
+          }
+          onChange(e);
         }}
       />
     );
@@ -243,7 +245,7 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
     ) : (
       Boolean(error[name] ?? children) && (
         <div ref={ref} style={textAreaStyles.divStyle} {...props}>
-          {error[name] ?? children}
+          {error[name] !== undefined ? error[name] : children}
         </div>
       )
     );
