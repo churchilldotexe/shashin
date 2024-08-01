@@ -2,8 +2,8 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { cn } from "@/lib/utils/cn";
-import { useSearchParams } from "next/navigation";
+import { animatedRouterPush, cn } from "@/lib/utils/cn";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -21,8 +21,14 @@ export default function LoginPage() {
     password: "",
   });
 
+  const router = useRouter();
   const searchParamsValue = useSearchParams().get("callbackUrl");
+
   const callbackUrl = searchParamsValue ?? "/";
+  if (state.message === "success") {
+    animatedRouterPush().then(() => router.push(callbackUrl));
+  }
+
   return (
     <AuthComponent>
       <Form className="w-full space-y-4 " action={action}>

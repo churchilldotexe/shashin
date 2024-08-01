@@ -1,4 +1,4 @@
-import { ACCEPTED_FILE_TYPE, MAX_FILE_SIZE } from "@/app/(content)/_lib/formschema";
+import { ACCEPTED_FILE_TYPE, MAX_FILE_SIZE } from "@/lib/constants";
 import { z } from "zod";
 
 export const loginFormSchema = z.object({

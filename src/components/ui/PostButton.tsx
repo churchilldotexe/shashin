@@ -15,7 +15,7 @@ export function PostButton({
     <button
       className={cn(
         "rounded-md bg-primary px-2 py-1 text-primary-foreground",
-        { "bg-muted": pending },
+        { "bg-muted text-foreground": pending },
         className
       )}
       type="submit"

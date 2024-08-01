@@ -2,7 +2,8 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { cn } from "@/lib/utils/cn";
+import { animatedRouterPush, cn } from "@/lib/utils/cn";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { registerFormActions } from "../_lib/actions/actions";
@@ -15,9 +16,21 @@ const { Form, Input, ErrorMessage } = GenerateFormComponents({
 });
 
 export default function RegisterPage() {
-  const [state, action] = useFormState(registerFormActions, {});
+  const [state, action] = useFormState(registerFormActions, {
+    email: "",
+    password: "",
+    userName: "",
+    displayName: "",
+    verifiedPassword: "",
+  });
   const [isMatched, setIsMatched] = useState<boolean>(true);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  const router = useRouter();
+
+  if (state.message === "success") {
+    animatedRouterPush().then(() => router.push("/profile-setup"));
+  }
 
   return (
     <AuthComponent>

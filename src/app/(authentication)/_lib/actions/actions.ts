@@ -10,7 +10,9 @@ import type { z } from "zod";
 import { profileSetupFormSchema, registerUserFormSchema } from "../schema";
 import { loginFormSchema } from "../schema";
 
-type loginActionStateType = Partial<z.infer<typeof loginFormSchema>>;
+type loginActionStateType = Partial<z.infer<typeof loginFormSchema>> & {
+  message?: "success";
+};
 
 export async function loginFormAction(
   initialData: loginActionStateType,
@@ -41,13 +43,13 @@ export async function loginFormAction(
   });
 
   if (isAuthenticated === "success") {
-    redirect(parsedFormData.data.callbackUrl);
-  } else {
-    return {
-      password: isAuthenticated.password,
-      userName: isAuthenticated.userName,
-    };
+    // redirect(parsedFormData.data.callbackUrl);
+    return { message: "success" };
   }
+  return {
+    password: isAuthenticated.password,
+    userName: isAuthenticated.userName,
+  };
 }
 
 type registerFormReturn = Partial<z.infer<typeof registerUserFormSchema>> & {
@@ -104,7 +106,7 @@ export async function registerFormActions(
   });
 
   if (isAuthenticated === "success") {
-    redirect("/profile-setup");
+    return { message: "success" };
   }
   return {
     password: isAuthenticated.password,
@@ -115,7 +117,7 @@ export async function registerFormActions(
 type ProfileSetupFormSchemaTypes = z.infer<typeof profileSetupFormSchema>;
 type ProfileSetupReturnTypes = {
   [K in keyof ProfileSetupFormSchemaTypes]?: string;
-};
+} & { message?: "success" };
 
 const utapi = new UTApi();
 
@@ -154,5 +156,5 @@ export async function profileSetupAction(
     urlKey: key,
     displayName: parsedFormData.data.displayName,
   });
-  redirect("/");
+  return { message: "success" };
 }

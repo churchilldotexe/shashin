@@ -1,15 +1,15 @@
 "use client";
 
-import { ACCEPTED_FILE_TYPE } from "@/app/(content)/_lib/formschema";
-import { ImageSlider } from "@/components/ImageSlider";
-import { PageSection } from "@/components/PageSection";
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { cn } from "@/lib/utils/cn";
+import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
+import { animatedRouterPush, cn } from "@/lib/utils/cn";
 import { Images } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFormState } from "react-dom";
 import { profileSetupAction } from "../_lib/actions/actions";
+import AuthComponent from "../_lib/components/AuthComponent";
 import { profileSetupFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -22,15 +22,15 @@ export default function ProfileSetupPage() {
     images: "",
   });
   const [objectUrls, setObjectUrls] = useState<string[]>([]);
+  const router = useRouter();
 
   const handleImageChange = (fileList: FileList | null) => {
     if (fileList === null) {
       return;
     }
-
     const files = Array.from(fileList);
     const newUrls = files.map((file) => URL.createObjectURL(file));
-    // const newUrls =  URL.createObjectURL(file)
+    // ensures cleanup before changing/adding new object url
     setObjectUrls((prevUrls) => {
       for (const url of prevUrls) {
         URL.revokeObjectURL(url);
@@ -39,10 +39,14 @@ export default function ProfileSetupPage() {
     });
   };
 
+  if (state.message === "success") {
+    animatedRouterPush().then(() => router.push("/"));
+  }
+
   return (
-    <PageSection>
-      <div className="shadow-elevate-dark shadow-elevate-light">
-        <Form action={action}>
+    <AuthComponent>
+      <div>
+        <Form action={action} className=" space-y-4 shadow-elevate-light dark:shadow-none ">
           <fieldset className="relative">
             <legend className="sr-only">User name</legend>
             <Input
@@ -63,37 +67,52 @@ export default function ProfileSetupPage() {
             >
               Display Name
             </label>
+
             <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName">
-              {state?.displayName || ""}
+              {state?.displayName}
             </ErrorMessage>
           </fieldset>
-          <fieldset>
-            <legend className="sr-only">user avatar</legend>
-            <legend className="sr-only">Image Upload</legend>
-            <label className="relative cursor-pointer" htmlFor="imageFile">
-              <Images />
-              <span className="sr-only">Select Image</span>
-              <Input
-                id="imageFile"
-                className="sr-only"
-                name="images"
-                type="file"
-                accept={ACCEPTED_FILE_TYPE.join(",")}
-                onChange={(e) => {
-                  handleImageChange(e.target.files);
-                }}
-                required
-              />
-              <ErrorMessage useDefaultStyling={false} name="images">
-                {state?.images}
-              </ErrorMessage>
-            </label>
-          </fieldset>
 
-          {objectUrls.length > 0 && <ImageSlider className="m-auto size-1/2" url={objectUrls} />}
-          <PostButton>Finish Setup</PostButton>
+          <div className="flex items-center justify-between">
+            <fieldset className="">
+              <legend className="sr-only">user avatar</legend>
+              <label
+                className="relative flex cursor-pointer items-center justify-center gap-2"
+                htmlFor="imageFile"
+              >
+                <Images /> Set a display photo
+                <span className="sr-only">Select Image</span>
+                <Input
+                  id="imageFile"
+                  className="sr-only"
+                  name="images"
+                  type="file"
+                  accept={ACCEPTED_FILE_TYPE.join(",")}
+                  onChange={(e) => {
+                    handleImageChange(e.target.files);
+                  }}
+                  required
+                />
+                <ErrorMessage useDefaultStyling={false} name="images">
+                  {state?.images}
+                </ErrorMessage>
+              </label>
+            </fieldset>
+
+            <PostButton>Finish Setup</PostButton>
+          </div>
+
+          {objectUrls.length > 0 ? (
+            <div className="relative aspect-video size-full shrink-0 ">
+              <img
+                src={objectUrls[0] as string}
+                alt="profile avatar"
+                className="size-full rounded-lg object-contain object-center transition-all duration-300 ease-linear "
+              />
+            </div>
+          ) : null}
         </Form>
       </div>
-    </PageSection>
+    </AuthComponent>
   );
 }
