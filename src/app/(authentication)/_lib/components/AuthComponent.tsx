@@ -3,10 +3,7 @@
 import { PageSection } from "@/components/PageSection";
 import type { ReactNode } from "react";
 
-const images = ["/AZKi.png", "/furina-white.jpg", "/furina.jpeg", "/watame.png"];
-
 export default function AuthComponent({ children }: { children: ReactNode }) {
-  //TODO: mobile (try to figure out to set media queries for animated330deg.. meaning when in md and up should be able to have full rotation with no invi
   return (
     <PageSection>
       <div className="grid size-full place-items-center rounded-lg px-2 sm:px-6 md:grid-cols-2 md:px-0">
@@ -15,13 +12,6 @@ export default function AuthComponent({ children }: { children: ReactNode }) {
           <h1 className=" text_stroke_outline rounded-lg p-4 font-extrabold text-5xl backdrop-blur-sm">
             Shashin
           </h1>
-          {/* <Image */}
-          {/*   src="/AZKi.png" */}
-          {/*   className="absolute top-4 right-0 size-40 rounded-lg object-contain object-center" */}
-          {/*   alt="landing page image" */}
-          {/*   width={500} */}
-          {/*   height={500} */}
-          {/* /> */}
         </div>
 
         <div className="css-border-animateAt330deg relative size-full rounded-xl bg-neutral-50/5 p-8 shadow-[0_8px_6px_0_rgba(0,0,0,0.1)_inset,-6px_-4px_10px_white_inset] backdrop-blur-lg dark:bg-neutral-950/5 dark:shadow-[0_8px_6px_0_rgba(250,250,250,0.1)_inset,-8px_-6px_12px_black_inset]">
