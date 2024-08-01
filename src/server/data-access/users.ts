@@ -1,10 +1,30 @@
 import "server-only";
 
-import { getAuthenticatedId } from "@/server/use-cases/auth/tokenManagement";
 import type { Row } from "@libsql/client";
 import { ZodError, type z } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../database/schema/users";
 import { turso } from "../database/turso";
+
+export async function createUser({
+  email,
+  id,
+  userName,
+  displayName,
+  hashedPassword,
+  salt,
+}: CreateUserTypes) {
+  if (id === undefined) {
+    throw new Error("Id must be defined");
+  }
+  await turso.execute({
+    sql: `INSERT INTO
+            users
+              (user_name, email, display_name, hashed_password,id, salt)
+            VALUES
+              (:userName, :email, :displayName, :hashedPassword, :id, :salt)`,
+    args: { userName, email, displayName, hashedPassword, id, salt },
+  });
+}
 
 export async function getUserName({ userName }: Pick<CreateUserTypes, "userName">) {
   const user = await turso.execute({
@@ -38,27 +58,6 @@ export async function getEmail({ email }: Pick<CreateUserTypes, "email">) {
   return parsedUser.data.email;
 }
 
-export async function createUser({
-  email,
-  id,
-  userName,
-  displayName,
-  hashedPassword,
-  salt,
-}: CreateUserTypes) {
-  if (id === undefined) {
-    throw new Error("Id must be defined");
-  }
-  await turso.execute({
-    sql: `INSERT INTO
-            users
-              (user_name, email, display_name, hashed_password,id, salt)
-            VALUES
-              (:userName, :email, :displayName, :hashedPassword, :id, :salt)`,
-    args: { userName, email, displayName, hashedPassword, id, salt },
-  });
-}
-
 const getUserQuerySchema = getUserSchema.pick({
   id: true,
   email: true,
@@ -66,11 +65,11 @@ const getUserQuerySchema = getUserSchema.pick({
   userName: true,
 });
 
-export async function getUserInfo(userId: string) {
+export async function getUserInfoById(userId: string) {
   const rawUserInfo = await turso.execute({
     sql: `
         SELECT 
-          id,email,display_name,user_name, hashed_password 
+          id,email,display_name,user_name  
         FROM users
         WHERE  id= :userId
         `,
@@ -91,6 +90,48 @@ export async function getUserInfo(userId: string) {
   }
 
   return parsedUserInfo.data;
+}
+
+const updateUserSchema = createUserSchema.pick({
+  displayName: true,
+  avatar: true,
+  urlKey: true,
+});
+type UpdateUserTypes = z.infer<typeof updateUserSchema>;
+
+export async function updateUserInfoById({
+  urlKey,
+  avatar,
+  userId,
+  displayName,
+}: { userId: string } & UpdateUserTypes) {
+  const parsedUserInfo = updateUserSchema.safeParse({
+    urlKey,
+    avatar,
+    displayName,
+  });
+
+  if (parsedUserInfo.success === false) {
+    console.error(parsedUserInfo.error.cause);
+    throw new ZodError(parsedUserInfo.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         UPDATE users 
+         SET 
+            display_name = :displayName,
+            avatar = :avatar,
+            url_key = :urlKey
+         WHERE id = :userId
+         `,
+    args: {
+      userId,
+      avatar: parsedUserInfo.data.avatar as string,
+      urlKey: parsedUserInfo.data.urlKey as string,
+      displayName: parsedUserInfo.data.displayName,
+    },
+  });
 }
 
 const DBDataSchema = getUserSchema.pick({

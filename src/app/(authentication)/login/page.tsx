@@ -2,12 +2,12 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import { useSearchParams } from "next/navigation";
 import { useFormState } from "react-dom";
-import { loginFormAction } from "../_lib/actions/login-actions";
+import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
+import { TransitionLink } from "../_lib/components/TransitionLink";
 import { loginFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({

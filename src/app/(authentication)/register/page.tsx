@@ -2,21 +2,20 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { TransitionLink } from "@/components/utils/TransitionLink";
 import { cn } from "@/lib/utils/cn";
 import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
-import { registerFormActions } from "../_lib/actions/register-actions";
+import { registerFormActions } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
+import { TransitionLink } from "../_lib/components/TransitionLink";
 import { registerUserFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: registerUserFormSchema,
 });
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [state, action] = useFormState(registerFormActions, {});
-  console.log(state);
   const [isMatched, setIsMatched] = useState<boolean>(true);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -43,7 +42,7 @@ export default function LoginPage() {
             Username
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
-            {state?.userName || ""}
+            {state?.userName}
           </ErrorMessage>
         </fieldset>
 
@@ -67,7 +66,7 @@ export default function LoginPage() {
             Display Name
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName">
-            {state?.displayName || ""}
+            {state?.displayName}
           </ErrorMessage>
         </fieldset>
 
@@ -91,7 +90,7 @@ export default function LoginPage() {
             Email
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="email">
-            {state?.email || ""}
+            {state?.email}
           </ErrorMessage>
         </fieldset>
 
@@ -116,7 +115,7 @@ export default function LoginPage() {
             Password
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
-            {state?.password || ""}
+            {state?.password}
           </ErrorMessage>
         </fieldset>
 
@@ -151,7 +150,7 @@ export default function LoginPage() {
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
             {isMatched ? null : "Passwords didn't match. Please reverify."}
-            {state?.verifiedPassword || ""}
+            {state?.verifiedPassword}
           </ErrorMessage>
         </fieldset>
 

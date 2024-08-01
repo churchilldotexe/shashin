@@ -78,7 +78,7 @@ export async function authenticateUser({
 }: {
   password: string;
   userName: string;
-  rememberMe: boolean;
+  rememberMe?: boolean;
   ip: string;
   userAgent: string;
 }): Promise<{ userName?: string; password?: string } | "success"> {

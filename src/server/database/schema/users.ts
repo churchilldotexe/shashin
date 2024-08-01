@@ -12,6 +12,8 @@ const users = sqliteTable("users", {
   userName: text("user_name", { length: 255 }).unique().notNull(),
   email: text("email", { length: 255 }).unique().notNull(),
   displayName: text("display_name", { length: 255 }).notNull(),
+  avatar: text("avatar", { length: 255 }),
+  urlKey: text("url_key", { length: 255 }),
   hashedPassword: text("hashed_password").notNull(),
   salt: text("salt").notNull(),
   refreshToken: text("refresh_token"),

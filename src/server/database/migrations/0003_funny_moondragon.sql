@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `url_key` text(255);
