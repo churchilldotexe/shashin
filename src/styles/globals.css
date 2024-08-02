@@ -71,36 +71,20 @@
 #auth-layout {
    transition-timing-function: ease-in-out;
    transition-duration: 700ms;
-   /*transform: translateX(var(--transition));*/
    transform: var(--transition);
    transition-property: opacity, background, transform, filter;
-   /*transition-property: var(--property);*/
 
    @starting-style {
       transform: translateX(-150%)
    }
 }
 
-.page-transition {
-   opacity: 0;
-   background: hsl(var(--background));
-   /*transform: scaleX(100) scaleY(100);*/
-   filter: blur(1.5rem);
-   transform: translateX(150%);
-}
-
-.transition-reset {
-   /*transition-property: opacity, background, filter;*/
-   transform: unset;
-   /*transform: translateX(0);*/
-}
-
 .custom-overlay[open]>summary::before {
    position: fixed;
-   inset: 0;
    content: "";
    width: 100dvw;
-   height: 100dvw;
+   inset: 0;
+   height: 100dvh;
    z-index: 999;
 }
 
@@ -111,6 +95,11 @@
 .text_stroke_outline {
    -webkit-text-fill-color: transparent;
    -webkit-text-stroke-width: 2px;
+}
+
+.popover:popover-open {
+   grid-area: 1/1;
+   position: absolute !important;
 }
 
 @property --angle {

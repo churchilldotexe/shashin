@@ -3,6 +3,7 @@
 import { ImageSlider } from "@/components/ImageSlider";
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
+import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn } from "@/lib/utils/cn";
 import { Globe, GlobeLock, Images } from "lucide-react";
 import {
@@ -15,7 +16,7 @@ import {
 } from "react";
 import { useFormState } from "react-dom";
 import { postImageAction } from "../Actions";
-import { ACCEPTED_FILE_TYPE, formSchema } from "../formschema";
+import { formSchema } from "../formschema";
 
 const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
@@ -177,7 +178,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                 onChange={(e) => handleTextAreaChange(e)}
               />
               <ErrorMessage position="bottomMiddle" useDefaultStyling={false} name="description">
-                {state?.description || ""}
+                {state?.description}
               </ErrorMessage>
             </fieldset>
 
@@ -205,7 +206,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                   required
                 />
                 <ErrorMessage useDefaultStyling={false} name="images">
-                  {state?.images || ""}
+                  {state?.images}
                 </ErrorMessage>
               </label>
             </fieldset>
@@ -226,7 +227,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
                     onChange={() => setIsSharedToPublic(!isSharedToPublic)}
                   />
                   <ErrorMessage useDefaultStyling={false} name="shareToPublic">
-                    {state?.shareToPublic || ""}
+                    {state?.shareToPublic}
                   </ErrorMessage>
 
                   <GlobeLock className="transition-all peer-checked:hidden " />

@@ -75,7 +75,7 @@ function MobileHeader({
   );
 }
 
-export function HeaderContent({
+export function HeaderContents({
   className,
   children,
   ...props

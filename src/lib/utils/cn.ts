@@ -12,6 +12,6 @@ export const wait = (ms: number) => {
 
 export async function animatedRouterPush() {
   document.documentElement.style.setProperty("--transition", "translateX(150%)");
-  await wait(500);
+  await wait(700);
   document.documentElement.style.setProperty("--transition", "unset");
 }

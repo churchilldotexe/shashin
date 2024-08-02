@@ -63,26 +63,34 @@ const getUserQuerySchema = getUserSchema.pick({
   email: true,
   displayName: true,
   userName: true,
+  avatar: true,
 });
 
 export async function getUserInfoById(userId: string) {
   const rawUserInfo = await turso.execute({
     sql: `
         SELECT 
-          id,email,display_name,user_name  
+          id,email,display_name,user_name,avatar  
         FROM users
         WHERE  id= :userId
         `,
     args: { userId },
   });
 
-  const { display_name: displayName, id, email, user_name: userName } = rawUserInfo.rows[0] as Row;
+  const {
+    display_name: displayName,
+    id,
+    email,
+    user_name: userName,
+    avatar,
+  } = rawUserInfo.rows[0] as Row;
 
   const parsedUserInfo = getUserQuerySchema.safeParse({
     displayName,
     id,
     email,
     userName,
+    avatar,
   });
 
   if (parsedUserInfo.success === false) {
