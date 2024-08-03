@@ -68,17 +68,7 @@
 /*    outline: solid 1px red; */
 /* } */
 
-#auth-layout {
-   transition-timing-function: ease-in-out;
-   transition-duration: 700ms;
-   transform: var(--transition);
-   transition-property: opacity, background, transform, filter;
-
-   @starting-style {
-      transform: translateX(-150%)
-   }
-}
-
+/*darkmode and lightmode theme component*/
 .custom-overlay[open]>summary::before {
    position: fixed;
    content: "";
@@ -92,16 +82,38 @@
    display: none;
 }
 
+/*user-content Popover animation*/
+.popover-transition {
+   transition-behavior: allow-discrete;
+   transition-property: transform opacity;
+   transition-duration: .5s;
+   /*translate: -50% -50%;*/
+
+   @starting-style {
+      transform: scaleX(.9) scaleY(.9);
+      opacity: 0;
+   }
+}
+
+/*Auth pages animation*/
+#auth-layout {
+   transition-timing-function: ease-in-out;
+   transition-duration: 700ms;
+   transform: var(--transition);
+   transition-property: opacity, background, transform, filter;
+
+   @starting-style {
+      transform: translateX(-150%)
+   }
+}
+
+/*Authpages and Shashin title*/
 .text_stroke_outline {
    -webkit-text-fill-color: transparent;
    -webkit-text-stroke-width: 2px;
 }
 
-.popover:popover-open {
-   grid-area: 1/1;
-   position: absolute !important;
-}
-
+/*Animation for auth landing page start here*/
 @property --angle {
    syntax: "<angle>";
    initial-value: 80deg;
@@ -142,7 +154,6 @@
 .css-border-animateAt30deg::before,
 .css-border-animateAt330deg::before {
    filter: blur(0.5rem);
-   /* opacity: 0.5; */
 }
 
 @keyframes mobile-rotate {
@@ -271,6 +282,10 @@
    }
 }
 
+/*animation for auth landing page ends here*/
+
+
+/*PostContent animation */
 .fade-in-image,
 .modal-transition {
    transition-timing-function: ease-in-out;
@@ -287,6 +302,7 @@
    }
 }
 
+/*intersecting route modal transition*/
 .modal-transition {
    transition-property: transform;
    transition-duration: .5s;
@@ -297,6 +313,7 @@
    }
 }
 
+/*Nav animation for mobile layout*/
 .slide-from-left {
    transition-property: transform display opacity;
    display: none;
