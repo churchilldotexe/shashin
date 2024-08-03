@@ -1,14 +1,9 @@
 "use client";
 
+/// <reference types="react/canary" />
 import { cn } from "@/lib/utils/cn";
-import {
-  type ElementRef,
-  type KeyboardEvent,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import Link from "next/link";
+import { type ElementRef, useEffect, useRef, useState } from "react";
 import { logoutAction } from "../Actions";
 
 function AvatarWithFallBack({
@@ -72,17 +67,24 @@ export function UserContent({
   // [] - chekout useTransition
   // [] - list the user basic information including the logout button
   return (
-    <label ref={containerRef} htmlFor="tool-tip" className=" tool-tip relative">
+    <label
+      ref={containerRef}
+      htmlFor="tool-tip"
+      className=" tool-tip relative size-full cursor-pointer"
+    >
       <input ref={inputRef} type="checkbox" id="tool-tip" className="peer sr-only" />
       <AvatarWithFallBack avatar={avatar} displayName={displayName} />
       <div
         className={cn(
-          " -translate-x0/2 invisible absolute bottom-full left-full opacity-0 transition-all duration-500",
+          " -translate-x0/2 invisible absolute bottom-full left-full w-full opacity-0 transition-all duration-500",
           " peer-checked:visible peer-checked:opacity-100"
         )}
       >
-        <div>{displayName}</div>
-        <button type="button" popoverTarget="warning">
+        <div className="flex w-full flex-col justify-center">
+          <h3 className="w-max cursor-default">{displayName}</h3>
+          <Link href={"/my-posts"}>@{userName}</Link>
+        </div>
+        <button type="button" popovertarget="warning">
           logout
         </button>
         <div>
@@ -103,50 +105,3 @@ export function UserContent({
     </label>
   );
 }
-// after:content-[' '] after:fixed after:inset-0 after:w-screen after:h-screen after:bg-red-50
-
-//  const  asd = {
-// <details
-//       className={cn("group  ", {
-//         "after:bg-red-500 after:fixed after:inset-0  after:content-[' '] after:w-screen after:h-screen after:-translate-x-[10%] ": false,
-//       })}
-//       open={isOpen}
-//       onToggle={(e) => {
-//         setIsOpen(e.currentTarget.open);
-//       }}
-//       onKeyPress={(e) => {
-//         handleKeyPress(e);
-//       }}
-//     >
-//       <summary className="cursor-pointer  list-none">
-//         <AvatarWithFallBack avatar={avatar} displayName={displayName} />
-//       </summary>{" "}
-//       {/* {createPortal( */}
-//       <div
-//         className={cn(
-//           "  group-open:bg-red-500",
-//           "after:bg-red-500 after:absolute after:inset-0  after:content-[' '] after:w-screen after:h-screen after:-translate-x-[10%] ",
-//           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
-//         )}
-//       >
-//         <div>{displayName}</div>
-//         <button type="button" popoverTarget="warning">
-//           logout
-//         </button>
-//         <div>
-//           <button
-//             popover=""
-//             id="warning"
-//             type="button"
-//             onClick={async () => {
-//               setLoading(true);
-//               await logoutAction();
-//               setLoading(false);
-//             }}
-//           >
-//             {loading ? "loggingOut" : "Logout "}
-//           </button>
-//         </div>
-//       </div>
-//     </details>
-// }
