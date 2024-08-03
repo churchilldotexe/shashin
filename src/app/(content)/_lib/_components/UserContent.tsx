@@ -43,15 +43,36 @@ export function UserContent({
   const detailsRef = useRef<ElementRef<"details">>(null);
 
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
-        detailsRef.current.open = false;
-      }
-    }
+    const abortController = new AbortController();
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      (event: MouseEvent) => {
+        if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+          detailsRef.current.open = false;
+        }
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      (event: KeyboardEvent) => {
+        if (detailsRef.current) {
+          if (event.key === "Escape" && detailsRef.current.open) {
+            detailsRef.current.open = false;
+          }
+        }
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      abortController.abort();
     };
   }, []);
 
