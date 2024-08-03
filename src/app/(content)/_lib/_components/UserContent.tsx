@@ -40,16 +40,12 @@ export function UserContent({
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const inputRef = useRef<ElementRef<"input">>(null);
-  const containerRef = useRef<ElementRef<"label">>(null);
-  console.log(inputRef.current, "inputref");
-  console.log(containerRef.current?.contains, "label node");
+  const detailsRef = useRef<ElementRef<"details">>(null);
+
   useEffect(() => {
-    console.log("did i run?");
     function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        if (inputRef.current) {
-          inputRef.current.checked = false;
-        }
+      if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+        detailsRef.current.open = false;
       }
     }
 
@@ -59,49 +55,84 @@ export function UserContent({
     };
   }, []);
 
-  // TODO: User Profile
-  // [x] - get the userInfo by userId
-  // [x] - define new table for users for avatar
-  // [] - create a userProfile action(popover)
-  // [] - display user avatar as a trigger
-  // [] - chekout useTransition
-  // [] - list the user basic information including the logout button
+  const handleCloseModal = () => {
+    if (detailsRef.current === null) {
+      return;
+    }
+    detailsRef.current.open = false;
+  };
+
   return (
-    <label
-      ref={containerRef}
-      htmlFor="tool-tip"
-      className=" tool-tip relative size-full cursor-pointer"
-    >
-      <input ref={inputRef} type="checkbox" id="tool-tip" className="peer sr-only" />
-      <AvatarWithFallBack avatar={avatar} displayName={displayName} />
+    <details ref={detailsRef} className="group relative size-full ">
+      <summary className="cursor-pointer list-none">
+        <AvatarWithFallBack avatar={avatar} displayName={displayName} />
+      </summary>
+
       <div
         className={cn(
-          " -translate-x0/2 invisible absolute bottom-full left-full w-full opacity-0 transition-all duration-500",
-          " peer-checked:visible peer-checked:opacity-100"
+          "absolute bottom-full left-1/2 size-fit rounded-md p-4 shadow-elevate-light backdrop-blur-[3px] [translate:-50%_0] dark:shadow-elevate-dark",
+          " popover-transition "
+          // "  group-open:opacity-100 group-open:scale-100  "
         )}
       >
-        <div className="flex w-full flex-col justify-center">
-          <h3 className="w-max cursor-default">{displayName}</h3>
-          <Link href={"/my-posts"}>@{userName}</Link>
-        </div>
-        <button type="button" popovertarget="warning">
-          logout
-        </button>
-        <div>
+        <div className="flex flex-col justify-center gap-4 ">
+          <div>
+            <h3 className="cursor-default whitespace-nowrap capitalize">{displayName}</h3>
+            <Link
+              href={"/my-posts"}
+              onClick={() => handleCloseModal()}
+              className="text-sky-500 text-xs"
+            >
+              @{userName}
+            </Link>
+          </div>
+          <hr className="" />
           <button
-            popover=""
-            id="warning"
             type="button"
-            onClick={async () => {
-              setLoading(true);
-              await logoutAction();
-              setLoading(false);
-            }}
+            className="hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
+            popovertarget="notification"
           >
-            {loading ? "loggingOut" : "Logout "}
+            Logout
           </button>
         </div>
+
+        <div
+          id="notification"
+          className={cn(
+            "space-y-2 rounded-md bg-background p-4 font-medium text-foreground shadow-elevate-light dark:shadow-elevate-dark",
+            "popover-transition backdrop:bg-neutral-50/20 backdrop:backdrop-blur-[3px] backdrop:dark:bg-neutral-950/20 "
+          )}
+          popover=""
+        >
+          <p className="line-clamp-2 max-w-[30ch] ">
+            You're about to be logged out. Do you want to proceed?
+          </p>
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              className="hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
+              onClick={async () => {
+                setLoading(true);
+                await logoutAction();
+                setLoading(false);
+                handleCloseModal();
+              }}
+            >
+              {loading ? "loggingOut" : "Logout "}
+            </button>
+
+            <button
+              className="hocus-visible:scale-105 rounded-md bg-secondary p-2 active:scale-90"
+              type="button"
+              popovertarget="notification"
+              popovertargetaction="hide"
+              onClick={() => handleCloseModal()}
+            >
+              Back
+            </button>
+          </div>
+        </div>
       </div>
-    </label>
+    </details>
   );
 }

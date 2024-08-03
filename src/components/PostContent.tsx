@@ -27,7 +27,7 @@ export default function PostContent({ postContent, className, ...props }: PostCo
       {...props}
     >
       <header className="flex scale-100 items-center justify-between text-foreground">
-        <h1>{name}</h1>
+        <h1 className="">{name}</h1>
         <time dateTime={new Date(createdAt).toISOString()}>
           {new Date(createdAt).toLocaleDateString()}
         </time>
