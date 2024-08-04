@@ -22,6 +22,7 @@ const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
 
+const CHARACTERLIMIT = 250;
 const getPercentage = ({
   baseNumber,
   limit,
@@ -57,7 +58,11 @@ function CharacterLimitIndicator({
   );
 }
 
-export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function PostImage({
+  albums,
+  className,
+  ...props
+}: { albums: { name: string[] } | null } & HTMLAttributes<HTMLDivElement>) {
   const [state, action] = useFormState(postImageAction, {
     images: "",
     description: "",
@@ -65,7 +70,6 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
     message: "failed",
   });
 
-  const characterLimit = 250;
   const [textAreaInput, setTextAreaInput] = useState<string>("");
   const [isDragged, setIsDragged] = useState<boolean>(false);
   const [isSharedToPublic, setIsSharedToPublic] = useState<boolean>(true);
@@ -142,7 +146,7 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
       <Form action={action} ref={formRef}>
         <div className="relative flex flex-col">
           <CharacterLimitIndicator
-            characterLimit={characterLimit}
+            characterLimit={CHARACTERLIMIT}
             textCount={textAreaInput.length}
           />
           <div
@@ -169,9 +173,12 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
               <legend className="sr-only">Description</legend>
               <Textarea
                 ref={textAreaRef}
-                className={cn("w-full resize-none rounded-b-md border p-2 outline-none ", {
-                  "bg-indigo-500": isDragged,
-                })}
+                className={cn(
+                  "w-full resize-none rounded-b-md border bg-white p-2 outline-none dark:bg-black ",
+                  {
+                    "bg-indigo-500": isDragged,
+                  }
+                )}
                 placeholder="Describe your image. No image yet? Try dragging and dropping one here..."
                 rows={5}
                 name="description"
@@ -252,10 +259,19 @@ export function PostImage({ className, ...props }: HTMLAttributes<HTMLDivElement
 
           <div className="flex items-center gap-2">
             <fieldset>
-              <select>
-                <option>Select an Album</option>
-                {/* TODO: itterate over the albums here */}
-              </select>
+              <legend className="sr-only">Assign Album</legend>
+              {albums?.name.length ? (
+                <select name="albumName" className=" bg-background" required>
+                  <option value="">Select an Album</option>
+                  {albums.name.map((album) => (
+                    <option key={album} value={album}>
+                      {album}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <Input name="albumName" type="text" placeholder="Add an Album" required />
+              )}
             </fieldset>
             <PostButton>Post</PostButton>
           </div>

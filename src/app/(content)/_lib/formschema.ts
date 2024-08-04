@@ -19,4 +19,5 @@ export const formSchema = z.object({
       "Can only Accept an Image file"
     ),
   shareToPublic: z.string().default("").pipe(z.coerce.boolean()),
+  albumName: z.string().min(1),
 });

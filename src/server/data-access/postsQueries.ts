@@ -6,6 +6,47 @@ import { selectImageSchema } from "../database/schema/images";
 import { type InsertPostSchemaTypes, insertPostSchema } from "../database/schema/posts";
 import { turso } from "../database/turso";
 
+export async function insertNewPost(postsValue: InsertPostSchemaTypes) {
+  const uuid = randomUUID();
+
+  const parsedPostValue = insertPostSchema.safeParse({
+    ...postsValue,
+    id: uuid,
+  });
+  if (parsedPostValue.success === false) {
+    throw new ZodError(parsedPostValue.error.errors);
+  }
+
+  const { description, id, userId } = parsedPostValue.data;
+
+  await turso.execute({
+    sql: `
+      INSERT INTO 
+        posts
+          (id, description, user_id)
+      VALUES 
+          (:id, :description, :userId)
+      `,
+    args: { id: id as string, description: description as string, userId },
+  });
+
+  return { id };
+}
+
+export async function createPublicPost(postId: string) {
+  const allPostId = await turso.execute({
+    sql: `
+      INSERT INTO 
+        all_posts
+          (post_id)
+      VALUES 
+          (:postId) 
+`,
+    args: { postId },
+  });
+  console.log("allPostId", allPostId);
+}
+
 const getPostSchema = z.array(
   z.object({
     description: z.string(),
@@ -47,56 +88,6 @@ export async function getPost() {
     throw new ZodError(parsedResult.error.errors);
   }
   return parsedResult.data;
-}
-
-const createPostSchema = z.object({
-  id: z.string().optional(),
-  description: z.string().max(250).optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type createPostSchemaType = z.infer<typeof createPostSchema>;
-
-export async function newPost(postsValue: InsertPostSchemaTypes) {
-  const uuid = randomUUID();
-
-  const parsedPostValue = insertPostSchema.safeParse({
-    ...postsValue,
-    id: uuid,
-  });
-  if (parsedPostValue.success === false) {
-    throw new ZodError(parsedPostValue.error.errors);
-  }
-
-  const { description, id, userId } = parsedPostValue.data;
-
-  await turso.execute({
-    sql: `
-      INSERT INTO 
-        posts
-          (id, description, user_id)
-      VALUES 
-          (:id, :description, :userId)
-      `,
-    args: { id: id as string, description: description as string, userId },
-  });
-
-  return { id };
-}
-
-export async function createPublicPost(postId: string) {
-  const allPostId = await turso.execute({
-    sql: `
-      INSERT INTO 
-        all_posts
-          (post_id)
-      VALUES 
-          (:postId) 
-`,
-    args: { postId },
-  });
-  console.log("allPostId", allPostId);
 }
 
 const getPublicPostsSchema = z.object({

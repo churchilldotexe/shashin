@@ -37,7 +37,7 @@ export function DisplayModeDropDown() {
 
   return (
     <details
-      className="custom-overlay relative"
+      className="custom-overlay relative bg-background"
       open={isOpen}
       onToggle={(e) => {
         setIsOpen(e.currentTarget.open);
@@ -50,7 +50,7 @@ export function DisplayModeDropDown() {
       </summary>
       <div
         className={cn(
-          "-translate-x-1/2 absolute left-[-150%] z-[1000] flex flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
+          " -translate-x-1/2 absolute left-[-150%] z-[1000] flex flex-col divide-y divide-muted rounded border bg-background text-secondary-foreground transition-all duration-300 ease-in-out",
           isOpen ? "scale-100 opacity-100" : "scale-90 opacity-0"
         )}
       >

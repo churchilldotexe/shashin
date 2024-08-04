@@ -1,15 +1,7 @@
 import "server-only";
 
 import { getUserInfoById, updateUserInfoById } from "../data-access/users";
-import { getAuthenticatedId } from "./auth/tokenManagement";
-
-async function hasAccess({ errorMsg }: { errorMsg: string }) {
-  const user = await getAuthenticatedId();
-  if (user === undefined) {
-    throw new Error(errorMsg);
-  }
-  return user;
-}
+import { hasAccess } from "./auth/authentication";
 
 export async function getUserInfo() {
   // to ensure that user is logged in and to make use JWT benefit

@@ -12,10 +12,19 @@ import { ZodError } from "zod";
 import { registerUserSchema, type registerUserSchemaTypes } from "./authenticationTypesAndSchema";
 import {
   generateFingerprint,
+  getAuthenticatedId,
   signAndSetAccessToken,
   signRefreshToken,
   verifyRefreshToken,
 } from "./tokenManagement";
+
+export async function hasAccess({ errorMsg }: { errorMsg: string }) {
+  const user = await getAuthenticatedId();
+  if (user === undefined) {
+    throw new Error(errorMsg);
+  }
+  return user;
+}
 
 export async function verifyUserInfo({
   userName,

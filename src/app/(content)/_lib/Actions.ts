@@ -1,5 +1,6 @@
 "use server";
 
+import { createAlbum } from "@/server/use-cases/albums-use-cases";
 import { removeTokenInfoFromDB } from "@/server/use-cases/auth/tokenManagement";
 import { createImage } from "@/server/use-cases/images-use-cases";
 import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesAndSchema";
@@ -33,17 +34,18 @@ export async function postImageAction(
       shareToPublic: shareToPublic?.[0] ?? undefined,
     };
   }
-  const { description, shareToPublic } = parsedFormData.data;
+  const { description, shareToPublic, albumName } = parsedFormData.data;
 
   const post = await createPost(description, shareToPublic);
+  if (post.id === undefined) {
+    throw new Error("unable to retrieve the post");
+  }
+
   const utImages = await utapi.uploadFiles(parsedFormData.data.images);
 
   const imageData = utImages.map((image) => {
     if (image.data === null) {
       throw new Error(image.error.message);
-    }
-    if (post.id === undefined) {
-      throw new Error("unable to retrieve the post");
     }
     const { url, key, type, name } = image.data;
 
@@ -56,8 +58,11 @@ export async function postImageAction(
       postId: post.id,
     } as CreateImageType;
   });
+
   await createImage(imageData);
+  await createAlbum({ postId: post.id, name: albumName });
   revalidatePath("/");
+
   return { message: "success" };
 }
 

@@ -57,3 +57,32 @@ export async function getMyImages() {
 
   return parsedImages.data;
 }
+
+const getImageInfoByPostIdSchema = insertImageSchema.pick({ id: true }).extend({
+  id: z
+    .string()
+    .transform((val) => JSON.parse(val as string))
+    .pipe(z.array(z.string())),
+});
+
+export async function getImageInfoByPostId(postId: string) {
+  const rawImageInfo = await turso.execute({
+    sql: `
+         SELECT json_group_array(id) as id 
+         FROM images 
+         WHERE post_id = :postId
+      `,
+    args: { postId },
+  });
+
+  console.log(rawImageInfo.rows, "imgid");
+  const parsedImageInfo = getImageInfoByPostIdSchema.safeParse(rawImageInfo.rows[0]);
+  console.log(parsedImageInfo.data, "parsed imgid");
+
+  if (parsedImageInfo.success === false) {
+    console.error(parsedImageInfo.error.errors);
+    return null;
+  }
+
+  return parsedImageInfo.data;
+}

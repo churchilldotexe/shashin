@@ -198,8 +198,6 @@ export function GenerateFormComponents<T extends z.ZodObject<ZodRawShape>>({
         onChange={(e) => {
           if (error[name]) {
             onBlurValidation(e);
-          } else {
-            return;
           }
           if (onChange === undefined) {
             return;
