@@ -2,7 +2,7 @@
 
 import Dialog from "@/components/ui/Dialog";
 import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import {
   type Dispatch,
   type HTMLAttributes,

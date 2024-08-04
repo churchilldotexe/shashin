@@ -1,5 +1,6 @@
 "use client";
-import { animatedRouterPush, cn } from "@/lib/utils/cn";
+
+import { animatedRouterPush, cn } from "@/lib/utils";
 import Link, { type LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 import { type MouseEvent as ReactMouseEvent, type ReactNode, useState } from "react";

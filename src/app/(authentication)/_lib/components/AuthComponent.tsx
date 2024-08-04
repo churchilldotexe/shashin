@@ -1,7 +1,7 @@
 "use client";
 
 import { PageSection } from "@/components/PageSection";
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
 export default function AuthComponent({ children }: { children: ReactNode }) {

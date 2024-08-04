@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
 import { Fragment, type HTMLAttributes, type MouseEvent, forwardRef, useState } from "react";

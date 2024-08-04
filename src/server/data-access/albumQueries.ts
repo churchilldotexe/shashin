@@ -76,8 +76,7 @@ export async function getAlbumsFromDB(userId: string) {
   });
 
   if (parsedAlbums.success === false) {
-    console.error("Unable to get albums", parsedAlbums.error.errors);
-    return null;
+    throw new ZodError(parsedAlbums.error.errors);
   }
   return parsedAlbums.data;
 }

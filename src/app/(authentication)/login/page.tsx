@@ -2,7 +2,7 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { animatedRouterPush, cn } from "@/lib/utils/cn";
+import { animatedRouterPush, cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";

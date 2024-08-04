@@ -1,7 +1,7 @@
 "use client";
 
 /// <reference types="react/canary" />
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { type ElementRef, useEffect, useRef, useState } from "react";
 import { logoutAction } from "../Actions";

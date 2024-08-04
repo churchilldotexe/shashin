@@ -1,6 +1,6 @@
 // (property) JSX.IntrinsicElements.section: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import type { HTMLAttributes, ReactNode } from "react";
 
 export function PageSection({

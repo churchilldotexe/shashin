@@ -4,11 +4,12 @@ import { ImageSlider } from "@/components/ImageSlider";
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
-import { cn } from "@/lib/utils/cn";
-import { Globe, GlobeLock, Images } from "lucide-react";
+import { cn, createTooltipClasses } from "@/lib/utils";
+import { Check, Globe, GlobeLock, Images, X } from "lucide-react";
 import {
   type ChangeEvent,
   type DragEvent,
+  type ElementRef,
   type HTMLAttributes,
   useEffect,
   useRef,
@@ -17,46 +18,13 @@ import {
 import { useFormState } from "react-dom";
 import { postImageAction } from "../Actions";
 import { formSchema } from "../formschema";
+import { CharacterLimitIndicator } from "./CharacterLimitIndicator";
 
 const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
   schema: formSchema,
 });
 
 const CHARACTERLIMIT = 250;
-const getPercentage = ({
-  baseNumber,
-  limit,
-}: {
-  baseNumber: number;
-  limit: number;
-}) => {
-  return Math.floor(((limit - baseNumber) / limit) * 100);
-};
-
-function CharacterLimitIndicator({
-  characterLimit,
-  textCount,
-}: {
-  characterLimit: number;
-  textCount: number;
-}) {
-  const basePercentage = getPercentage({
-    baseNumber: textCount,
-    limit: characterLimit,
-  });
-
-  return (
-    <div
-      style={{
-        width: `${basePercentage}%`,
-        transition: "width 0.5s ease-out",
-      }}
-      className={cn("h-1 bg-green-500", {
-        "bg-destructive": basePercentage < 10,
-      })}
-    />
-  );
-}
 
 export function PostImage({
   albums,
@@ -72,12 +40,18 @@ export function PostImage({
 
   const [textAreaInput, setTextAreaInput] = useState<string>("");
   const [isDragged, setIsDragged] = useState<boolean>(false);
-  const [isSharedToPublic, setIsSharedToPublic] = useState<boolean>(true);
   const [objectUrls, setObjectUrls] = useState<string[]>([]);
+  const [isSelectOpen, setIsSelectOpen] = useState<boolean>(() => {
+    if (albums?.name.length) {
+      return true;
+    }
+    return false;
+  });
 
-  const formRef = useRef<HTMLFormElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<ElementRef<"form">>(null);
+  const textAreaRef = useRef<ElementRef<"textarea">>(null);
+  const fileInputRef = useRef<ElementRef<"input">>(null);
+  const albumInputRef = useRef<ElementRef<"input">>(null);
 
   useEffect(() => {
     if (state.message === "success") {
@@ -134,12 +108,9 @@ export function PostImage({
     }
   };
 
-  // TODO:
-  // Select input for albums..
-  //    if no album create new album
-  //    if album exists -> give option to choose existing album
-  //     ! - should be able to only dispay USER Specific album
-  //          - itterate over the albums and put it as an option
+  const handleAddAlbum = () => {
+    setIsSelectOpen((prev) => !prev);
+  };
 
   return (
     <div className={cn("w-full", className)} {...props}>
@@ -192,11 +163,18 @@ export function PostImage({
             {objectUrls.length > 0 && <ImageSlider className="m-auto size-1/2" url={objectUrls} />}
           </div>
         </div>
+
         <div className="flex items-center justify-between py-2">
           <div className="flex gap-2">
             <fieldset>
               <legend className="sr-only">Image Upload</legend>
-              <label className="relative cursor-pointer" htmlFor="imageFile">
+              <label
+                className={cn(
+                  "relative cursor-pointer",
+                  createTooltipClasses("hover:after:content-['Upload_Image']")
+                )}
+                htmlFor="imageFile"
+              >
                 <Images />
                 <span className="sr-only">Select Image</span>
                 <Input
@@ -223,56 +201,98 @@ export function PostImage({
               <div className="flex items-center gap-2">
                 <label
                   htmlFor="shareToggle"
-                  className="relative flex cursor-pointer items-center rounded-full "
+                  className={cn("relative flex cursor-pointer items-center rounded-full ")}
                 >
                   <Input
                     type="checkbox"
                     id="shareToggle"
                     name="shareToPublic"
                     className="peer sr-only"
-                    checked={isSharedToPublic}
-                    onChange={() => setIsSharedToPublic(!isSharedToPublic)}
                   />
                   <ErrorMessage useDefaultStyling={false} name="shareToPublic">
                     {state?.shareToPublic}
                   </ErrorMessage>
 
-                  <GlobeLock className="transition-all peer-checked:hidden " />
-                  <Globe className=" hidden transition-all peer-checked:block " />
-                  <span className={cn("sr-only")}>
-                    {isSharedToPublic ? "Everyone can see" : "Only Me"}
-                  </span>
+                  <div
+                    className={cn(
+                      "peer-checked:hidden",
+                      createTooltipClasses("hover:after:content-['Only_Me']")
+                    )}
+                  >
+                    <GlobeLock />
+                    <span className="sr-only">Only Me</span>
+                  </div>
+                  <div
+                    className={cn(
+                      " hidden peer-checked:block",
+                      createTooltipClasses("hover:after:content-['Share_to_Public']")
+                    )}
+                  >
+                    <Globe />
+                    <span className="sr-only">Share to Public</span>
+                  </div>
                 </label>
-                <span>
-                  {isSharedToPublic ? (
-                    <>
-                      <span className="md:hidden">Public</span>
-                      <span className="hidden md:inline">Everyone can see</span>
-                    </>
-                  ) : (
-                    "Only Me"
-                  )}
-                </span>
               </div>
             </fieldset>
-          </div>
 
-          <div className="flex items-center gap-2">
             <fieldset>
               <legend className="sr-only">Assign Album</legend>
-              {albums?.name.length ? (
-                <select name="albumName" className=" bg-background" required>
+              {isSelectOpen ? (
+                <select
+                  onChange={(e) => {
+                    if (e.target.value === "add_Album") {
+                      handleAddAlbum();
+                    }
+                  }}
+                  name="albumName"
+                  className=" bg-background"
+                  required
+                >
                   <option value="">Select an Album</option>
-                  {albums.name.map((album) => (
+                  {albums?.name.map((album) => (
                     <option key={album} value={album}>
                       {album}
                     </option>
                   ))}
+                  <option value="add_Album">Add Album</option>
                 </select>
               ) : (
-                <Input name="albumName" type="text" placeholder="Add an Album" required />
+                <div className=" flex items-center">
+                  <Input
+                    ref={albumInputRef}
+                    name="albumName"
+                    type="text"
+                    placeholder="Add an Album"
+                    required
+                    className="rounded-sm border hocus-visible:border-foreground bg-white active:border-foreground dark:bg-black"
+                  />
+
+                  <button
+                    onClick={() => {
+                      handleAddAlbum();
+                    }}
+                    type="button"
+                    className="hocus-visible:scale-110 text-green-500 active:scale-95"
+                  >
+                    <Check />
+                    <span className="sr-only">add album</span>
+                  </button>
+
+                  {albums?.name.length === 0 ? null : (
+                    <button
+                      type="button"
+                      className=" hocus-visible:scale-110 text-destructive active:scale-95"
+                    >
+                      <span className="sr-only">go Back</span>
+                      <X />
+                    </button>
+                  )}
+                </div>
               )}
             </fieldset>
+          </div>
+
+          <div className="flex items-center gap-2">
             <PostButton>Post</PostButton>
           </div>
         </div>

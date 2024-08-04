@@ -3,7 +3,7 @@
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
-import { animatedRouterPush, cn } from "@/lib/utils/cn";
+import { animatedRouterPush, cn } from "@/lib/utils";
 import { Images } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

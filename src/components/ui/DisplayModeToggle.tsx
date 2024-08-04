@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils/cn";
+import { cn } from "@/lib/utils";
 import { type LucideProps, Moon, Sun, SunMoon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";

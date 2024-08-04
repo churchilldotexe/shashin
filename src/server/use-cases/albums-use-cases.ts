@@ -7,8 +7,15 @@ export async function getMyAlbums() {
     errorMsg: "unable to find user, Please Log in.",
   });
 
-  const myAlbums = await getAlbumsFromDB(user.userId);
-  return myAlbums;
+  try {
+    const myAlbums = await getAlbumsFromDB(user.userId);
+    return myAlbums;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Unable to find your album,Error:${error.message}`);
+    }
+    throw new Error("Unable to find your album, add an album");
+  }
 }
 
 export async function createAlbum({
