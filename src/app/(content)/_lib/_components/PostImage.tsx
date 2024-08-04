@@ -53,6 +53,8 @@ export function PostImage({
   const fileInputRef = useRef<ElementRef<"input">>(null);
   const albumInputRef = useRef<ElementRef<"input">>(null);
 
+  const textAreaCharactersLeft = CHARACTERLIMIT - textAreaInput.length;
+
   useEffect(() => {
     if (state.message === "success") {
       setObjectUrls((urls) => {
@@ -112,6 +114,14 @@ export function PostImage({
     setIsSelectOpen((prev) => !prev);
   };
 
+  const handleBackToSelect = () => {
+    if (albumInputRef.current === null) {
+      return;
+    }
+    albumInputRef.current.value = "";
+    setIsSelectOpen((prev) => !prev);
+  };
+
   return (
     <div className={cn("w-full", className)} {...props}>
       <Form action={action} ref={formRef}>
@@ -120,6 +130,7 @@ export function PostImage({
             characterLimit={CHARACTERLIMIT}
             textCount={textAreaInput.length}
           />
+
           <div
             className={cn({
               "bg-indigo-500 outline outline-green-500": isDragged,
@@ -145,16 +156,31 @@ export function PostImage({
               <Textarea
                 ref={textAreaRef}
                 className={cn(
-                  "w-full resize-none rounded-b-md border bg-white p-2 outline-none dark:bg-black ",
+                  "peer/textarea w-full resize-none rounded-b-md border bg-white p-2 outline-none dark:bg-black ",
                   {
                     "bg-indigo-500": isDragged,
                   }
                 )}
-                placeholder="Describe your image. No image yet? Try dragging and dropping one here..."
+                placeholder="Describe your image."
                 rows={5}
                 name="description"
                 onChange={(e) => handleTextAreaChange(e)}
               />
+
+              <>
+                <p className="absolute right-1 bottom-1 hidden text-gray-400 peer-placeholder-shown/textarea:block">
+                  You can also drag and drop image in this area
+                </p>
+                <p
+                  className={cn(
+                    "absolute right-1 bottom-1 block text-amber-500 peer-placeholder-shown/textarea:hidden",
+                    { "text-destructive": textAreaCharactersLeft < 10 }
+                  )}
+                >
+                  {textAreaCharactersLeft < 25 ? textAreaCharactersLeft : null}
+                </p>
+              </>
+
               <ErrorMessage position="bottomMiddle" useDefaultStyling={false} name="description">
                 {state?.description}
               </ErrorMessage>
@@ -254,6 +280,11 @@ export function PostImage({
                       {album}
                     </option>
                   ))}
+                  {!albumInputRef.current?.value ? null : (
+                    <option value={albumInputRef.current?.value}>
+                      {albumInputRef.current?.value}
+                    </option>
+                  )}
                   <option value="add_Album">Add Album</option>
                 </select>
               ) : (
@@ -264,7 +295,7 @@ export function PostImage({
                     type="text"
                     placeholder="Add an Album"
                     required
-                    className="rounded-sm border hocus-visible:border-foreground bg-white active:border-foreground dark:bg-black"
+                    className="peer rounded-sm border hocus-visible:border-foreground bg-white active:border-foreground dark:bg-black"
                   />
 
                   <button
@@ -272,7 +303,7 @@ export function PostImage({
                       handleAddAlbum();
                     }}
                     type="button"
-                    className="hocus-visible:scale-110 text-green-500 active:scale-95"
+                    className="visible hocus-visible:scale-110 text-green-500 active:scale-95 peer-placeholder-shown:invisible"
                   >
                     <Check />
                     <span className="sr-only">add album</span>
@@ -281,7 +312,10 @@ export function PostImage({
                   {albums?.name.length === 0 ? null : (
                     <button
                       type="button"
-                      className=" hocus-visible:scale-110 text-destructive active:scale-95"
+                      className="visible hocus-visible:scale-110 text-destructive active:scale-95 peer-placeholder-shown:invisible"
+                      onClick={() => {
+                        handleBackToSelect();
+                      }}
                     >
                       <span className="sr-only">go Back</span>
                       <X />
