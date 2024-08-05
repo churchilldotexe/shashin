@@ -23,7 +23,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
     //biome-ignore lint/a11y/useKeyWithClickEvents: <dialog Default handles keypress>
     <dialog
       ref={dialogRef}
-      className="modal-transition size-full bg-transparent shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] backdrop:backdrop-blur-[3px] md:m-auto md:size-[85%] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] "
+      className="modal-transition w-full bg-transparent shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] backdrop:backdrop-blur-[3px] lg:w-[85%] 2xl:w-1/2 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] "
       onClick={(e) => {
         if (e.currentTarget === e.target) {
           router.back();
@@ -38,10 +38,10 @@ export function Modal({ children }: { children: React.ReactNode }) {
         onClick={(e) => {
           onDismiss(e);
         }}
-        className="absolute top-0 left-0 bg-primary p-2 font-bold"
+        className="absolute top-0 left-0 rounded-sm bg-primary font-bold "
         type="button"
       >
-        <XIcon />
+        <XIcon className="size-4 md:size-auto" />
       </button>
     </dialog>
   );

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import type { CSSProperties, HTMLAttributes } from "react";
+import { AvatarWithFallBack } from "./AvatarWithFallBack";
 import { ImageSlider } from "./ImageSlider";
 
 type ContentType = {
@@ -7,6 +8,7 @@ type ContentType = {
   name: string;
   createdAt: Date;
   description: string;
+  avatarUrl?: string | null;
   url: string[];
   unoptimize?: boolean;
 };
@@ -16,23 +18,24 @@ type PostContentType = {
 } & HTMLAttributes<HTMLDialogElement>;
 
 export default function PostContent({ postContent, className, ...props }: PostContentType) {
-  const { url, unoptimize, index, description, createdAt, name } = postContent;
+  const { url, unoptimize, index, description, createdAt, name, avatarUrl } = postContent;
   return (
     <article
       className={cn(
-        "fade-in-image size-full rounded-lg border border-border bg-background text-foreground shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] md:p-6 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]",
+        "fade-in-image w-full space-y-2 rounded-lg border bg-background p-3 text-foreground shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] md:p-6 dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]",
         className
       )}
       style={{ "--i": `${index}` } as CSSProperties}
       {...props}
     >
-      <header className="flex scale-100 items-center justify-between text-foreground">
-        <h1 className="">{name}</h1>
+      <header className="flex scale-100 items-center justify-between gap-2 text-foreground">
+        <AvatarWithFallBack avatar={avatarUrl} displayName={name} className="" />
+        <h1 className="mr-auto ml-0">{name}</h1>
         <time dateTime={new Date(createdAt).toISOString()}>
           {new Date(createdAt).toLocaleDateString()}
         </time>
       </header>
-      <figure>
+      <figure className="space-y-2">
         <figcaption>{description}</figcaption>
         <ImageSlider
           className="m-auto size-full md:size-[85%]"

@@ -6,6 +6,7 @@ import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn, createTooltipClasses } from "@/lib/utils";
 import { Check, Globe, GlobeLock, Images, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   type ChangeEvent,
   type DragEvent,
@@ -25,6 +26,53 @@ const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
 });
 
 const CHARACTERLIMIT = 250;
+
+function TextAreaIndicator({
+  textAreaCharactersLeft,
+}: {
+  textAreaCharactersLeft: number;
+}) {
+  return (
+    <>
+      <p className="absolute right-1 bottom-1 hidden select-none text-gray-500 text-sm peer-placeholder-shown/textarea:block">
+        You can also drag and drop image in this area
+      </p>
+      <p
+        className={cn(
+          "absolute right-1 bottom-1 block text-amber-500 peer-placeholder-shown/textarea:hidden",
+          { "text-destructive": textAreaCharactersLeft < 10 }
+        )}
+      >
+        {textAreaCharactersLeft < 25 ? textAreaCharactersLeft : null}
+      </p>
+    </>
+  );
+}
+
+function ShareIconIndicator() {
+  return (
+    <>
+      <div
+        className={cn(
+          "peer-checked:hidden",
+          createTooltipClasses("hover:after:content-['Only_Me']")
+        )}
+      >
+        <GlobeLock />
+        <span className="sr-only">Only Me</span>
+      </div>
+      <div
+        className={cn(
+          " hidden peer-checked:block",
+          createTooltipClasses("hover:after:content-['Share_to_Public']")
+        )}
+      >
+        <Globe />
+        <span className="sr-only">Share to Public</span>
+      </div>
+    </>
+  );
+}
 
 export function PostImage({
   albums,
@@ -47,6 +95,8 @@ export function PostImage({
     }
     return false;
   });
+  const router = useRouter();
+  const albumParams = useSearchParams().get("a");
 
   const formRef = useRef<ElementRef<"form">>(null);
   const textAreaRef = useRef<ElementRef<"textarea">>(null);
@@ -111,6 +161,7 @@ export function PostImage({
   };
 
   const handleAddAlbum = () => {
+    router.push(`/?a=${albumInputRef.current?.value}`, { scroll: false });
     setIsSelectOpen((prev) => !prev);
   };
 
@@ -167,19 +218,7 @@ export function PostImage({
                 onChange={(e) => handleTextAreaChange(e)}
               />
 
-              <>
-                <p className="absolute right-1 bottom-1 hidden text-gray-400 peer-placeholder-shown/textarea:block">
-                  You can also drag and drop image in this area
-                </p>
-                <p
-                  className={cn(
-                    "absolute right-1 bottom-1 block text-amber-500 peer-placeholder-shown/textarea:hidden",
-                    { "text-destructive": textAreaCharactersLeft < 10 }
-                  )}
-                >
-                  {textAreaCharactersLeft < 25 ? textAreaCharactersLeft : null}
-                </p>
-              </>
+              <TextAreaIndicator textAreaCharactersLeft={textAreaCharactersLeft} />
 
               <ErrorMessage position="bottomMiddle" useDefaultStyling={false} name="description">
                 {state?.description}
@@ -234,29 +273,12 @@ export function PostImage({
                     id="shareToggle"
                     name="shareToPublic"
                     className="peer sr-only"
+                    defaultChecked
                   />
+                  <ShareIconIndicator />
                   <ErrorMessage useDefaultStyling={false} name="shareToPublic">
                     {state?.shareToPublic}
                   </ErrorMessage>
-
-                  <div
-                    className={cn(
-                      "peer-checked:hidden",
-                      createTooltipClasses("hover:after:content-['Only_Me']")
-                    )}
-                  >
-                    <GlobeLock />
-                    <span className="sr-only">Only Me</span>
-                  </div>
-                  <div
-                    className={cn(
-                      " hidden peer-checked:block",
-                      createTooltipClasses("hover:after:content-['Share_to_Public']")
-                    )}
-                  >
-                    <Globe />
-                    <span className="sr-only">Share to Public</span>
-                  </div>
                 </label>
               </div>
             </fieldset>
@@ -275,16 +297,19 @@ export function PostImage({
                   required
                 >
                   <option value="">Select an Album</option>
+
                   {albums?.name.map((album) => (
                     <option key={album} value={album}>
                       {album}
                     </option>
                   ))}
-                  {!albumInputRef.current?.value ? null : (
-                    <option value={albumInputRef.current?.value}>
-                      {albumInputRef.current?.value}
+
+                  {!albumParams ? null : (
+                    <option value={albumParams} selected>
+                      {albumParams}
                     </option>
                   )}
+
                   <option value="add_Album">Add Album</option>
                 </select>
               ) : (
@@ -299,10 +324,10 @@ export function PostImage({
                   />
 
                   <button
+                    type="button"
                     onClick={() => {
                       handleAddAlbum();
                     }}
-                    type="button"
                     className="visible hocus-visible:scale-110 text-green-500 active:scale-95 peer-placeholder-shown:invisible"
                   >
                     <Check />
