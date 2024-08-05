@@ -6,6 +6,7 @@ import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn, createTooltipClasses } from "@/lib/utils";
 import { Check, Globe, GlobeLock, Images, X } from "lucide-react";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   type ChangeEvent,
@@ -26,6 +27,16 @@ const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
 });
 
 const CHARACTERLIMIT = 250;
+
+const RouterPushWithAlbumParams = ({
+  router,
+  urlValue,
+}: {
+  router: AppRouterInstance;
+  urlValue: string | undefined;
+}) => {
+  return router.push(`/?a=${urlValue}`, { scroll: false });
+};
 
 function TextAreaIndicator({
   textAreaCharactersLeft,
@@ -153,13 +164,20 @@ export function PostImage({
         urls.forEach(URL.revokeObjectURL);
         return [];
       });
+
       if (textAreaRef.current !== null) {
         textAreaRef.current.rows = 5;
         textAreaRef.current.style.height = "100%";
       }
+
       formRef.current?.reset();
+
+      RouterPushWithAlbumParams({
+        router,
+        urlValue: "",
+      });
     }
-  }, [state.message]);
+  }, [state.message, router]);
 
   const handleImageChange = (fileList: FileList | null) => {
     if (fileList === null || textAreaRef.current === null) {
@@ -203,7 +221,10 @@ export function PostImage({
   };
 
   const handleAddAlbum = () => {
-    router.push(`/?a=${albumInputRef.current?.value}`, { scroll: false });
+    RouterPushWithAlbumParams({
+      router,
+      urlValue: albumInputRef.current?.value,
+    });
     setIsSelectOpen((prev) => !prev);
   };
 
@@ -212,7 +233,12 @@ export function PostImage({
       return;
     }
     albumInputRef.current.value = "";
-    router.push("/?a=", { scroll: false });
+
+    RouterPushWithAlbumParams({
+      router,
+      urlValue: "",
+    });
+
     setIsSelectOpen((prev) => !prev);
   };
 
