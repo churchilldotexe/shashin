@@ -5,7 +5,7 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn, createTooltipClasses } from "@/lib/utils";
-import { Check, Globe, GlobeLock, Images, X } from "lucide-react";
+import { Check, Globe, GlobeLock, ImagePlus, ImagePlusIcon, Images, X } from "lucide-react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -302,14 +302,10 @@ export function PostImage({
           <div className="flex gap-2">
             <fieldset>
               <legend className="sr-only">Image Upload</legend>
-              <label
-                className={cn(
-                  "relative cursor-pointer",
-                  createTooltipClasses("hover:after:content-['Upload_Image']")
-                )}
-                htmlFor="imageFile"
-              >
-                <Images />
+              <label className="relative cursor-pointer" htmlFor="imageFile">
+                <div className={cn(createTooltipClasses("hover:after:content-['Upload_Image']"))}>
+                  <ImagePlus />
+                </div>
                 <span className="sr-only">Select Image</span>
                 <Input
                   id="imageFile"
@@ -379,7 +375,9 @@ export function PostImage({
                     </option>
                   )}
 
-                  <option value="add_Album">Add Album</option>
+                  <option value="add_Album" className="text-green-500">
+                    Add Album
+                  </option>
                 </select>
               ) : (
                 <div className=" flex items-center">
