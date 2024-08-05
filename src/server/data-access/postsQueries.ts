@@ -92,6 +92,7 @@ export async function getPost() {
 
 const getPublicPostsSchema = z.object({
   name: z.string(),
+  avatarUrl: z.string().nullish(),
   description: z.string(),
   id: z.string(),
   type: selectImageSchema.shape.type,
@@ -109,6 +110,7 @@ export async function getAllPublicPosts() {
     sql: `
         SELECT 
             u.display_name as name,
+            u.avatar as avatarUrl,
             p.id AS id,
             p.description AS description,
             json_group_array(i.url) AS url,

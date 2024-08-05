@@ -1,33 +1,11 @@
 "use client";
 
+import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 /// <reference types="react/canary" />
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { type ElementRef, useEffect, useRef, useState } from "react";
 import { logoutAction } from "../Actions";
-
-function AvatarWithFallBack({
-  displayName,
-  avatar,
-}: {
-  avatar: string | null;
-  displayName: string;
-}) {
-  const splittedString = displayName.split(" ");
-  const initials = splittedString.map((string) => string.slice(0, 1)).join("");
-
-  return avatar ? (
-    <img
-      src={avatar}
-      alt="profile avatar"
-      className="size-8 rounded-full object-cover object-center "
-    />
-  ) : (
-    <div className="flex size-8 items-center justify-center rounded-full bg-primary text-foreground">
-      {initials}
-    </div>
-  );
-}
 
 export function UserContent({
   userName,
@@ -39,7 +17,6 @@ export function UserContent({
   avatar: string | null;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const inputRef = useRef<ElementRef<"input">>(null);
   const detailsRef = useRef<ElementRef<"details">>(null);
 
   useEffect(() => {
