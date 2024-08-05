@@ -74,6 +74,48 @@ function ShareIconIndicator() {
   );
 }
 
+type ConfirmationButtonType = {
+  albums: {
+    name: string[];
+  } | null;
+  handleAddAlbum: () => void;
+  handleBackToSelect: () => void;
+};
+
+function ConfirmationButton({
+  handleBackToSelect,
+  albums,
+  handleAddAlbum,
+}: ConfirmationButtonType) {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          handleAddAlbum();
+        }}
+        className="visible hocus-visible:scale-110 text-green-500 active:scale-95 peer-placeholder-shown:invisible"
+      >
+        <Check />
+        <span className="sr-only">add album</span>
+      </button>
+
+      {albums?.name.length === 0 ? null : (
+        <button
+          type="button"
+          className="visible hocus-visible:scale-110 text-destructive active:scale-95 peer-placeholder-shown:invisible"
+          onClick={() => {
+            handleBackToSelect();
+          }}
+        >
+          <span className="sr-only">go Back</span>
+          <X />
+        </button>
+      )}
+    </>
+  );
+}
+
 export function PostImage({
   albums,
   className,
@@ -170,6 +212,7 @@ export function PostImage({
       return;
     }
     albumInputRef.current.value = "";
+    router.push("/?a=", { scroll: false });
     setIsSelectOpen((prev) => !prev);
   };
 
@@ -323,29 +366,11 @@ export function PostImage({
                     className="peer rounded-sm border hocus-visible:border-foreground bg-white active:border-foreground dark:bg-black"
                   />
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleAddAlbum();
-                    }}
-                    className="visible hocus-visible:scale-110 text-green-500 active:scale-95 peer-placeholder-shown:invisible"
-                  >
-                    <Check />
-                    <span className="sr-only">add album</span>
-                  </button>
-
-                  {albums?.name.length === 0 ? null : (
-                    <button
-                      type="button"
-                      className="visible hocus-visible:scale-110 text-destructive active:scale-95 peer-placeholder-shown:invisible"
-                      onClick={() => {
-                        handleBackToSelect();
-                      }}
-                    >
-                      <span className="sr-only">go Back</span>
-                      <X />
-                    </button>
-                  )}
+                  <ConfirmationButton
+                    handleBackToSelect={handleBackToSelect}
+                    albums={albums}
+                    handleAddAlbum={handleAddAlbum}
+                  />
                 </div>
               )}
             </fieldset>

@@ -9,6 +9,13 @@ export default function StatsPage() {
   );
 }
 
+// FIX: work on this
+// [] - posted photos
+// [] - bookmarked
+// [] - album count
+// [] - favorited
+// [] - TRY a this month stats
+
 // className={cn(
 //   "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
 //   {

@@ -17,6 +17,9 @@ type PostContentType = {
   postContent: ContentType;
 } & HTMLAttributes<HTMLDialogElement>;
 
+// FIX: add ability to bookmarks with optimistic update
+// [] - make a better date (like today if the same day otherwise put a day e.g. sunday 8/25)
+
 export default function PostContent({ postContent, className, ...props }: PostContentType) {
   const { url, unoptimize, index, description, createdAt, name, avatarUrl } = postContent;
   return (
@@ -35,7 +38,7 @@ export default function PostContent({ postContent, className, ...props }: PostCo
           {new Date(createdAt).toLocaleDateString()}
         </time>
       </header>
-      <figure className="space-y-2">
+      <figure className="space-y-4">
         <figcaption>{description}</figcaption>
         <ImageSlider
           className="m-auto size-full md:size-[85%]"
