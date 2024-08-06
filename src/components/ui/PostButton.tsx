@@ -21,6 +21,7 @@ export function PostButton({
       type="submit"
       disabled={pending}
       {...props}
+      onClick={(e) => e.stopPropagation()}
     >
       {pending ? <Loader2 className="m-auto animate-spin text-center" /> : children}
     </button>

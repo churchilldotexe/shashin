@@ -21,7 +21,7 @@ export function AvatarWithFallBack({
   ) : (
     <div
       className={cn(
-        "flex size-8 items-center justify-center rounded-full bg-primary text-foreground",
+        "flex size-8 items-center justify-center rounded-full bg-primary text-foreground uppercase",
         className
       )}
     >

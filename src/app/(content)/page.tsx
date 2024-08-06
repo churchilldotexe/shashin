@@ -1,9 +1,12 @@
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
 import { getMyAlbums } from "@/server/use-cases/albums-use-cases";
+import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { getPublicPosts } from "@/server/use-cases/post-use-case";
 import Link from "next/link";
+import { Suspense } from "react";
 import { PostImage } from "./_lib/_components/PostImage";
+import Loading from "./loading";
 
 export default async function HomePage() {
   const allPost = await getPublicPosts();
@@ -16,14 +19,17 @@ export default async function HomePage() {
       />
 
       <div className="flex size-full grow flex-col gap-4">
-        {allPost?.map((post, index) => {
+        {allPost?.map(async (post, index) => {
           const { type, ...restPost } = post;
           const unoptimize = (type === "image/webp" || type === "image/gif") && false;
-          const postContent = { ...restPost, unoptimize, index };
+          const isBookmarked = await checkBookmarkBypostId(post.id);
+          const postContent = { ...restPost, unoptimize, index, isBookmarked };
 
           return (
             <Link href={`/img/${post.id}`} key={post.id} scroll={false}>
-              <PostContent postContent={postContent} />
+              <Suspense fallback={<Loading />}>
+                <PostContent postContent={postContent} />
+              </Suspense>
             </Link>
           );
         })}

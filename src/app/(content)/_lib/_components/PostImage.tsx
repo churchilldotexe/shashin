@@ -5,7 +5,7 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn, createTooltipClasses } from "@/lib/utils";
-import { Check, Globe, GlobeLock, ImagePlus, ImagePlusIcon, Images, X } from "lucide-react";
+import { Check, Globe, GlobeLock, ImagePlus, X } from "lucide-react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -27,16 +27,6 @@ const { Form, Input, Textarea, ErrorMessage } = GenerateFormComponents({
 });
 
 const CHARACTERLIMIT = 250;
-
-const RouterPushWithAlbumParams = ({
-  router,
-  urlValue,
-}: {
-  router: AppRouterInstance;
-  urlValue: string | undefined;
-}) => {
-  return router.push(`/?a=${urlValue}`, { scroll: false });
-};
 
 function TextAreaIndicator({
   textAreaCharactersLeft,
@@ -172,10 +162,7 @@ export function PostImage({
 
       formRef.current?.reset();
 
-      RouterPushWithAlbumParams({
-        router,
-        urlValue: "",
-      });
+      router.push("/", { scroll: false });
     }
   }, [state.message, router]);
 
@@ -220,24 +207,13 @@ export function PostImage({
     }
   };
 
-  const handleAddAlbum = () => {
-    RouterPushWithAlbumParams({
-      router,
-      urlValue: albumInputRef.current?.value,
-    });
-    setIsSelectOpen((prev) => !prev);
-  };
-
   const handleBackToSelect = () => {
     if (albumInputRef.current === null) {
       return;
     }
     albumInputRef.current.value = "";
 
-    RouterPushWithAlbumParams({
-      router,
-      urlValue: "",
-    });
+    router.push("/", { scroll: false });
 
     setIsSelectOpen((prev) => !prev);
   };
@@ -306,6 +282,7 @@ export function PostImage({
                 <div className={cn(createTooltipClasses("hover:after:content-['Upload_Image']"))}>
                   <ImagePlus />
                 </div>
+
                 <span className="sr-only">Select Image</span>
                 <Input
                   id="imageFile"
@@ -354,11 +331,15 @@ export function PostImage({
                 <select
                   onChange={(e) => {
                     if (e.target.value === "add_Album") {
-                      handleAddAlbum();
+                      router.push(`/?a=${albumInputRef.current?.value}`, {
+                        scroll: false,
+                      });
+                      setIsSelectOpen((prev) => !prev);
                     }
                   }}
                   name="albumName"
                   className=" bg-background"
+                  defaultValue={albumParams ?? ""}
                   required
                 >
                   <option value="">Select an Album</option>
@@ -369,13 +350,9 @@ export function PostImage({
                     </option>
                   ))}
 
-                  {!albumParams ? null : (
-                    <option value={albumParams} selected>
-                      {albumParams}
-                    </option>
-                  )}
+                  {!albumParams ? null : <option value={albumParams}>{albumParams}</option>}
 
-                  <option value="add_Album" className="text-green-500">
+                  <option value="add_Album" className=" font-bold text-green-500">
                     Add Album
                   </option>
                 </select>
@@ -393,7 +370,12 @@ export function PostImage({
                   <ConfirmationButton
                     handleBackToSelect={handleBackToSelect}
                     albums={albums}
-                    handleAddAlbum={handleAddAlbum}
+                    handleAddAlbum={() => {
+                      router.push(`/?a=${albumInputRef.current?.value}`, {
+                        scroll: false,
+                      });
+                      setIsSelectOpen((prev) => !prev);
+                    }}
                   />
                 </div>
               )}
