@@ -39,3 +39,81 @@ export function createTooltipClasses(
     "hover:before:content-['_']",
   ];
 }
+
+const getIntlDateFormat = (date: Date, options: Intl.DateTimeFormatOptions) => {
+  return new Intl.DateTimeFormat("en-GB", options).format(date);
+};
+
+export function dateTimeFormat(date: Date) {
+  const formattedDate = new Date(date);
+  const dateNow = new Date(Date.now());
+
+  // List all possible Options for date format
+  const { day, hour12, weekday, hour, minute, year, month } = {
+    day: "numeric",
+    minute: "numeric",
+    hour12: true,
+    hour: "numeric",
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+  } as const;
+
+  console.log(
+    "date format localed",
+    // getIntlDateFormat(formattedDate, {
+    //   year,
+    //   month: "numeric",
+    //   day,
+    //   hour,
+    //   minute,
+    // })
+    formattedDate,
+    formattedDate.getHours()
+  );
+
+  const isJustNow =
+    getIntlDateFormat(formattedDate, {
+      dateStyle: "short",
+      timeStyle: "short",
+    }) ===
+    getIntlDateFormat(dateNow, {
+      dateStyle: "short",
+      timeStyle: "short",
+    });
+  if (isJustNow) {
+    return "Just Now";
+  }
+
+  const isSameDay =
+    getIntlDateFormat(formattedDate, {
+      dateStyle: "long",
+    }) ===
+    getIntlDateFormat(dateNow, {
+      dateStyle: "long",
+    });
+
+  //  check with string literal result:
+  //  if formattedDate [day] === dateNow[day] => today + do...
+  const isWithin24Hours = dateNow.getTime() - formattedDate.getTime() <= 24 * 60 * 60 * 1000;
+
+  if (isSameDay) {
+    if (isWithin24Hours) {
+      const minutesAgo = Math.floor((dateNow.getTime() - formattedDate.getTime()) / (1000 * 60));
+      if (minutesAgo < 60) {
+        return `today, ${minutesAgo} minute${minutesAgo !== 1 ? "s" : ""} ago`;
+      }
+      const hoursAgo = Math.floor(minutesAgo / 60);
+      return `today, ${hoursAgo} hour${hoursAgo !== 1 ? "s" : ""} ago`;
+    }
+    return `today at ${getIntlDateFormat(formattedDate, { hour12, hour, minute })}`;
+  }
+  //  if dateNow[day] - formattedDate [day] === 1 => yesterday at [hour12][hour:"numeric"]
+  const yesterdayDate = new Date(dateNow);
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  if (formattedDate.getTime() === yesterdayDate.getTime()) {
+    return `yesterday at ${getIntlDateFormat(formattedDate, { hour12, hour, minute })}`;
+  }
+  //  else [weekday:"long"][year:"numeric"][month:"long"][day:"numeric"]
+  return `${getIntlDateFormat(formattedDate, { weekday, year, month, day })}`;
+}

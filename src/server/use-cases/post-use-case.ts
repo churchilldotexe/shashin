@@ -7,7 +7,6 @@ import {
   selectPublicPosts,
 } from "../data-access/postsQueries";
 import { hasAccess } from "./auth/authentication";
-import { getAuthenticatedId } from "./auth/tokenManagement";
 
 export async function createPost(description: string | undefined, shareToPublic: boolean) {
   const user = await hasAccess({

@@ -63,10 +63,10 @@
 }
 
 
+.capital-first-letter::first-letter {
+   text-transform: uppercase;
+}
 
-/* * { */
-/*    outline: solid 1px red; */
-/* } */
 
 /*darkmode and lightmode theme component*/
 .custom-overlay[open]>summary::before {

@@ -55,7 +55,9 @@ const getPostSchema = z.array(
       .string()
       .transform((val) => JSON.parse(val) as string)
       .pipe(z.array(z.string().url())),
-    createdAt: z.string().pipe(z.coerce.date()),
+    createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
   })
 );
 
@@ -69,7 +71,7 @@ export async function getPost() {
             p.description as description,
             p.id as id, 
             json_group_array(i.url) as url,
-            p.created_at as createdAt
+            datetime(p.created_at,'unixepoch') AS createdAt
           FROM
             images i, posts p 
           WHERE 
@@ -100,7 +102,9 @@ const getPublicPostsSchema = z.object({
     .string()
     .transform((val) => JSON.parse(val) as string)
     .pipe(z.array(z.string().url())),
-  createdAt: z.string().pipe(z.coerce.date()),
+  createdAt: z.string().transform((val) => {
+    return new Date(`${val}Z`);
+  }),
 });
 
 const getAllPublicPostsSchema = z.array(getPublicPostsSchema);
@@ -109,12 +113,12 @@ export async function getAllPublicPosts() {
   const post = await turso.execute({
     sql: `
         SELECT 
-            u.display_name as name,
-            u.avatar as avatarUrl,
+            u.display_name AS name,
+            u.avatar AS avatarUrl,
             p.id AS id,
             p.description AS description,
             json_group_array(i.url) AS url,
-            i.created_at AS createdAt,
+            datetime(p.created_at,'unixepoch') AS createdAt,
             i.type AS type
         FROM 
             all_posts ap
