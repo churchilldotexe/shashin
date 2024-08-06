@@ -9,8 +9,12 @@ const allPosts = sqliteTable("all_posts", {
   postId: text("post_id")
     .notNull()
     .references(() => posts.id),
-  createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text("updated_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
 });
 
 export const createAllPostsSchema = createInsertSchema(allPosts);

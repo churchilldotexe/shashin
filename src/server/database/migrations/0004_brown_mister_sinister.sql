@@ -1,1 +1,0 @@
-ALTER TABLE `albums` ADD `name` text(255) NOT NULL;

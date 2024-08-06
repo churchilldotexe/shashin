@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { sql } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 
@@ -18,8 +18,12 @@ const users = sqliteTable("users", {
   salt: text("salt").notNull(),
   refreshToken: text("refresh_token"),
   tokenFingerprint: text("token_fingerprint"),
-  createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text("updated_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
 });
 
 export const createUserSchema = createInsertSchema(users);

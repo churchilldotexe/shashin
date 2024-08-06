@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1721206365168,
-      "tag": "0000_narrow_korg",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1721387489992,
-      "tag": "0001_flaky_firestar",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1722460669972,
-      "tag": "0002_strong_phantom_reporter",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1722465019815,
-      "tag": "0003_funny_moondragon",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1722710295679,
-      "tag": "0004_brown_mister_sinister",
+      "when": 1722929338413,
+      "tag": "0000_tearful_titania",
       "breakpoints": true
     }
   ]

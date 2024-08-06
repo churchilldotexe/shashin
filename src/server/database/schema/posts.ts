@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { relations, sql } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import images from "./images";
@@ -15,8 +15,12 @@ export const posts = sqliteTable("posts", {
   userId: text("user_id")
     .references(() => users.id)
     .notNull(),
-  createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text("updated_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
 });
 
 export const insertPostSchema = createInsertSchema(posts);
@@ -24,11 +28,5 @@ export type InsertPostSchemaTypes = z.infer<typeof insertPostSchema>;
 
 export const selectPostSchema = createSelectSchema(posts);
 export type SelectPostSchema = z.infer<typeof selectPostSchema>;
-
-// NOTE: relations: 1 post can have many images (one to many)
-
-export const postsRelations = relations(posts, ({ many }) => ({
-  images: many(images),
-}));
 
 export default posts;

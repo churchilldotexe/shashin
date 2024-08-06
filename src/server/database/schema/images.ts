@@ -1,7 +1,7 @@
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { relations, sql } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { z } from "zod";
 import posts from "./posts";
@@ -23,8 +23,12 @@ const images = sqliteTable("images", {
   postId: text("post_id")
     .notNull()
     .references(() => posts.id),
-  createdAt: text("created_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
-  updatedAt: text("updated_at").notNull().default(sql`(CURRENT_TIMESTAMP)`),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`STRFTIME('%s','NOW')`),
 });
 
 export const insertImageSchema = createInsertSchema(images);
@@ -32,12 +36,5 @@ export type InsertImageType = z.infer<typeof insertImageSchema>;
 
 export const selectImageSchema = createSelectSchema(images);
 export type SelectImageType = z.infer<typeof selectImageSchema>;
-
-export const imagesRelations = relations(images, ({ one }) => ({
-  post: one(posts, {
-    fields: [images.postId],
-    references: [posts.id],
-  }),
-}));
 
 export default images;
