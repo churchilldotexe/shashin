@@ -63,7 +63,7 @@ export function UserContent({
   return (
     <details ref={detailsRef} className="group relative size-full ">
       <summary className="cursor-pointer list-none">
-        <AvatarWithFallBack avatar={avatar} displayName={displayName} />
+        <AvatarWithFallBack className="" avatar={avatar} displayName={displayName} />
       </summary>
 
       <div

@@ -21,10 +21,10 @@ export async function insertNewPost(postsValue: InsertPostSchemaTypes) {
 
   await turso.execute({
     sql: `
-      INSERT INTO 
+      INSERT INTO
         posts
           (id, description, user_id)
-      VALUES 
+      VALUES
           (:id, :description, :userId)
       `,
     args: { id: id as string, description: description as string, userId },
@@ -36,11 +36,11 @@ export async function insertNewPost(postsValue: InsertPostSchemaTypes) {
 export async function createPublicPost(postId: string) {
   const allPostId = await turso.execute({
     sql: `
-      INSERT INTO 
+      INSERT INTO
         all_posts
           (post_id)
-      VALUES 
-          (:postId) 
+      VALUES
+          (:postId)
 `,
     args: { postId },
   });
@@ -61,27 +61,26 @@ const getPostSchema = z.array(
   })
 );
 
-// NOTE: this is for Profile page(my post)
-export async function getPost() {
-  // FIX: must be in post-use-cases
-  // isAuthenticated();
-
+export async function getMyPostFromDb(userId: string) {
   const post = await turso.execute({
-    sql: `SELECT 
+    sql: `
+         SELECT
             p.description as description,
-            p.id as id, 
+            p.id as id,
             json_group_array(i.url) as url,
             datetime(p.created_at,'unixepoch') AS createdAt
-          FROM
-            images i, posts p 
-          WHERE 
-            i.post_id = p.id 
-          GROUP BY 
-            p.id
-          ORDER BY
-            p.created_at DESC
-          `,
-    args: [],
+         FROM
+            posts p
+         LEFT JOIN
+            images i ON p.id = i.post_id
+         WHERE
+            p.user_id = :userId
+         GROUP BY
+         p.id
+         ORDER BY
+         p.created_at DESC
+`,
+    args: { userId },
   });
 
   const dbResult = post.rows;
@@ -112,7 +111,7 @@ const getAllPublicPostsSchema = z.array(getPublicPostsSchema);
 export async function getAllPublicPosts() {
   const post = await turso.execute({
     sql: `
-        SELECT 
+        SELECT
             u.display_name AS name,
             u.avatar AS avatarUrl,
             p.id AS id,
@@ -120,18 +119,19 @@ export async function getAllPublicPosts() {
             json_group_array(i.url) AS url,
             datetime(p.created_at,'unixepoch') AS createdAt,
             i.type AS type
-        FROM 
+        FROM
             all_posts ap
-        JOIN 
+        JOIN
             posts p ON ap.post_id = p.id
-        LEFT JOIN 
-            images i ON p.id = i.post_id,
+        LEFT JOIN
+            images i ON p.id = i.post_id
+        JOIN
             users u ON p.user_id = u.id
-          WHERE 
-            i.post_id = p.id 
+          WHERE
+            i.post_id = p.id
         GROUP BY
             p.id
-        ORDER BY 
+        ORDER BY
             p.created_at DESC;
         `,
     args: [],
@@ -148,23 +148,23 @@ export async function getAllPublicPosts() {
 export async function selectPublicPosts(postId: string) {
   const post = await turso.execute({
     sql: `
-        SELECT 
+        SELECT
             u.display_name as name,
             p.id AS id,
             p.description AS description,
             json_group_array(i.url) AS url,
-            i.created_at AS createdAt,
+            datetime(p.created_at,'unixepoch') AS createdAt,
             i.type AS type
-        FROM 
+        FROM
             all_posts ap
-        JOIN 
+        JOIN
             posts p ON ap.post_id = p.id
-        LEFT JOIN 
+        LEFT JOIN
             images i ON p.id = i.post_id,
             users u ON p.user_id = u.id
-          WHERE 
+          WHERE
              ap.post_id =  :postId
-        
+
         `,
     args: { postId },
   });

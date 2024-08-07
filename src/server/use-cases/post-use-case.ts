@@ -3,6 +3,7 @@ import "server-only";
 import {
   createPublicPost,
   getAllPublicPosts,
+  getMyPostFromDb,
   insertNewPost,
   selectPublicPosts,
 } from "../data-access/postsQueries";
@@ -40,4 +41,12 @@ export async function getSpecificPublicPost(userId: string) {
 
   const publicPost = await selectPublicPosts(userId);
   return publicPost;
+}
+
+export async function getMyPost() {
+  const user = await hasAccess({ errorMsg: "Please Login to see your post" });
+
+  try {
+    const mypost = await getMyPostFromDb(user.userId);
+  } catch (error) {}
 }

@@ -149,7 +149,7 @@ export function PostImage({
   const textAreaCharactersLeft = CHARACTERLIMIT - textAreaInput.length;
 
   useEffect(() => {
-    if (state.message === "success") {
+    if (state?.message === "success") {
       setObjectUrls((urls) => {
         urls.forEach(URL.revokeObjectURL);
         return [];
@@ -164,7 +164,7 @@ export function PostImage({
 
       router.push("/", { scroll: false });
     }
-  }, [state.message, router]);
+  }, [state?.message, router]);
 
   const handleImageChange = (fileList: FileList | null) => {
     if (fileList === null || textAreaRef.current === null) {

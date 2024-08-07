@@ -3,6 +3,7 @@ import "server-only";
 import {
   deleteBookmarkFromDb,
   getBookmarkByPostId,
+  getBookmarksPostFromDb,
   insertNewBookmark,
 } from "../data-access/bookmarksQueries";
 import { hasAccess } from "./auth/authentication";
@@ -46,7 +47,7 @@ export async function getAllMyBookmarks() {
   });
 
   try {
-    const bookmarkedPost = await getBookmarkByPostId(user.userId);
+    const bookmarkedPost = await getBookmarksPostFromDb(user.userId);
     return bookmarkedPost;
   } catch (error) {
     // to ensure it wont throw error when user have no bookmarks

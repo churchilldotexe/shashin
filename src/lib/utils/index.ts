@@ -59,19 +59,6 @@ export function dateTimeFormat(date: Date) {
     month: "long",
   } as const;
 
-  console.log(
-    "date format localed",
-    // getIntlDateFormat(formattedDate, {
-    //   year,
-    //   month: "numeric",
-    //   day,
-    //   hour,
-    //   minute,
-    // })
-    formattedDate,
-    formattedDate.getHours()
-  );
-
   const isJustNow =
     getIntlDateFormat(formattedDate, {
       dateStyle: "short",
@@ -93,8 +80,6 @@ export function dateTimeFormat(date: Date) {
       dateStyle: "long",
     });
 
-  //  check with string literal result:
-  //  if formattedDate [day] === dateNow[day] => today + do...
   const isWithin24Hours = dateNow.getTime() - formattedDate.getTime() <= 24 * 60 * 60 * 1000;
 
   if (isSameDay) {
@@ -108,12 +93,10 @@ export function dateTimeFormat(date: Date) {
     }
     return `today at ${getIntlDateFormat(formattedDate, { hour12, hour, minute })}`;
   }
-  //  if dateNow[day] - formattedDate [day] === 1 => yesterday at [hour12][hour:"numeric"]
   const yesterdayDate = new Date(dateNow);
   yesterdayDate.setDate(yesterdayDate.getDate() - 1);
   if (formattedDate.getTime() === yesterdayDate.getTime()) {
     return `yesterday at ${getIntlDateFormat(formattedDate, { hour12, hour, minute })}`;
   }
-  //  else [weekday:"long"][year:"numeric"][month:"long"][day:"numeric"]
   return `${getIntlDateFormat(formattedDate, { weekday, year, month, day })}`;
 }
