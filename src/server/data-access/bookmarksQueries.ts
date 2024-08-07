@@ -79,8 +79,13 @@ const getBookmarksPostSchema = z.array(
     name: getUserSchema.shape.displayName,
     id: selectPostSchema.shape.id,
     description: selectPostSchema.shape.description,
-    url: z.array(selectImageSchema.shape.url),
-    createdAt: selectPostSchema.shape.createdAt,
+    url: z
+      .string()
+      .transform((val) => JSON.parse(val) as string)
+      .pipe(z.array(z.string().url())),
+    createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
     type: selectImageSchema.shape.type,
   })
 );
@@ -112,6 +117,7 @@ export async function getBookmarksPostFromDb(userId: string) {
          `,
     args: { userId },
   });
+  console.log(rawBookmarkData.rows[0], "rawdata");
 
   const parsedBookmarkData = getBookmarksPostSchema.safeParse(rawBookmarkData.rows);
 

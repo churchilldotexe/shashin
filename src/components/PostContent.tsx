@@ -12,7 +12,7 @@ type ContentType = {
   index?: number;
   name: string;
   createdAt: Date;
-  description: string;
+  description: string | null;
   avatarUrl?: string | null;
   url: string[];
   unoptimize?: boolean;
@@ -22,9 +22,6 @@ type ContentType = {
 type PostContentType = {
   postContent: ContentType;
 } & HTMLAttributes<HTMLDialogElement>;
-
-// FIX: add ability to bookmarks with optimistic update
-// [] - make a better date (like today if the same day otherwise put a day e.g. sunday 8/25)
 
 function AddOrDeleteBookmark({
   children,
@@ -67,13 +64,31 @@ export default function PostContent({ postContent, className, ...props }: PostCo
 
         <div className="z-50 flex gap-4">
           {isBookmarked ? (
-            <AddOrDeleteBookmark fn={removeBookmark(id)}>
-              <BookmarkCheck />
-            </AddOrDeleteBookmark>
+            <form
+              className="hocus-visible::scale-110 active:scale-95"
+              action={async () => {
+                "use server";
+                await removeBookmark(id);
+                revalidatePath("/");
+              }}
+            >
+              <BookmarkButton>
+                <BookmarkCheck />
+              </BookmarkButton>
+            </form>
           ) : (
-            <AddOrDeleteBookmark fn={createNewBookmark(id)}>
-              <Bookmark />
-            </AddOrDeleteBookmark>
+            <form
+              className="hocus-visible:scale-110 active:scale-95"
+              action={async () => {
+                "use server";
+                await createNewBookmark(id);
+                revalidatePath("/");
+              }}
+            >
+              <BookmarkButton>
+                <Bookmark />
+              </BookmarkButton>
+            </form>
           )}
 
           <time dateTime={new Date(createdAt).toISOString()}>{dateTimeFormat(createdAt)}</time>
