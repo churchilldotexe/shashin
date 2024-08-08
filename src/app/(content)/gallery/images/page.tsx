@@ -4,7 +4,7 @@ import Image from "next/image";
 export default async function ImagesPage() {
   const myImages = await getMyImages();
   return (
-    <section>
+    <section className="flex flex-wrap">
       {myImages?.map((image) => (
         <div key={image.url + 1} className="relative aspect-video size-full ">
           <Image
@@ -19,5 +19,6 @@ export default async function ImagesPage() {
   );
 }
 
-// NOTE: show all the images regardless of the albums BUT must only show per User ==> integrate to user,
+// FIX: show all the images regardless of the albums BUT must only show per User ==> integrate to user,
 // FEAT: be able to have a view options (large, extra large, details/list)
+// add feature to delete post, image,album

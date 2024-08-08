@@ -37,6 +37,3 @@ export default async function HomePage() {
     </PageSection>
   );
 }
-
-// NOTE: have an optional render where Userid === userId (if it is the user) when viewing the post it will also render the album it assoc to
-// When the Image/post is clicked the PostsId must be the one that will register in the Link as params not the allPostsId

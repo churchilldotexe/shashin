@@ -16,36 +16,30 @@ type ContentType = {
   avatarUrl?: string | null;
   url: string[];
   unoptimize?: boolean;
-  isBookmarked: boolean;
+  isBookmarked?: boolean;
+  isFavorited?: boolean;
 };
 
 type PostContentType = {
   postContent: ContentType;
 } & HTMLAttributes<HTMLDialogElement>;
 
-function AddOrDeleteBookmark({
-  children,
-  fn,
-}: {
-  children: ReactNode;
-  fn: Promise<void>;
-}) {
-  return (
-    <form
-      action={async () => {
-        "use server";
-        await fn;
-        revalidatePath("/");
-      }}
-    >
-      <BookmarkButton>{children}</BookmarkButton>
-    </form>
-  );
-}
-
 export default function PostContent({ postContent, className, ...props }: PostContentType) {
-  const { id, url, unoptimize, index, description, createdAt, name, avatarUrl, isBookmarked } =
-    postContent;
+  const {
+    id,
+    url,
+    unoptimize,
+    index,
+    description,
+    createdAt,
+    name,
+    avatarUrl,
+    isBookmarked,
+    isFavorited,
+  } = postContent;
+  console.log(isBookmarked, "isBookmarked");
+  console.log(isFavorited, "isFavorited");
+
   return (
     <article
       className={cn(
@@ -63,6 +57,7 @@ export default function PostContent({ postContent, className, ...props }: PostCo
         </div>
 
         <div className="z-50 flex gap-4">
+          {/* FIX:  find a way to change this to FAVORITES when used in mypost.. if end up using client do a compound component*/}
           {isBookmarked ? (
             <form
               className="hocus-visible::scale-110 active:scale-95"

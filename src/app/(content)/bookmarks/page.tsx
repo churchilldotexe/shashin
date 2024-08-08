@@ -8,11 +8,12 @@ import Loading from "../loading";
 export default async function BookmarksPage() {
   const myBookmarks = await getAllMyBookmarks();
   return (
-    <PageSection className="space-y-8">
-      {!myBookmarks ? (
+    <PageSection className=" space-y-8 p-8">
+      {myBookmarks.length === 0 ? (
+        // TODO: handle this
         <div>no bookmarks</div>
       ) : (
-        <div className="m-auto flex size-[85%] grow flex-col gap-4">
+        <div className="m-auto flex size-full grow flex-col gap-4">
           {myBookmarks?.map(async (post, index) => {
             const { type, ...restPost } = post;
             const unoptimize = (type === "image/webp" || type === "image/gif") && false;
@@ -37,7 +38,3 @@ export default async function BookmarksPage() {
     </PageSection>
   );
 }
-
-// NOTE: bookmarks will take the posts id and list all posts that are bookmarked
-// probably new table for bookmarks
-// relation: BOOKMARK can have many post but POST can only be bookmarked once
