@@ -5,7 +5,7 @@ import type { z } from "zod";
 import posts from "./posts";
 import users from "./users";
 
-const bookmarks = sqliteTable("bookmarks", {
+const favorites = sqliteTable("favorites", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   postId: text("post_id")
     .notNull()
@@ -21,10 +21,10 @@ const bookmarks = sqliteTable("bookmarks", {
     .default(sql`STRFTIME('%s','NOW')`),
 });
 
-export const insertBookmarksSchema = createInsertSchema(bookmarks);
-export type InserBookmarkTypes = z.infer<typeof insertBookmarksSchema>;
+export const insertFavoritesSchema = createInsertSchema(favorites);
+export type InserFavoriteTypes = z.infer<typeof insertFavoritesSchema>;
 
-export const selectBookmarkSchema = createSelectSchema(bookmarks);
-export type SelectBookmarksTypes = z.infer<typeof selectBookmarkSchema>;
+export const selectFavoriteSchema = createSelectSchema(favorites);
+export type SelectFavoriteTypes = z.infer<typeof selectFavoriteSchema>;
 
-export default bookmarks;
+export default favorites;
