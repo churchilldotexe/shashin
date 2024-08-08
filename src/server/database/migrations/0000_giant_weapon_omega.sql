@@ -1,12 +1,11 @@
-
 CREATE TABLE `albums` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text(255) NOT NULL,
 	`user_id` text NOT NULL,
 	`image_id` text NOT NULL,
 	`post_id` text NOT NULL,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`image_id`) REFERENCES `images`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON UPDATE no action ON DELETE no action
@@ -15,8 +14,8 @@ CREATE TABLE `albums` (
 CREATE TABLE `all_posts` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`post_id` text NOT NULL,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
 	FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -24,8 +23,8 @@ CREATE TABLE `bookmarks` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`post_id` text NOT NULL,
 	`user_id` text NOT NULL,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
 	FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
@@ -36,10 +35,11 @@ CREATE TABLE `images` (
 	`name` text(255) NOT NULL,
 	`type` text NOT NULL,
 	`file_key` text NOT NULL,
+	`is_favorited` integer DEFAULT false,
 	`user_id` text NOT NULL,
 	`post_id` text NOT NULL,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`post_id`) REFERENCES `posts`(`id`) ON UPDATE no action ON DELETE no action
 );
@@ -48,8 +48,8 @@ CREATE TABLE `posts` (
 	`id` text PRIMARY KEY NOT NULL,
 	`description` text(255),
 	`user_id` text NOT NULL,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -64,8 +64,8 @@ CREATE TABLE `users` (
 	`salt` text NOT NULL,
 	`refresh_token` text,
 	`token_fingerprint` text,
-	`created_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL,
-	`updated_at` integer DEFAULT ( STRFTIME('%s','NOW') ) NOT NULL
+	`created_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL,
+	`updated_at` integer DEFAULT STRFTIME('%s','NOW') NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `users_user_name_unique` ON `users` (`user_name`);--> statement-breakpoint

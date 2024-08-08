@@ -1,15 +1,15 @@
 "use client";
 
-import { cn, createTooltipClasses } from "@/lib/utils";
-import type { ReactNode } from "react";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-export function BookmarkButton({ children }: { children: ReactNode }) {
+export function BookmarkOrFavoritedButton({
+  children,
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  children: ReactNode;
+}) {
   return (
-    <button
-      className={cn(createTooltipClasses("hover:after:content-['Bookmark']"))}
-      type="submit"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <button type="submit" onClick={(e) => e.stopPropagation()} {...props}>
       {children}
     </button>
   );

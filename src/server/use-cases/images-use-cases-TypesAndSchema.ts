@@ -8,8 +8,6 @@ export const createImageSchema = z.object({
   fileKey: z.string().min(1),
   postId: z.string().min(1),
   id: z.string().optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
 });
 
 export type CreateImageType = z.infer<typeof createImageSchema>;

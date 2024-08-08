@@ -2,7 +2,11 @@ import "server-only";
 // biome-ignore lint/style/useNodejsImportProtocol: <file: and Data: is being used>
 import { randomUUID } from "crypto";
 import { ZodError, z } from "zod";
-import { type InsertImageType, insertImageSchema } from "../database/schema/images";
+import {
+  type InsertImageType,
+  insertImageSchema,
+  selectImageSchema,
+} from "../database/schema/images";
 import { turso } from "../database/turso";
 
 const createImageSchemaArr = z.array(insertImageSchema);
@@ -32,30 +36,131 @@ export async function insertImage(imageData: InsertImageType[]) {
   );
 }
 
+const insertAndDeleteFavoriteSchema = insertImageSchema.pick({
+  id: true,
+});
+
+export async function insertNewFavorite(rawData: { id: string }) {
+  const parsedData = insertAndDeleteFavoriteSchema.safeParse(rawData);
+
+  if (parsedData.success === false) {
+    throw new ZodError(parsedData.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         UPDATE images
+         SET is_favorited = true
+         WHERE id = :imageId
+         `,
+    args: {
+      imageId: parsedData.data.id as string,
+    },
+  });
+}
+
+export async function deleteFavoriteFromDb(rawData: { id: string }) {
+  const parsedData = insertAndDeleteFavoriteSchema.safeParse(rawData);
+
+  if (parsedData.success === false) {
+    throw new ZodError(parsedData.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         UPDATE images
+         SET is_favorited = false
+         WHERE id = :imageId
+         `,
+    args: { imageId: parsedData.data.id as string },
+  });
+}
+
+const getFavoritedImageSchema = selectImageSchema
+  .pick({ url: true })
+  .transform((val) => JSON.parse(val.url))
+  .pipe(z.object({ url: z.array(z.string().url()) }));
+
+export async function getFavoritedImagesByUserId(userId: string) {
+  const rawImageUrl = await turso.execute({
+    sql: `
+         SELECT json_group_array(url) as url
+         FROM images
+         WHERE user_id = :userId 
+            AND is_favorited = true
+         `,
+
+    args: { userId },
+  });
+
+  const parsedImageUrl = getFavoritedImageSchema.safeParse(rawImageUrl.rows);
+  if (parsedImageUrl.success === false) {
+    throw new ZodError(parsedImageUrl.error.errors);
+  }
+  return parsedImageUrl.data;
+}
+
 const getMyImagesSchema = z.array(
   z.object({
-    url: z.string().url().min(1),
+    id: selectImageSchema.shape.id,
+    url: selectImageSchema.shape.url,
+    name: selectImageSchema.shape.name,
+    fileKey: selectImageSchema.shape.fileKey,
+    isFavorited: z.number().transform((val) => Boolean(val)),
   })
 );
 
-// NOTE: Must integrate with the USER ID
-export async function getMyImages() {
-  // hasAccess({ errorMsg: "user must be logged in to query the images" });
-
-  const myImages = await turso.execute({
+export async function getAllMyFavoritesFromDb(userId: string) {
+  const rawFavoritedImages = await turso.execute({
     sql: `
-      SELECT images.url as url FROM images
+      SELECT 
+         images.url as url,
+         images.id as id,
+         images.name as name,
+         images.file_key as fileKey,
+         images.is_favorited as isFavorited
+      FROM images
+      WHERE user_id = :userId
+         AND images.is_favorited = true
+         ORDER BY
+            images.created_at DESC
       `,
-    args: {},
+    args: { userId },
   });
 
-  const parsedImages = getMyImagesSchema.safeParse(myImages.rows);
+  const parsedFavoritedImages = getMyImagesSchema.safeParse(rawFavoritedImages.rows);
 
-  if (parsedImages.success === false) {
-    return null;
+  if (parsedFavoritedImages.success === false) {
+    throw new ZodError(parsedFavoritedImages.error.errors);
   }
 
-  return parsedImages.data;
+  return parsedFavoritedImages.data;
+}
+
+export async function getMyImagesFromDb(userId: string) {
+  const rawMyImages = await turso.execute({
+    sql: `
+      SELECT 
+         images.url as url,
+         images.id as id,
+         images.name as name,
+         images.file_key as fileKey,
+         images.is_favorited as isFavorited
+      FROM images
+      WHERE user_id = :userId
+         ORDER BY
+            images.created_at DESC
+      `,
+    args: { userId },
+  });
+
+  const parsedMyImages = getMyImagesSchema.safeParse(rawMyImages.rows);
+
+  if (parsedMyImages.success === false) {
+    throw new ZodError(parsedMyImages.error.errors);
+  }
+
+  return parsedMyImages.data;
 }
 
 const getImageInfoByPostIdSchema = insertImageSchema.pick({ id: true }).extend({
@@ -75,9 +180,7 @@ export async function getImageInfoByPostId(postId: string) {
     args: { postId },
   });
 
-  console.log(rawImageInfo.rows, "imgid");
   const parsedImageInfo = getImageInfoByPostIdSchema.safeParse(rawImageInfo.rows[0]);
-  console.log(parsedImageInfo.data, "parsed imgid");
 
   if (parsedImageInfo.success === false) {
     console.error(parsedImageInfo.error.errors);

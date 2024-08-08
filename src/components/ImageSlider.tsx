@@ -81,7 +81,7 @@ export const ImageSlider = forwardRef<
             <button
               type="button"
               key={urlInfo}
-              className=" text-secondary data-[index=true]:text-primary"
+              className=" text-foreground data-[index=true]:text-primary"
               data-index={Boolean(imageIndex === index)}
               onClick={(e) => {
                 e.preventDefault();

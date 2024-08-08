@@ -17,6 +17,7 @@ const images = sqliteTable("images", {
     enum: ["image/jpeg", "image/jpg", "image/bmp", "image/png", "image/gif", "image/webp"],
   }).notNull(),
   fileKey: text("file_key").notNull(),
+  isFavorited: integer("is_favorited", { mode: "boolean" }).default(false),
   userId: text("user_id")
     .notNull()
     .references(() => users.id),

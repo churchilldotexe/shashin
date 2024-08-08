@@ -1,5 +1,6 @@
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
+import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
 import { getMyPost } from "@/server/use-cases/post-use-case";
 import Link from "next/link";
@@ -18,12 +19,12 @@ export default async function HomePage() {
           {myPost?.map(async (post, index) => {
             const { type, ...restPost } = post;
             const unoptimize = (type === "image/webp" || type === "image/gif") && false;
-            const isFavorited = await checkFavoriteBypostId(post.id);
+            const isBookmarked = await checkBookmarkBypostId(post.id);
             const postContent = {
               ...restPost,
               unoptimize,
               index,
-              isFavorited,
+              isBookmarked,
             };
 
             return (

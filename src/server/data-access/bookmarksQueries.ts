@@ -75,6 +75,7 @@ export async function getBookmarkByPostId(userId: string) {
 
 const getBookmarksPostSchema = z.array(
   z.object({
+    avatarUrl: getUserSchema.shape.avatar,
     name: getUserSchema.shape.displayName,
     id: selectPostSchema.shape.id,
     description: selectPostSchema.shape.description,
@@ -93,6 +94,7 @@ export async function getBookmarksPostFromDb(userId: string) {
   const rawBookmarkData = await turso.execute({
     sql: `
          SELECT 
+            u.avatar as avatarUrl,
             u.display_name as name,
             p.id as id,
             p.description AS description,

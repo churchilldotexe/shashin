@@ -1,11 +1,11 @@
 import { cn, dateTimeFormat } from "@/lib/utils";
 import { createNewBookmark, removeBookmark } from "@/server/use-cases/bookmarks-use-case";
-import { Bookmark, BookmarkCheck } from "lucide-react";
+import { Bookmark, BookmarkCheck, Star } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import { type CSSProperties, type HTMLAttributes, type ReactNode, Suspense } from "react";
 import { AvatarWithFallBack } from "./AvatarWithFallBack";
 import { ImageSlider } from "./ImageSlider";
-import { BookmarkButton } from "./ui/BookmarkButton";
+import { BookmarkOrFavoritedButton } from "./ui/BookmarkButton";
 
 type ContentType = {
   id: string;
@@ -16,8 +16,7 @@ type ContentType = {
   avatarUrl?: string | null;
   url: string[];
   unoptimize?: boolean;
-  isBookmarked?: boolean;
-  isFavorited?: boolean;
+  isBookmarked: boolean;
 };
 
 type PostContentType = {
@@ -25,20 +24,8 @@ type PostContentType = {
 } & HTMLAttributes<HTMLDialogElement>;
 
 export default function PostContent({ postContent, className, ...props }: PostContentType) {
-  const {
-    id,
-    url,
-    unoptimize,
-    index,
-    description,
-    createdAt,
-    name,
-    avatarUrl,
-    isBookmarked,
-    isFavorited,
-  } = postContent;
-  console.log(isBookmarked, "isBookmarked");
-  console.log(isFavorited, "isFavorited");
+  const { id, url, unoptimize, index, description, createdAt, name, avatarUrl, isBookmarked } =
+    postContent;
 
   return (
     <article
@@ -57,7 +44,6 @@ export default function PostContent({ postContent, className, ...props }: PostCo
         </div>
 
         <div className="z-50 flex gap-4">
-          {/* FIX:  find a way to change this to FAVORITES when used in mypost.. if end up using client do a compound component*/}
           {isBookmarked ? (
             <form
               className="hocus-visible::scale-110 active:scale-95"
@@ -67,9 +53,12 @@ export default function PostContent({ postContent, className, ...props }: PostCo
                 revalidatePath("/");
               }}
             >
-              <BookmarkButton>
-                <BookmarkCheck />
-              </BookmarkButton>
+              <BookmarkOrFavoritedButton>
+                <abbr title="Bookmark">
+                  <Bookmark className="fill-primary" />
+                  <span className="sr-only">Bookmarks</span>
+                </abbr>
+              </BookmarkOrFavoritedButton>
             </form>
           ) : (
             <form
@@ -80,12 +69,14 @@ export default function PostContent({ postContent, className, ...props }: PostCo
                 revalidatePath("/");
               }}
             >
-              <BookmarkButton>
-                <Bookmark />
-              </BookmarkButton>
+              <BookmarkOrFavoritedButton>
+                <abbr title="Bookmark">
+                  <Bookmark />
+                  <span className="sr-only">Bookmarks</span>
+                </abbr>
+              </BookmarkOrFavoritedButton>
             </form>
           )}
-
           <time dateTime={new Date(createdAt).toISOString()}>{dateTimeFormat(createdAt)}</time>
         </div>
       </header>

@@ -49,11 +49,11 @@ export async function createPublicPost(postId: string) {
 `,
     args: { postId },
   });
-  console.log("allPostId", allPostId);
 }
 
 const getPostSchema = z.array(
   z.object({
+    avatarUrl: getUserSchema.shape.avatar,
     name: getUserSchema.shape.displayName,
     description: selectPostSchema.shape.description,
     id: selectPostSchema.shape.id,
@@ -72,6 +72,7 @@ export async function getMyPostFromDb(userId: string) {
   const post = await turso.execute({
     sql: `
          SELECT
+            u.avatar AS avatarUrl,
             u.display_name AS name,
             p.description as description,
             p.id as id,
