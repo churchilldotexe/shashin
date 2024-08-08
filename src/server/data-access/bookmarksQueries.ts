@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { ZodError, z } from "zod";
 import { insertBookmarksSchema, selectBookmarkSchema } from "../database/schema/bookmarks";
 import { selectImageSchema } from "../database/schema/images";
@@ -51,6 +50,11 @@ export async function deleteBookmarkFromDb(rawData: { postId: string }) {
   });
 }
 
+const getBookmarksPostByIdSchema = selectBookmarkSchema
+  .pick({ postId: true })
+  .transform((val) => JSON.parse(val.postId))
+  .pipe(z.array(z.string()));
+
 export async function getBookmarkByPostId(userId: string) {
   const rawBookmarkedPost = await turso.execute({
     sql: `
@@ -61,12 +65,7 @@ export async function getBookmarkByPostId(userId: string) {
     args: { userId },
   });
 
-  const parsedBookmarkedPost = selectBookmarkSchema
-    .pick({ postId: true })
-    .transform((val) => JSON.parse(val.postId))
-    .pipe(z.array(z.string()))
-    .safeParse(rawBookmarkedPost.rows[0]);
-
+  const parsedBookmarkedPost = getBookmarksPostByIdSchema.safeParse(rawBookmarkedPost.rows[0]);
   if (parsedBookmarkedPost.success === false) {
     throw new ZodError(parsedBookmarkedPost.error.errors);
   }
@@ -117,13 +116,11 @@ export async function getBookmarksPostFromDb(userId: string) {
          `,
     args: { userId },
   });
-  console.log(rawBookmarkData.rows[0], "rawdata");
 
   const parsedBookmarkData = getBookmarksPostSchema.safeParse(rawBookmarkData.rows);
 
   if (parsedBookmarkData.success === false) {
     throw new ZodError(parsedBookmarkData.error.errors);
   }
-
   return parsedBookmarkData.data;
 }

@@ -31,13 +31,18 @@ export async function checkBookmarkBypostId(postId: string) {
 
   try {
     const bookmarkedPost = await getBookmarkByPostId(user.userId);
+    if (bookmarkedPost.postId.length === 0) {
+      return false;
+    }
     if (bookmarkedPost.postId.includes(postId)) {
       return true;
     }
     return false;
   } catch (error) {
-    console.error(error);
-    return false;
+    if (error instanceof Error) {
+      throw new Error(`An ${error.name} Error occured: ${error.cause}, ${error.message}`);
+    }
+    throw new Error("Unexpected Error Occured");
   }
 }
 
@@ -48,10 +53,12 @@ export async function getAllMyBookmarks() {
 
   try {
     const bookmarkedPost = await getBookmarksPostFromDb(user.userId);
+    // if no bookmark found will return an empty array
     return bookmarkedPost;
   } catch (error) {
-    // to ensure it wont throw error when user have no bookmarks
-    console.error(error);
-    return null;
+    if (error instanceof Error) {
+      throw new Error(`An ${error.name} Error occured: ${error.cause}, ${error.message}`);
+    }
+    throw new Error("Unexpected Error Occured");
   }
 }

@@ -48,5 +48,12 @@ export async function getMyPost() {
 
   try {
     const mypost = await getMyPostFromDb(user.userId);
-  } catch (error) {}
+    // will return empty array if no user found
+    return mypost;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`An ${error.name} Error occured: ${error.cause}, ${error.message}`);
+    }
+    throw new Error("Unexpected Error Occured");
+  }
 }
