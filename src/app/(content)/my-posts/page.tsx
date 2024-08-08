@@ -1,5 +1,5 @@
 import { PageSection } from "@/components/PageSection";
-import PostContent from "@/components/PostContent";
+import { PostContent } from "@/components/PostContent";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
 import { getMyPost } from "@/server/use-cases/post-use-case";
@@ -15,27 +15,27 @@ export default async function HomePage() {
         //TODO: handle this
         <div className="text-foreground">post something </div>
       ) : (
-        <div className="m-auto flex size-full grow flex-col gap-4">
-          {myPost?.map(async (post, index) => {
-            const { type, ...restPost } = post;
-            const unoptimize = (type === "image/webp" || type === "image/gif") && false;
-            const isBookmarked = await checkBookmarkBypostId(post.id);
-            const postContent = {
-              ...restPost,
-              unoptimize,
-              index,
-              isBookmarked,
-            };
+        <Suspense fallback={<Loading />}>
+          <div className="m-auto flex size-full grow flex-col gap-4">
+            {myPost?.map(async (post, index) => {
+              const { type, ...restPost } = post;
+              const unoptimize = (type === "image/webp" || type === "image/gif") && false;
+              const isBookmarked = await checkBookmarkBypostId(post.id);
+              const postContent = {
+                ...restPost,
+                unoptimize,
+                index,
+                isBookmarked,
+              };
 
-            return (
-              <Link href={`/img/${post.id}`} key={post.id} scroll={false}>
-                <Suspense fallback={<Loading />}>
+              return (
+                <Link href={`/img/${post.id}`} key={post.id} scroll={false}>
                   <PostContent postContent={postContent} />
-                </Suspense>
-              </Link>
-            );
-          })}
-        </div>
+                </Link>
+              );
+            })}
+          </div>
+        </Suspense>
       )}
     </PageSection>
   );

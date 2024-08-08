@@ -6,6 +6,7 @@ import {
   getAlbumsSchema,
   insertAlbumsSchema,
 } from "../database/schema/albums";
+import { selectImageSchema } from "../database/schema/images";
 import { turso } from "../database/turso";
 
 const insertDataToAlbumsSchema = insertAlbumsSchema.extend({
@@ -79,4 +80,44 @@ export async function getAlbumsFromDB(userId: string) {
     throw new ZodError(parsedAlbums.error.errors);
   }
   return parsedAlbums.data;
+}
+
+const getAllMyAlbumsFromDBSchema = z.array(
+  z.object({
+    albumName: getAlbumsSchema.shape.name,
+    url: selectImageSchema.shape.url
+      .transform((val) => JSON.parse(val))
+      .pipe(z.array(z.string().url())),
+    createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
+  })
+);
+
+export async function getAllMyAlbumsFromDB(userId: string) {
+  const rawAlbumData = await turso.execute({
+    sql: `
+         SELECT 
+            a.name AS albumName,
+            json_group_array(i.url) as url,
+            datetime(a.created_at,'unixepoch') AS createdAt
+         FROM
+            albums a
+         LEFT JOIN
+            images i ON a.post_id = i.post_id
+         WHERE a.user_id = :userId
+         GROUP BY
+            a.id 
+         ORDER BY
+            a.created_at DESC
+         `,
+    args: { userId },
+  });
+
+  const parsedAlbumData = getAllMyAlbumsFromDBSchema.safeParse(rawAlbumData.rows);
+
+  if (parsedAlbumData.success === false) {
+    throw new ZodError(parsedAlbumData.error.errors);
+  }
+  return parsedAlbumData.data;
 }
