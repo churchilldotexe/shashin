@@ -1,31 +1,32 @@
 "use client";
 
-import { setBookmarkPost, unBookmarkPost } from "@/app/(content)/_lib/Actions";
-import { Bookmark } from "lucide-react";
-import { type ButtonHTMLAttributes, type ReactNode, useTransition } from "react";
+import { Star } from "lucide-react";
+import { type ButtonHTMLAttributes, useTransition } from "react";
+import { setFavoritePost, unFavoritePost } from "./action";
 
-export function BookmarkButton({
-  isBookmark,
+export function FavoriteButton({
+  isFavorited,
   postId,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
-  isBookmark: boolean;
+  isFavorited: boolean;
   postId: string;
 }) {
   const [isPending, startTransition] = useTransition();
-  return isBookmark ? (
+
+  return isFavorited ? (
     <button
       type="button"
       onClick={(e) => {
         startTransition(async () => {
           e.stopPropagation();
           e.preventDefault();
-          await unBookmarkPost(postId);
+          await unFavoritePost(postId);
         });
       }}
       {...props}
     >
-      {isPending ? <Bookmark /> : <Bookmark className="fill-primary" />}
+      {isPending ? <Star /> : <Star className="fill-primary" />}
     </button>
   ) : (
     <button
@@ -34,12 +35,12 @@ export function BookmarkButton({
         startTransition(async () => {
           e.stopPropagation();
           e.preventDefault();
-          await setBookmarkPost(postId);
+          await setFavoritePost(postId);
         });
       }}
       {...props}
     >
-      {isPending ? <Bookmark className="fill-primary" /> : <Bookmark />}
+      {isPending ? <Star className="fill-primary" /> : <Star />}
     </button>
   );
 }

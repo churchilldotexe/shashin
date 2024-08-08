@@ -2,6 +2,7 @@
 
 import { createAlbum } from "@/server/use-cases/albums-use-cases";
 import { removeTokenInfoFromDB } from "@/server/use-cases/auth/tokenManagement";
+import { createNewBookmark, removeBookmark } from "@/server/use-cases/bookmarks-use-case";
 import { createImage } from "@/server/use-cases/images-use-cases";
 import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesAndSchema";
 import { createPost } from "@/server/use-cases/post-use-case";
@@ -74,4 +75,14 @@ export async function logoutAction() {
     cookies().delete("accessToken");
     redirect("/login");
   }
+}
+
+export async function unBookmarkPost(postId: string) {
+  await removeBookmark(postId);
+  revalidatePath("/");
+}
+
+export async function setBookmarkPost(postId: string) {
+  await createNewBookmark(postId);
+  revalidatePath("/");
 }

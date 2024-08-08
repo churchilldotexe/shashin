@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { type CSSProperties, type HTMLAttributes, type ReactNode, Suspense } from "react";
 import { AvatarWithFallBack } from "./AvatarWithFallBack";
 import { ImageSlider } from "./ImageSlider";
-import { BookmarkOrFavoritedButton } from "./ui/BookmarkButton";
+import { BookmarkButton } from "./ui/BookmarkButton";
 
 type ContentType = {
   id: string;
@@ -44,39 +44,7 @@ export default function PostContent({ postContent, className, ...props }: PostCo
         </div>
 
         <div className="z-50 flex gap-4">
-          {isBookmarked ? (
-            <form
-              className="hocus-visible::scale-110 active:scale-95"
-              action={async () => {
-                "use server";
-                await removeBookmark(id);
-                revalidatePath("/");
-              }}
-            >
-              <BookmarkOrFavoritedButton>
-                <abbr title="Bookmark">
-                  <Bookmark className="fill-primary" />
-                  <span className="sr-only">Bookmarks</span>
-                </abbr>
-              </BookmarkOrFavoritedButton>
-            </form>
-          ) : (
-            <form
-              className="hocus-visible:scale-110 active:scale-95"
-              action={async () => {
-                "use server";
-                await createNewBookmark(id);
-                revalidatePath("/");
-              }}
-            >
-              <BookmarkOrFavoritedButton>
-                <abbr title="Bookmark">
-                  <Bookmark />
-                  <span className="sr-only">Bookmarks</span>
-                </abbr>
-              </BookmarkOrFavoritedButton>
-            </form>
-          )}
+          <BookmarkButton isBookmark={isBookmarked} postId={id} />
           <time dateTime={new Date(createdAt).toISOString()}>{dateTimeFormat(createdAt)}</time>
         </div>
       </header>

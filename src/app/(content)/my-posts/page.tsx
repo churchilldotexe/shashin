@@ -1,5 +1,5 @@
 import { PageSection } from "@/components/PageSection";
-import { PostContent } from "@/components/PostContent";
+import PostContent from "@/components/PostContent";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
 import { getMyPost } from "@/server/use-cases/post-use-case";

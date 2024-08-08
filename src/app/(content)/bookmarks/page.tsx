@@ -1,5 +1,5 @@
 import { PageSection } from "@/components/PageSection";
-import { PostContent } from "@/components/PostContent";
+import PostContent from "@/components/PostContent";
 import { checkBookmarkBypostId, getAllMyBookmarks } from "@/server/use-cases/bookmarks-use-case";
 import Link from "next/link";
 import { Suspense } from "react";

@@ -1,5 +1,5 @@
 import { PageSection } from "@/components/PageSection";
-import { PostContent } from "@/components/PostContent";
+import PostContent from "@/components/PostContent";
 import { getMyAlbumsList } from "@/server/use-cases/albums-use-cases";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { getPublicPosts } from "@/server/use-cases/post-use-case";
