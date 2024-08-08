@@ -25,7 +25,7 @@ export default async function ImagesPage() {
               />
               <FavoriteButton
                 isFavorited={image.isFavorited}
-                postId={image.id}
+                imageId={image.id}
                 className="absolute top-0 right-0"
               />
             </div>

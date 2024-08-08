@@ -6,11 +6,11 @@ import { setFavoritePost, unFavoritePost } from "./action";
 
 export function FavoriteButton({
   isFavorited,
-  postId,
+  imageId,
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {
   isFavorited: boolean;
-  postId: string;
+  imageId: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -21,7 +21,7 @@ export function FavoriteButton({
         startTransition(async () => {
           e.stopPropagation();
           e.preventDefault();
-          await unFavoritePost(postId);
+          await unFavoritePost(imageId);
         });
       }}
       {...props}
@@ -35,7 +35,7 @@ export function FavoriteButton({
         startTransition(async () => {
           e.stopPropagation();
           e.preventDefault();
-          await setFavoritePost(postId);
+          await setFavoritePost(imageId);
         });
       }}
       {...props}

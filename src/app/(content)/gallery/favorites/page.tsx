@@ -1,4 +1,4 @@
-import { BookmarkOrFavoritedButton } from "@/components/ui/BookmarkButton";
+import { BookmarkButton } from "@/components/ui/BookmarkButton";
 import {
   createNewFavorite,
   getAllMyFavoritedImages,
@@ -8,6 +8,7 @@ import { Star } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { Suspense } from "react";
+import { FavoriteButton } from "../images/_lib/component/FavoritesButton";
 
 export default async function FavoritesPage() {
   const myFavoritedImages = await getAllMyFavoritedImages();
@@ -28,33 +29,11 @@ export default async function FavoritesPage() {
                 className="object-cover object-center "
                 fill
               />
-              {image.isFavorited ? (
-                <form
-                  action={async () => {
-                    "use server";
-                    await removeFavorite(image.id);
-                    revalidatePath("/gallery/images");
-                  }}
-                  className="absolute top-0 right-0"
-                >
-                  <BookmarkOrFavoritedButton className="text-secondary">
-                    <Star className="fill-primary" />
-                  </BookmarkOrFavoritedButton>
-                </form>
-              ) : (
-                <form
-                  action={async () => {
-                    "use server";
-                    await createNewFavorite(image.id);
-                    revalidatePath("/gallery/images");
-                  }}
-                  className="absolute top-0 right-0"
-                >
-                  <BookmarkOrFavoritedButton className="text-secondary">
-                    <Star />
-                  </BookmarkOrFavoritedButton>
-                </form>
-              )}
+              <FavoriteButton
+                isFavorited={image.isFavorited}
+                imageId={image.id}
+                className="absolute top-0 right-0"
+              />
             </div>
           ))}
         </Suspense>
