@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Circle } from "lucide-react";
 import Image from "next/image";
-import { Fragment, type HTMLAttributes, type MouseEvent, forwardRef, useState } from "react";
+import { type HTMLAttributes, type MouseEvent, forwardRef, useState } from "react";
 
 export const ImageSlider = forwardRef<
   HTMLDivElement,
@@ -31,13 +31,15 @@ export const ImageSlider = forwardRef<
       setImageIndex((prevIndex) => prevIndex - 1);
     }
   };
-
   return (
     <div ref={ref} className={cn("relative size-full", className)} {...props}>
-      <div className="flex size-full overflow-hidden">
-        {url.map((image) => (
-          <Fragment key={image}>
-            <div className="relative aspect-video size-full shrink-0 ">
+      <div className="grid snap-x snap-mandatory auto-cols-[100%] grid-flow-col overflow-x-hidden overscroll-x-contain">
+        {url.map((image, index) => {
+          return (
+            <div
+              key={`${image}${index}${image}`}
+              className="relative aspect-video w-full shrink-0 snap-center "
+            >
               <Image
                 unoptimized={unoptimized}
                 src={image}
@@ -47,8 +49,8 @@ export const ImageSlider = forwardRef<
                 fill
               />
             </div>
-          </Fragment>
-        ))}
+          );
+        })}
       </div>
 
       <div className="group absolute inset-0 flex size-full items-center justify-between ">

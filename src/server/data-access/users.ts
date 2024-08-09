@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Row } from "@libsql/client";
+import { Update } from "next/dist/build/swc";
 import { ZodError, type z } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../database/schema/users";
 import { turso } from "../database/turso";
@@ -137,6 +138,40 @@ export async function updateUserInfoById({
       userId,
       avatar: parsedUserInfo.data.avatar as string,
       urlKey: parsedUserInfo.data.urlKey as string,
+      displayName: parsedUserInfo.data.displayName,
+    },
+  });
+}
+
+const updateDisplayNameByIdTypeSchema = createUserSchema.pick({
+  displayName: true,
+});
+
+type UpdateDisplayNameByIdType = z.infer<typeof updateDisplayNameByIdTypeSchema> & {
+  userId: string;
+};
+
+export async function updateDisplayNameById({ userId, displayName }: UpdateDisplayNameByIdType) {
+  const parsedUserInfo = updateDisplayNameByIdTypeSchema.safeParse({
+    displayName,
+  });
+
+  if (parsedUserInfo.success === false) {
+    console.error(parsedUserInfo.error.cause);
+    throw new ZodError(parsedUserInfo.error.errors);
+  }
+
+  console.log(parsedUserInfo.data, userId, "user display name DB");
+
+  await turso.execute({
+    sql: `
+         UPDATE users 
+         SET 
+            display_name = :displayName
+         WHERE id = :userId
+         `,
+    args: {
+      userId,
       displayName: parsedUserInfo.data.displayName,
     },
   });

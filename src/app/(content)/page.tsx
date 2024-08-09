@@ -12,6 +12,7 @@ const PostContent = lazy(() => import("@/components/PostContent"));
 export default async function HomePage() {
   const allPost = await getPublicPosts();
   const myAlbums = await getMyAlbumsList();
+
   const postContent = await Promise.allSettled(
     allPost.map(async (post, index) => {
       const { type, ...restPost } = post;

@@ -129,7 +129,9 @@
 .css-border-animateAt30deg::after,
 .css-border-animateAt30deg::before,
 .css-border-animateAt330deg::after,
-.css-border-animateAt330deg::before {
+.css-border-animateAt330deg::before,
+.css-border-animateInline::before,
+.css-border-animateInline::after {
    box-sizing: content-box;
    content: "";
    position: absolute;
@@ -143,8 +145,8 @@
    border-radius: 0.5rem;
 }
 
-.css-border-animateAt330deg::after,
-.css-border-animateAt330deg::before {
+.css-border-animateAt30deg::after,
+.css-border-animateAt330deg::after {
    background-image: conic-gradient(from var(--angle2),
          transparent 95%,
          hsl(var(--primary)));
@@ -154,6 +156,11 @@
 .css-border-animateAt30deg::before,
 .css-border-animateAt330deg::before {
    filter: blur(0.5rem);
+}
+
+.css-border-animateInline::after {
+
+   background-image: conic-gradient(from 360%, hsl(var(--primary)));
 }
 
 @keyframes mobile-rotate {

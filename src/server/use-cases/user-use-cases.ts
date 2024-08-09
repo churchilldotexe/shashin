@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getUserInfoById, updateUserInfoById } from "../data-access/users";
+import { getUserInfoById, updateDisplayNameById, updateUserInfoById } from "../data-access/users";
 import { hasAccess } from "./auth/authentication";
 
 export async function getUserInfo() {
@@ -32,6 +32,23 @@ export async function setupUserProfile({
   const { userId } = user;
   try {
     await updateUserInfoById({ userId, displayName, avatar: url, urlKey });
+  } catch (error) {
+    throw new Error("an error Occured while getting the users Info ");
+  }
+}
+
+export async function updateDisplayName({
+  displayName,
+}: {
+  displayName: string;
+}) {
+  const user = await hasAccess({
+    errorMsg: "Please login to setup your profile",
+  });
+
+  const { userId } = user;
+  try {
+    await updateDisplayNameById({ userId, displayName });
   } catch (error) {
     throw new Error("an error Occured while getting the users Info ");
   }

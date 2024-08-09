@@ -1,11 +1,5 @@
-import { randomUUID } from "node:crypto";
-import type { Expand } from "@/lib/types-utils";
-import { ZodError, coerce, z } from "zod";
-import {
-  type InsertAlbumsTypes,
-  getAlbumsSchema,
-  insertAlbumsSchema,
-} from "../database/schema/albums";
+import { ZodError, z } from "zod";
+import { getAlbumsSchema, insertAlbumsSchema } from "../database/schema/albums";
 import { selectImageSchema } from "../database/schema/images";
 import { turso } from "../database/turso";
 
@@ -97,20 +91,21 @@ const getAllMyAlbumsFromDBSchema = z.array(
 export async function getAllMyAlbumsFromDB(userId: string) {
   const rawAlbumData = await turso.execute({
     sql: `
-         SELECT 
-            a.name AS albumName,
-            json_group_array(i.url) as url,
-            datetime(a.created_at,'unixepoch') AS createdAt
-         FROM
-            albums a
-         LEFT JOIN
-            images i ON a.post_id = i.post_id
-         WHERE a.user_id = :userId
-         GROUP BY
-            albumName
-         ORDER BY
-            a.created_at DESC
-         `,
+      SELECT 
+         a.name AS albumName,
+         (SELECT json_group_array(DISTINCT url)
+            FROM images
+            WHERE post_id IN (SELECT post_id FROM albums WHERE user_id = :userId AND name = a.name)
+            ) as url,
+         datetime(a.created_at, 'unixepoch') AS createdAt
+      FROM
+         albums a
+      WHERE 
+         a.user_id = :userId
+      GROUP BY
+         a.name
+      ORDER BY
+         a.created_at DESC`,
     args: { userId },
   });
 

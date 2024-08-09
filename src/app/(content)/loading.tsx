@@ -1,5 +1,11 @@
+import { PageSection } from "@/components/PageSection";
+
 export default function Loading() {
-  return <div>Loading....</div>;
+  return (
+    <PageSection>
+      <div>Loading....</div>
+    </PageSection>
+  );
 }
 
 // TODO: provide a better loading state

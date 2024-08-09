@@ -1,16 +1,22 @@
+import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
+import { cn } from "@/lib/utils";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
 import { getMyPost } from "@/server/use-cases/post-use-case";
+import { getUserInfo } from "@/server/use-cases/user-use-cases";
 import Link from "next/link";
 import { Suspense } from "react";
 import Loading from "../loading";
+import DisplayProfile from "./_lib/DisplayProfile";
 
 export default async function HomePage() {
   const myPost = await getMyPost();
+  const myProfile = await getUserInfo();
   return (
-    <PageSection className="space-y-8 p-8">
+    <PageSection className="justify-start space-y-8 px-8 py-4 ">
+      <DisplayProfile displayName={myProfile.displayName} avatar={myProfile.avatar} />
       {myPost.length === 0 ? (
         //TODO: handle this
         <div className="text-foreground">post something </div>
@@ -43,6 +49,4 @@ export default async function HomePage() {
 
 // FIX: work on this
 // NOTE: have an optional render where Userid === userId (if it is the user) when viewing the post it will also render the album it assoc to
-// NOTE: this will display (query) all posts of the user and display
-// FEAT: DEFAULT is sorted by post date
 // option : be able to sort the post (not priority )

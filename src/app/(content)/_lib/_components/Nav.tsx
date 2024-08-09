@@ -14,8 +14,7 @@ type Routes = (typeof routes.main)[number];
 type GallerySubRoutes = (typeof routes.gallerySubRoutes)[number];
 
 const getRouteName = (routeValue: Routes | GallerySubRoutes) => {
-  const routeName = routeValue.split("/").pop() ?? "home";
-  console.log(routeName);
+  const routeName = routeValue.split("/").pop() || "home";
   return routeName.replace("-", " ");
 };
 
