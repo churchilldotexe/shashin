@@ -23,7 +23,9 @@ export function TransitionLink({
 
   const handleTransition = async (e: ReactMouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    animatedRouterPush().then(() => router.push(href));
+    animatedRouterPush()
+      .then(() => router.push(href))
+      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
   };
 
   return (

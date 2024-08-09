@@ -60,7 +60,7 @@ export async function registerUser(userInfo: registerUserSchemaTypes) {
     throw new ZodError(parsedUserInfo.error.errors);
   }
 
-  const { password, userName, email, displayName } = parsedUserInfo.data;
+  const { password, userName, email } = parsedUserInfo.data;
   const salt = generateSalt();
   const hashedPassword = generateHashPassword(password, salt);
   const id = randomUUID();
@@ -68,7 +68,6 @@ export async function registerUser(userInfo: registerUserSchemaTypes) {
     await createUser({
       salt,
       hashedPassword,
-      displayName,
       userName,
       id,
       email,

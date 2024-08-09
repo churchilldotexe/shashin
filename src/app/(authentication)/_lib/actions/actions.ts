@@ -63,18 +63,17 @@ export async function registerFormActions(
   const rawFormData = Object.fromEntries(formData.entries());
   const parsedFormData = registerUserFormSchema.safeParse(rawFormData);
   if (parsedFormData.success === false) {
-    const { password, userName, verifiedPassword, displayName, email } =
+    const { password, userName, verifiedPassword, email } =
       parsedFormData.error.formErrors.fieldErrors;
     return {
       password: password?.[0] ?? undefined,
       userName: userName?.[0] ?? undefined,
       verifiedPassword: verifiedPassword?.[0] ?? undefined,
-      displayName: displayName?.[0] ?? undefined,
       email: email?.[0] ?? undefined,
     };
   }
 
-  const { displayName, email, userName, password, verifiedPassword } = parsedFormData.data;
+  const { email, userName, password, verifiedPassword } = parsedFormData.data;
   if (password !== verifiedPassword) {
     return { verifiedPassword: "Passwords didn't match. Please reverify." };
   }
@@ -88,7 +87,6 @@ export async function registerFormActions(
   }
 
   await registerUser({
-    displayName,
     email,
     userName,
     password,

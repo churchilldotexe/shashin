@@ -97,7 +97,7 @@
 
 /*Auth pages animation*/
 #auth-layout {
-   transition-timing-function: ease-in-out;
+   transition-timing-function: forwards;
    transition-duration: 700ms;
    transform: var(--transition);
    transition-property: opacity, background, transform, filter;

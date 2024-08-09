@@ -4,6 +4,7 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { animatedRouterPush, cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CSSProperties } from "react";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -26,7 +27,9 @@ export default function LoginPage() {
 
   const callbackUrl = searchParamsValue ?? "/";
   if (state.message === "success") {
-    animatedRouterPush().then(() => router.push(callbackUrl));
+    animatedRouterPush()
+      .then(() => router.push(callbackUrl))
+      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
   }
 
   return (

@@ -4,7 +4,7 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { animatedRouterPush, cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { CSSProperties, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { registerFormActions } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -20,7 +20,6 @@ export default function RegisterPage() {
     email: "",
     password: "",
     userName: "",
-    displayName: "",
     verifiedPassword: "",
   });
   const [isMatched, setIsMatched] = useState<boolean>(true);
@@ -29,7 +28,9 @@ export default function RegisterPage() {
   const router = useRouter();
 
   if (state.message === "success") {
-    animatedRouterPush().then(() => router.push("/profile-setup"));
+    animatedRouterPush()
+      .then(() => router.push("/profile-setup"))
+      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
   }
 
   return (
@@ -56,30 +57,6 @@ export default function RegisterPage() {
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
             {state?.userName}
-          </ErrorMessage>
-        </fieldset>
-
-        <fieldset className="relative ">
-          <Input
-            className="peer w-full rounded border p-2 placeholder-transparent outline-none "
-            name="displayName"
-            id="displayName"
-            type="text"
-            placeholder="displayName"
-            required
-          />
-          <label
-            className={cn(
-              " -top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
-              "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
-              "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
-            )}
-            htmlFor="displayName"
-          >
-            Display Name
-          </label>
-          <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="displayName">
-            {state?.displayName}
           </ErrorMessage>
         </fieldset>
 

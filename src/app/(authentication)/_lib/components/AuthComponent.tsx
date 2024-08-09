@@ -2,12 +2,15 @@
 
 import { PageSection } from "@/components/PageSection";
 import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export default function AuthComponent({ children }: { children: ReactNode }) {
   return (
     <PageSection>
-      <div className="grid size-full place-items-center rounded-lg px-2 sm:px-6 md:grid-cols-2 md:px-0">
+      <div
+        id="auth-layout"
+        className="grid size-full place-items-center rounded-lg px-2 sm:px-6 md:grid-cols-2 md:px-0"
+      >
         <div
           // shadow-[0_8px_6px_0_rgba(0,0,0,0.1),-6px_-4px_10px_white]
           //dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]

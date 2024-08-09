@@ -6,7 +6,7 @@ import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { animatedRouterPush, cn } from "@/lib/utils";
 import { Images } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 import { useFormState } from "react-dom";
 import { profileSetupAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -40,7 +40,9 @@ export default function ProfileSetupPage() {
   };
 
   if (state.message === "success") {
-    animatedRouterPush().then(() => router.push("/"));
+    animatedRouterPush()
+      .then(() => router.push("/"))
+      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
   }
 
   return (
