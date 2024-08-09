@@ -26,7 +26,7 @@ export function FavoriteButton({
       }}
       {...props}
     >
-      {isPending ? <Star /> : <Star className="fill-primary" />}
+      <abbr title="Favorite">{isPending ? <Star /> : <Star className="fill-primary" />}</abbr>
     </button>
   ) : (
     <button
@@ -40,7 +40,7 @@ export function FavoriteButton({
       }}
       {...props}
     >
-      {isPending ? <Star className="fill-primary" /> : <Star />}
+      <abbr title="Favorite">{isPending ? <Star className="fill-primary" /> : <Star />}</abbr>
     </button>
   );
 }

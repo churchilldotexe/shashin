@@ -3,24 +3,46 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { HTMLAttributes } from "react";
+import type { ComponentProps, HTMLAttributes } from "react";
 
-const routes = ["/", "/my-posts", "/bookmarks", "/gallery"] as const;
-const gallerySubRoutes = ["/gallery/albums", "/gallery/images", "/gallery/favorites"] as const;
+const routes = {
+  main: ["/", "/my-posts", "/bookmarks", "/gallery"],
+  gallerySubRoutes: ["/gallery/albums", "/gallery/images", "/gallery/favorites"],
+} as const;
 
-type Routes = (typeof routes)[number];
-type GallerySubRoutes = (typeof gallerySubRoutes)[number];
+type Routes = (typeof routes.main)[number];
+type GallerySubRoutes = (typeof routes.gallerySubRoutes)[number];
 
 const getRouteName = (routeValue: Routes | GallerySubRoutes) => {
-  const newRouteString = routeValue.replace("-", " ").slice(1);
-  if (newRouteString === "") {
-    return "home";
-  }
-  if (newRouteString.includes("gallery/")) {
-    return newRouteString.replace("gallery/", "");
-  }
-  return newRouteString;
+  const routeName = routeValue.split("/").pop() ?? "home";
+  console.log(routeName);
+  return routeName.replace("-", " ");
 };
+
+type LinkItemsType = {
+  route: Routes | GallerySubRoutes;
+  routeName: ReturnType<typeof getRouteName>;
+  pathname: string;
+} & ComponentProps<"a">;
+
+function LinkItems({ route, routeName, pathname, className, ...props }: LinkItemsType) {
+  return (
+    <li
+      key={route}
+      className={cn(
+        "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
+        {
+          " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ":
+            pathname === `${route}`,
+        }
+      )}
+    >
+      <Link href={route} className={cn("capitalize", className)} {...props}>
+        {routeName}
+      </Link>
+    </li>
+  );
+}
 
 export function Nav({ ...props }: HTMLAttributes<HTMLElement>) {
   const pathname = usePathname();
@@ -34,44 +56,24 @@ export function Nav({ ...props }: HTMLAttributes<HTMLElement>) {
           Shashin
         </Link>
         <ul>
-          {routes.map((route) => {
+          {routes.main.map((route) => {
             const routeName = getRouteName(route);
             return (
-              <li
-                key={route}
-                className={cn(
-                  "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
-                  {
-                    " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ":
-                      pathname === `${route}`,
-                  }
-                )}
-              >
-                <Link href={route} className="capitalize">
-                  {routeName}
-                </Link>
-              </li>
+              <LinkItems route={route} key={route} routeName={routeName} pathname={pathname} />
             );
           })}
           <li>
             <ul>
-              {gallerySubRoutes.map((subRoute) => {
+              {routes.gallerySubRoutes.map((subRoute) => {
                 const gallerySubRoute = getRouteName(subRoute);
                 return (
-                  <li
+                  <LinkItems
+                    className="ml-4"
+                    route={subRoute}
+                    routeName={gallerySubRoute}
+                    pathname={pathname}
                     key={subRoute}
-                    className={cn(
-                      "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95",
-                      {
-                        " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ":
-                          pathname === `${subRoute}`,
-                      }
-                    )}
-                  >
-                    <Link href={subRoute} className="ml-4 capitalize">
-                      {gallerySubRoute}
-                    </Link>
-                  </li>
+                  />
                 );
               })}
             </ul>

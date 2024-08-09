@@ -25,7 +25,9 @@ export function BookmarkButton({
       }}
       {...props}
     >
-      {isPending ? <Bookmark /> : <Bookmark className="fill-primary" />}
+      <abbr title="Bookmark">
+        {isPending ? <Bookmark /> : <Bookmark className="fill-primary" />}
+      </abbr>
     </button>
   ) : (
     <button
@@ -39,7 +41,9 @@ export function BookmarkButton({
       }}
       {...props}
     >
-      {isPending ? <Bookmark className="fill-primary" /> : <Bookmark />}
+      <abbr title="Bookmark">
+        {isPending ? <Bookmark className="fill-primary" /> : <Bookmark />}
+      </abbr>
     </button>
   );
 }

@@ -108,7 +108,9 @@ export function UserContent({
           <div className="flex items-center justify-between">
             <button
               type="button"
-              className="hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
+              className={cn("hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 ", {
+                "bg-muted": isPending,
+              })}
               onClick={async () => {
                 setTransiton(async () => {
                   await logoutAction();
@@ -117,7 +119,7 @@ export function UserContent({
               }}
               disabled={isPending}
             >
-              {isPending ? <Loader2 className="animate-spin text-primary" /> : "Logout "}
+              {isPending ? <Loader2 className="animate-spin text-foreground" /> : "Logout "}
             </button>
 
             <button

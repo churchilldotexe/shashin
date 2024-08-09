@@ -23,7 +23,7 @@ export default async function AlbumsPage() {
                 style={{ "--i": `${index}` } as CSSProperties}
               >
                 <header className="w-full">
-                  <h1 className="text-center font-semibold text-3xl capitalize">
+                  <h1 className=" text-center font-semibold text-3xl capitalize">
                     {album.albumName}
                   </h1>
                 </header>
