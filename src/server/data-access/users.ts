@@ -9,20 +9,20 @@ export async function createUser({
   email,
   id,
   userName,
-  displayName,
   hashedPassword,
   salt,
-}: CreateUserTypes) {
+}: Omit<CreateUserTypes, "displayName">) {
   if (id === undefined) {
     throw new Error("Id must be defined");
   }
+  const temporaryDisplayName = userName;
   await turso.execute({
     sql: `INSERT INTO
             users
-              (user_name, email, display_name, hashed_password,id, salt)
+              (user_name, email, display_name ,hashed_password,id, salt)
             VALUES
-              (:userName, :email, :displayName, :hashedPassword, :id, :salt)`,
-    args: { userName, email, displayName, hashedPassword, id, salt },
+              (:userName, :email,:temporaryDisplayName, :hashedPassword, :id, :salt)`,
+    args: { userName, email, temporaryDisplayName, hashedPassword, id, salt },
   });
 }
 

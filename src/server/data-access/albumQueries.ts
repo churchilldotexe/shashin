@@ -107,7 +107,7 @@ export async function getAllMyAlbumsFromDB(userId: string) {
             images i ON a.post_id = i.post_id
          WHERE a.user_id = :userId
          GROUP BY
-            a.id 
+            albumName
          ORDER BY
             a.created_at DESC
          `,

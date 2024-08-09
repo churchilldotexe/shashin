@@ -3,8 +3,9 @@
 import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 /// <reference types="react/canary" />
 import { cn } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { type ElementRef, useEffect, useRef, useState } from "react";
+import { type ElementRef, useEffect, useRef, useTransition } from "react";
 import { logoutAction } from "../Actions";
 
 export function UserContent({
@@ -16,7 +17,7 @@ export function UserContent({
   userName: string;
   avatar: string | null;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [isPending, setTransiton] = useTransition();
   const detailsRef = useRef<ElementRef<"details">>(null);
 
   useEffect(() => {
@@ -70,7 +71,6 @@ export function UserContent({
         className={cn(
           "absolute bottom-full left-1/2 size-fit rounded-md p-4 shadow-elevate-light backdrop-blur-[3px] [translate:-50%_0] dark:shadow-elevate-dark",
           " popover-transition "
-          // "  group-open:opacity-100 group-open:scale-100  "
         )}
       >
         <div className="flex flex-col justify-center gap-4 ">
@@ -110,13 +110,14 @@ export function UserContent({
               type="button"
               className="hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
               onClick={async () => {
-                setLoading(true);
-                await logoutAction();
-                setLoading(false);
-                handleCloseModal();
+                setTransiton(async () => {
+                  await logoutAction();
+                  handleCloseModal();
+                });
               }}
+              disabled={isPending}
             >
-              {loading ? "loggingOut" : "Logout "}
+              {isPending ? <Loader2 className="animate-spin text-primary" /> : "Logout "}
             </button>
 
             <button

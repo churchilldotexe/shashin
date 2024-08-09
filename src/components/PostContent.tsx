@@ -1,8 +1,5 @@
 import { cn, dateTimeFormat } from "@/lib/utils";
-import { createNewBookmark, removeBookmark } from "@/server/use-cases/bookmarks-use-case";
-import { Bookmark, BookmarkCheck, Star } from "lucide-react";
-import { revalidatePath } from "next/cache";
-import { type CSSProperties, type HTMLAttributes, type ReactNode, Suspense } from "react";
+import type { CSSProperties, ComponentProps } from "react";
 import { AvatarWithFallBack } from "./AvatarWithFallBack";
 import { ImageSlider } from "./ImageSlider";
 import { BookmarkButton } from "./ui/BookmarkButton";
@@ -21,7 +18,7 @@ type ContentType = {
 
 type PostContentType = {
   postContent: ContentType;
-} & HTMLAttributes<HTMLDialogElement>;
+} & ComponentProps<"article">;
 
 export default function PostContent({ postContent, className, ...props }: PostContentType) {
   const { id, url, unoptimize, index, description, createdAt, name, avatarUrl, isBookmarked } =
