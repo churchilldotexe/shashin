@@ -4,11 +4,12 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { animatedRouterPush, cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { CSSProperties, useRef, useState } from "react";
+import { type CSSProperties, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { registerFormActions } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { TransitionLink } from "../_lib/components/TransitionLink";
+import { usePageTransition } from "../_lib/hooks";
 import { registerUserFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -27,15 +28,20 @@ export default function RegisterPage() {
 
   const router = useRouter();
 
+  const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
-    animatedRouterPush()
-      .then(() => router.push("/profile-setup"))
-      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    // animatedRouterPush().then(() => router.push("/profile-setup"));
+    // .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    transitionedPush("/profile-setup");
   }
 
   return (
     <AuthComponent>
-      <Form className="flex flex-col gap-y-6" action={action}>
+      <Form
+        style={{ "--transition": "unset" } as CSSProperties}
+        className="flex flex-col gap-y-6"
+        action={action}
+      >
         <fieldset className="relative ">
           <Input
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "

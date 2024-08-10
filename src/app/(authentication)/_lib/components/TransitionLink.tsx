@@ -1,16 +1,13 @@
 "use client";
 
-import { animatedRouterPush, cn } from "@/lib/utils";
-import Link, { type LinkProps } from "next/link";
-import { useRouter } from "next/navigation";
-import { type MouseEvent as ReactMouseEvent, type ReactNode, useState } from "react";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import type { ComponentProps, MouseEvent as ReactMouseEvent } from "react";
+import { usePageTransition } from "../hooks";
 
-interface TransitionLinkTypes extends LinkProps {
-  children: ReactNode;
+type TransitionLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
   href: string;
-  scroll?: boolean;
-  className?: string;
-}
+};
 
 export function TransitionLink({
   href,
@@ -18,14 +15,12 @@ export function TransitionLink({
   scroll,
   className,
   ...props
-}: TransitionLinkTypes) {
-  const router = useRouter();
+}: TransitionLinkProps) {
+  const { transitionedPush } = usePageTransition();
 
   const handleTransition = async (e: ReactMouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    animatedRouterPush()
-      .then(() => router.push(href))
-      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    transitionedPush(href);
   };
 
   return (

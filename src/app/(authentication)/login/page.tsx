@@ -4,11 +4,12 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { animatedRouterPush, cn } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { TransitionLink } from "../_lib/components/TransitionLink";
+import { usePageTransition } from "../_lib/hooks";
 import { loginFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -22,14 +23,13 @@ export default function LoginPage() {
     password: "",
   });
 
-  const router = useRouter();
   const searchParamsValue = useSearchParams().get("callbackUrl");
 
   const callbackUrl = searchParamsValue ?? "/";
+
+  const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
-    animatedRouterPush()
-      .then(() => router.push(callbackUrl))
-      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    transitionedPush(callbackUrl);
   }
 
   return (

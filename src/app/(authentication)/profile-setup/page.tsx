@@ -3,13 +3,14 @@
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
-import { animatedRouterPush, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Images } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CSSProperties, useState } from "react";
+import { type CSSProperties, useState } from "react";
 import { useFormState } from "react-dom";
 import { profileSetupAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
+import { usePageTransition } from "../_lib/hooks";
 import { profileSetupFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -23,7 +24,6 @@ export default function ProfileSetupPage() {
   });
   const [objectUrls, setObjectUrls] = useState<string[]>([]);
   const router = useRouter();
-
   const handleImageChange = (fileList: FileList | null) => {
     if (fileList === null) {
       return;
@@ -39,16 +39,21 @@ export default function ProfileSetupPage() {
     });
   };
 
+  const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
-    animatedRouterPush()
-      .then(() => router.push("/"))
-      .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    // animatedRouterPush().then(() => router.push("/"));
+    // .then(() => document.documentElement.style.setProperty("--transition", "unset"));
+    transitionedPush("/");
   }
 
   return (
     <AuthComponent>
       <div>
-        <Form action={action} className=" space-y-4 shadow-elevate-light dark:shadow-none ">
+        <Form
+          style={{ "--transition": "unset" } as CSSProperties}
+          action={action}
+          className=" space-y-4 shadow-elevate-light dark:shadow-none "
+        >
           <fieldset className="relative">
             <legend className="sr-only">User name</legend>
             <Input
