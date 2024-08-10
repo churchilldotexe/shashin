@@ -4,10 +4,9 @@ import { profileSetupFormSchema } from "@/app/(authentication)/_lib/schema";
 import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { cn } from "@/lib/utils";
-import { updateDisplayName } from "@/server/use-cases/user-use-cases";
-import { CameraIcon, Check, Edit, X } from "lucide-react";
-import { type ElementRef, useRef, useState } from "react";
-import { updateProfileDisplayName } from "./action";
+import { CameraIcon, Check, Edit, Loader2, X } from "lucide-react";
+import { type ElementRef, useRef, useState, useTransition } from "react";
+import { updateAvatar, updateProfileDisplayName } from "./action";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: profileSetupFormSchema,
@@ -21,7 +20,6 @@ export default function DisplayProfile({
   avatar: string | null;
 }) {
   const [showNameEdit, setShowNameEdit] = useState<boolean>(false);
-  const [currentDisplayName, setCurrentDisplayName] = useState<string>(displayName);
   const [displayError, setDisplayError] = useState<{
     displayName: string;
     images: string;
@@ -29,61 +27,183 @@ export default function DisplayProfile({
     displayName: "",
     images: "",
   });
+  const [objectUrls, setObjectUrls] = useState<string[]>([]);
+
   const inputRef = useRef<ElementRef<"input">>(null);
-  // FIX: DO THE UPDATE AVATAR NEXT
+  const inputFileRef = useRef<ElementRef<"input">>(null);
+
+  const [isImagePending, startImageTransition] = useTransition();
+  const [isDisplayNamePending, startDisplayNameTransition] = useTransition();
+
+  const handleImageChange = (fileList: FileList | null) => {
+    if (fileList === null) {
+      return;
+    }
+    const files = Array.from(fileList);
+    const newUrls = files.map((file) => URL.createObjectURL(file));
+    // ensures cleanup before changing/adding new object url
+    setObjectUrls((prevUrls) => {
+      for (const url of prevUrls) {
+        URL.revokeObjectURL(url);
+      }
+      return newUrls;
+    });
+  };
+
+  const handleUpdateImage = () => {
+    startImageTransition(async () => {
+      if (inputFileRef.current?.files?.[0]) {
+        const file = inputFileRef.current.files[0];
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const { image } = await updateAvatar(formData);
+        setDisplayError((prevError) => ({
+          ...prevError,
+          images: image ?? "",
+        }));
+
+        if (image === undefined) {
+          setObjectUrls((prevUrls) => {
+            for (const url of prevUrls) {
+              URL.revokeObjectURL(url);
+            }
+            return [];
+          });
+        }
+      }
+    });
+  };
+
   return (
     <div className="relative w-full">
       <Form>
-        <div className="group/avatar relative w-fit">
+        <fieldset className="group/avatar relative w-fit">
+          <legend className="sr-only">Update Avatar</legend>
+
           <AvatarWithFallBack
-            avatar={avatar}
+            isRounded={false}
+            avatar={objectUrls[0] ?? avatar}
             displayName={displayName}
-            className="size-40 rounded "
+            className={cn("size-40", { "grayscale filter": isImagePending })}
           />
+          <div
+            className={cn("-translate-x-1/2 -translate-y-1/12 absolute top-1/2 left-1/2 hidden ", {
+              block: isImagePending,
+            })}
+          >
+            <Loader2 className="animate-spin stroke-[3] text-primary" />
+          </div>
+
           <label
             htmlFor="editImage"
             className="absolute right-0 bottom-0 z-10 size-fit cursor-pointer rounded-lg hocus-visible:opacity-100 opacity-0 backdrop-blur group-hover/avatar:opacity-100"
           >
-            <input type="file" className="hidden" id="editImage" />
+            <Input
+              ref={inputFileRef}
+              name="images"
+              type="file"
+              className="hidden"
+              id="editImage"
+              onChange={(e) => {
+                handleImageChange(e.target.files);
+              }}
+            />
+            <ErrorMessage name="images" useDefaultStyling={false}>
+              {displayError.images || null}
+            </ErrorMessage>
+
             <abbr title="Edit Profile Picture">
               <CameraIcon className="" />
             </abbr>
           </label>
-        </div>
+
+          {objectUrls.length === 0 ? null : (
+            <div
+              className={cn("-bottom-8 -translate-x-1/2 absolute left-1/2 space-x-4", {
+                hidden: isImagePending,
+              })}
+            >
+              <button
+                type="button"
+                className="text-green-500"
+                onClick={() => {
+                  handleUpdateImage();
+                }}
+              >
+                <Check />
+              </button>
+              <button
+                type="button"
+                className="text-destructive"
+                onClick={() => {
+                  setObjectUrls((prevUrls) => {
+                    for (const url of prevUrls) {
+                      URL.revokeObjectURL(url);
+                    }
+                    return [];
+                  });
+                }}
+              >
+                <X />
+              </button>
+            </div>
+          )}
+        </fieldset>
+
         <div className="-translate-x-1/2 absolute bottom-5 left-1/2 w-fit text-5xl capitalize ">
           {showNameEdit ? (
             <fieldset className="relative w-fit">
               <legend className="sr-only">Change Profile Name</legend>
+
               <Input
                 name="displayName"
                 ref={inputRef}
                 id="profileName"
                 type="text"
                 className={cn("w-[20ch] bg-transparent text-center capitalize outline-none")}
-                defaultValue={currentDisplayName}
-                // biome-ignore lint/a11y/noAutofocus: <this is a toggle focus>
+                defaultValue={displayName}
                 autoFocus
+                autoComplete="off"
+                disabled={isDisplayNamePending}
               />
+
               <ErrorMessage name="displayName" useDefaultStyling={false}>
                 {displayError.displayName || null}
               </ErrorMessage>
 
-              <div className="-bottom-8 -translate-x-1/2 absolute left-1/2 space-x-4">
+              <div
+                className={cn(
+                  "-translate-x-1/2 -translate-y-1/12 absolute top-1/2 left-1/2 hidden ",
+                  {
+                    block: isDisplayNamePending,
+                  }
+                )}
+              >
+                <Loader2 className="animate-spin stroke-[3] text-primary" />
+              </div>
+
+              <div
+                className={cn("-bottom-8 -translate-x-1/2 absolute left-1/2 space-x-4", {
+                  hidden: isDisplayNamePending,
+                })}
+              >
                 <button
                   type="button"
                   className="text-green-500"
-                  onClick={async () => {
-                    if (inputRef.current !== null) {
-                      setCurrentDisplayName(inputRef.current.value);
-                      setShowNameEdit((prev) => !prev);
-                      const { displayName } = await updateProfileDisplayName(
-                        inputRef.current.value
-                      );
-                      setDisplayError((prevError) => ({
-                        ...prevError,
-                        displayName: displayName as string,
-                      }));
-                    }
+                  onClick={() => {
+                    startDisplayNameTransition(async () => {
+                      if (inputRef.current !== null) {
+                        const { displayName } = await updateProfileDisplayName(
+                          inputRef.current.value
+                        );
+                        setDisplayError((prevError) => ({
+                          ...prevError,
+                          displayName: displayName ?? "",
+                        }));
+                        setShowNameEdit((prev) => !prev);
+                      }
+                    });
                   }}
                 >
                   <Check />
@@ -101,7 +221,7 @@ export default function DisplayProfile({
             </fieldset>
           ) : (
             <div className="group/display relative">
-              {currentDisplayName}
+              {displayName}
               <abbr title="Edit Name">
                 <button
                   type="button"

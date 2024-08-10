@@ -1,8 +1,12 @@
 "use server";
 
-import { updateDisplayName } from "@/server/use-cases/user-use-cases";
+import { updateAvatarImage, updateDisplayName } from "@/server/use-cases/user-use-cases";
 import { revalidatePath } from "next/cache";
-import { updateUserNameSchema } from "./schema";
+import { permanentRedirect } from "next/navigation";
+import { UTApi } from "uploadthing/server";
+import { updateAvatarImageSchema, updateUserNameSchema } from "./schema";
+
+const utapi = new UTApi();
 
 export async function updateProfileDisplayName(
   displayName: string
@@ -14,11 +18,36 @@ export async function updateProfileDisplayName(
   }
   await updateDisplayName({ displayName: parsedDisplayName.data.displayName });
   revalidatePath("/my-posts");
-
   return {};
 }
 
-export async function updateAvatar(avatarUrl: string) {
-  await updateAvatar(avatarUrl);
+type UpdateAvatarType = { image?: string };
+
+export async function updateAvatar(formData: FormData): Promise<UpdateAvatarType> {
+  const file = formData.get("image") as File;
+
+  const parsedAvatarImage = updateAvatarImageSchema.safeParse({
+    image: file,
+  });
+
+  if (parsedAvatarImage.success === false) {
+    const { image } = parsedAvatarImage.error.formErrors.fieldErrors;
+    return { image: image?.[0] ?? undefined };
+  }
+  const utImages = await utapi.uploadFiles(parsedAvatarImage.data.image);
+
+  if (utImages.data === null) {
+    throw new Error(`${utImages.error.code}:${utImages.error.message}.`);
+  }
+  const { url, key } = utImages.data;
+
+  const oldUrlKey = await updateAvatarImage({ url, urlKey: key });
+  if (oldUrlKey.urlKey === null) {
+    throw new Error("An Error Occured While updating your Image");
+  }
+
+  await utapi.deleteFiles(oldUrlKey.urlKey);
+
   revalidatePath("/my-posts");
+  return { image: undefined };
 }

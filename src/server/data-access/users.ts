@@ -177,6 +177,61 @@ export async function updateDisplayNameById({ userId, displayName }: UpdateDispl
   });
 }
 
+const updateAvatarFromDBSchema = createUserSchema.pick({
+  urlKey: true,
+  avatar: true,
+});
+
+type UpdateAvatarFromDBTypes = z.infer<typeof updateAvatarFromDBSchema> & {
+  userId: string;
+};
+
+export async function updateAvatarFromDB({ urlKey, avatar, userId }: UpdateAvatarFromDBTypes) {
+  const parsedUserInfo = updateAvatarFromDBSchema.safeParse({
+    urlKey,
+    avatar,
+  });
+
+  if (parsedUserInfo.success === false) {
+    console.error(parsedUserInfo.error.cause);
+    throw new ZodError(parsedUserInfo.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         UPDATE users 
+         SET 
+            avatar = :avatar,
+            url_key = :urlKey
+         WHERE id = :userId
+         `,
+    args: {
+      userId,
+      avatar: parsedUserInfo.data.avatar as string,
+      urlKey: parsedUserInfo.data.urlKey as string,
+    },
+  });
+}
+
+export async function getAvatarImgKeyFromDB(userId: string) {
+  const rawImageKey = await turso.execute({
+    sql: `
+         SELECT
+            u.url_key as urlKey
+         FROM
+            users u
+         WHERE u.id = :userId
+         `,
+    args: { userId },
+  });
+
+  const parsedImageKey = getUserSchema.pick({ urlKey: true }).safeParse(rawImageKey.rows[0]);
+  if (parsedImageKey.success === false) {
+    throw new ZodError(parsedImageKey.error.errors);
+  }
+  return parsedImageKey.data;
+}
+
 const DBDataSchema = getUserSchema.pick({
   hashedPassword: true,
   salt: true,

@@ -6,7 +6,6 @@ import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
 import { cn, createTooltipClasses } from "@/lib/utils";
 import { Check, Globe, GlobeLock, ImagePlus, X } from "lucide-react";
-import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   type ChangeEvent,

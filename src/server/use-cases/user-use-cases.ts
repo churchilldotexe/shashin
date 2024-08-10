@@ -1,6 +1,12 @@
 import "server-only";
 
-import { getUserInfoById, updateDisplayNameById, updateUserInfoById } from "../data-access/users";
+import {
+  getAvatarImgKeyFromDB,
+  getUserInfoById,
+  updateAvatarFromDB,
+  updateDisplayNameById,
+  updateUserInfoById,
+} from "../data-access/users";
 import { hasAccess } from "./auth/authentication";
 
 export async function getUserInfo() {
@@ -50,6 +56,36 @@ export async function updateDisplayName({
   try {
     await updateDisplayNameById({ userId, displayName });
   } catch (error) {
+    throw new Error("an error Occured while getting the users Info ");
+  }
+}
+
+// TODO:
+// [] - get the URLKEY first
+// [] - Proceed to update the avatar(MAKE SURE THIS SUCCEEDS)
+// [] - delete the image to UPDLOAD THING using the URLKEY //better do this in the server action
+//      - return the URL key
+
+export async function updateAvatarImage({
+  url,
+  urlKey,
+}: {
+  url: string;
+  urlKey: string;
+}) {
+  const user = await hasAccess({
+    errorMsg: "Please login to setup your profile",
+  });
+
+  const { userId } = user;
+  try {
+    const avatarUrlKey = await getAvatarImgKeyFromDB(userId);
+    await updateAvatarFromDB({ userId, avatar: url, urlKey });
+    return avatarUrlKey;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`An Error Occured ${error.name}: ${error.cause}. ${error.message}`);
+    }
     throw new Error("an error Occured while getting the users Info ");
   }
 }
