@@ -1,6 +1,6 @@
 import { migrate } from "drizzle-orm/libsql/migrator";
 import config from "drizzle.config";
-import { connection, db } from ".";
+import db, { connection } from ".";
 
 await migrate(db, { migrationsFolder: config.out as string });
 
