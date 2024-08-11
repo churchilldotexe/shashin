@@ -1,8 +1,7 @@
 import { getMyImages } from "@/server/use-cases/images-use-cases";
-import Image from "next/image";
 import { Suspense } from "react";
 import Loading from "../../loading";
-import { FavoriteButton } from "./_lib/component/FavoritesButton";
+import RenderImage from "./_lib/RenderImage";
 
 export default async function ImagesPage() {
   const myImages = await getMyImages();
@@ -12,24 +11,7 @@ export default async function ImagesPage() {
         <div>no image yet</div>
       ) : (
         <Suspense fallback={<Loading />}>
-          {myImages.map((image) => (
-            <div
-              key={image.fileKey}
-              className="relative aspect-video flex-grow basis-full md:basis-2/3 lg:basis-1/3"
-            >
-              <Image
-                src={image.url}
-                alt={image.name}
-                className="object-cover object-center "
-                fill
-              />
-              <FavoriteButton
-                isFavorited={image.isFavorited}
-                imageId={image.id}
-                className="absolute top-0 right-0"
-              />
-            </div>
-          ))}
+          <RenderImage myImages={myImages} />
         </Suspense>
       )}
     </section>
@@ -38,3 +20,10 @@ export default async function ImagesPage() {
 
 // NOTE: FEAT: be able to have a view options (large, extra large, details/list) // can control with flex-basis
 // add feature to delete post, image,album
+
+// NOTE: implementation for Performant eventlistener
+// [] - instead of itteration over the images pass the Array itself to the component (client)
+// [] -  the client component will now take these array and use useEffect without dependencies for eventlistener
+// [] - eventlistenr for favorites button that can run server action
+// [] -  TRY : passing the fileKey as identifier then for deletion use it as a query
+// [] - add DELETE button and other feature needed like View Options (transitioned)
