@@ -1,17 +1,15 @@
 "use client";
 
 import { Star } from "lucide-react";
-import { type ButtonHTMLAttributes, useTransition } from "react";
+import { type ComponentProps, useTransition } from "react";
 import { setFavoritePost, unFavoritePost } from "../action";
 
-export function FavoriteButton({
-  isFavorited,
-  imageId,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
+type FavoriteButtonProps = ComponentProps<"button"> & {
   isFavorited: boolean;
   imageId: string;
-}) {
+};
+
+export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   return isFavorited ? (

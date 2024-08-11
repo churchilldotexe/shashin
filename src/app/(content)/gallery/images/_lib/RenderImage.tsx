@@ -1,50 +1,7 @@
 "use client";
 
-import { Star } from "lucide-react";
 import Image from "next/image";
-import { type ButtonHTMLAttributes, useTransition } from "react";
-import { setFavoritePost, unFavoritePost } from "./action";
-
-function FavoriteButton({
-  isFavorited,
-  imageId,
-  ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & {
-  isFavorited: boolean;
-  imageId: string;
-}) {
-  const [isPending, startTransition] = useTransition();
-
-  return isFavorited ? (
-    <button
-      type="button"
-      onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await unFavoritePost(imageId);
-        });
-      }}
-      {...props}
-    >
-      <abbr title="Favorite">{isPending ? <Star /> : <Star className="fill-primary" />}</abbr>
-    </button>
-  ) : (
-    <button
-      type="button"
-      onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await setFavoritePost(imageId);
-        });
-      }}
-      {...props}
-    >
-      <abbr title="Favorite">{isPending ? <Star className="fill-primary" /> : <Star />}</abbr>
-    </button>
-  );
-}
+import { FavoriteButton } from "../../_lib/components/FavoriteButton";
 
 type myImages = {
   id: string;
@@ -71,6 +28,9 @@ export default function RenderImage({ myImages }: RenderImageProps) {
               imageId={image.id}
               className="absolute top-0 right-0"
             />
+            <button type="button" className="mydiv absolute top-0 left-0 text-primary">
+              Click oh hi
+            </button>
           </div>
         </figure>
       ))}

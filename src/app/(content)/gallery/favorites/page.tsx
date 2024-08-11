@@ -1,16 +1,10 @@
-import { BookmarkButton } from "@/components/ui/BookmarkButton";
-import {
-  createNewFavorite,
-  getAllMyFavoritedImages,
-  removeFavorite,
-} from "@/server/use-cases/favorites-use-case";
-import { Star } from "lucide-react";
-import { revalidatePath } from "next/cache";
+import { getAllMyFavoritedImages } from "@/server/use-cases/favorites-use-case";
 import Image from "next/image";
 import { Suspense } from "react";
-import { FavoriteButton } from "../images/_lib/component/FavoritesButton";
+import { FavoriteButton } from "../_lib/components/FavoriteButton";
 
 export default async function FavoritesPage() {
+  console.log("favorite page");
   const myFavoritedImages = await getAllMyFavoritedImages();
   return (
     <section className="flex flex-wrap gap-4">

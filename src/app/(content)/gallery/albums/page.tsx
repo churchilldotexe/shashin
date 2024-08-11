@@ -6,6 +6,8 @@ import { type CSSProperties, Suspense } from "react";
 import Loading from "../../loading";
 
 export default async function AlbumsPage() {
+  console.log("albums page");
+
   const myAlbums = await getAllMyAlbums();
   return (
     <PageSection className="space-y-4 p-4">
