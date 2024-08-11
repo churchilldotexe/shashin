@@ -25,6 +25,4 @@ export default async function ImagesPage() {
 // NOTE: implementation for Performant eventlistener
 // [x] - instead of itteration over the images pass the Array itself to the component (client)
 // [x] -  the client component will now take these array and use useEffect without dependencies for eventlistener
-// [] - eventlistenr for favorites button that can run server action
-// [] -  TRY : passing the fileKey as identifier then for deletion use it as a query
 // [] - add DELETE button and other feature needed like View Options (transitioned)

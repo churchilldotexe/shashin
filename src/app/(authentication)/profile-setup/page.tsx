@@ -3,14 +3,13 @@
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { ACCEPTED_FILE_TYPE } from "@/lib/constants";
+import { usePageTransition } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { Images } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { type CSSProperties, useState } from "react";
 import { useFormState } from "react-dom";
 import { profileSetupAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
-import { usePageTransition } from "../_lib/hooks";
 import { profileSetupFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -23,7 +22,6 @@ export default function ProfileSetupPage() {
     images: "",
   });
   const [objectUrls, setObjectUrls] = useState<string[]>([]);
-  const router = useRouter();
   const handleImageChange = (fileList: FileList | null) => {
     if (fileList === null) {
       return;
@@ -41,8 +39,6 @@ export default function ProfileSetupPage() {
 
   const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
-    // animatedRouterPush().then(() => router.push("/"));
-    // .then(() => document.documentElement.style.setProperty("--transition", "unset"));
     transitionedPush("/");
   }
 

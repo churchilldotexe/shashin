@@ -2,14 +2,13 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { animatedRouterPush, cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePageTransition } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import { type CSSProperties, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { registerFormActions } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { TransitionLink } from "../_lib/components/TransitionLink";
-import { usePageTransition } from "../_lib/hooks";
 import { registerUserFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
@@ -26,12 +25,8 @@ export default function RegisterPage() {
   const [isMatched, setIsMatched] = useState<boolean>(true);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
-  const router = useRouter();
-
   const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
-    // animatedRouterPush().then(() => router.push("/profile-setup"));
-    // .then(() => document.documentElement.style.setProperty("--transition", "unset"));
     transitionedPush("/profile-setup");
   }
 

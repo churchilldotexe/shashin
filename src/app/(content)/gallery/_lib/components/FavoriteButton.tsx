@@ -1,7 +1,8 @@
 "use client";
 
+import { useTransitionedServerAction } from "@/lib/hooks";
 import { Star } from "lucide-react";
-import { type ComponentProps, useTransition } from "react";
+import type { ComponentProps } from "react";
 import { setFavoritePost, unFavoritePost } from "../action";
 
 type FavoriteButtonProps = ComponentProps<"button"> & {
@@ -10,17 +11,15 @@ type FavoriteButtonProps = ComponentProps<"button"> & {
 };
 
 export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButtonProps) {
-  const [isPending, startTransition] = useTransition();
+  const { isPending, startServerTransition } = useTransitionedServerAction();
 
   return isFavorited ? (
     <button
       type="button"
       onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await unFavoritePost(imageId);
-        });
+        e.stopPropagation();
+        e.preventDefault();
+        startServerTransition(unFavoritePost(imageId));
       }}
       {...props}
     >
@@ -30,11 +29,7 @@ export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButto
     <button
       type="button"
       onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await setFavoritePost(imageId);
-        });
+        startServerTransition(setFavoritePost(imageId));
       }}
       {...props}
     >

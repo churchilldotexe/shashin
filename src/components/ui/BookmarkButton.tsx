@@ -1,8 +1,9 @@
 "use client";
 
 import { setBookmarkPost, unBookmarkPost } from "@/app/(content)/_lib/Actions";
+import { useTransitionedServerAction } from "@/lib/hooks";
 import { Bookmark } from "lucide-react";
-import { type ButtonHTMLAttributes, type ReactNode, useTransition } from "react";
+import type { ButtonHTMLAttributes } from "react";
 
 export function BookmarkButton({
   isBookmark,
@@ -12,16 +13,15 @@ export function BookmarkButton({
   isBookmark: boolean;
   postId: string;
 }) {
-  const [isPending, startTransition] = useTransition();
+  // const [isPending, startTransition] = useTransition();
+  const { isPending, startServerTransition } = useTransitionedServerAction();
   return isBookmark ? (
     <button
       type="button"
       onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await unBookmarkPost(postId);
-        });
+        e.stopPropagation();
+        e.preventDefault();
+        startServerTransition(unBookmarkPost(postId));
       }}
       {...props}
     >
@@ -33,11 +33,9 @@ export function BookmarkButton({
     <button
       type="button"
       onClick={(e) => {
-        startTransition(async () => {
-          e.stopPropagation();
-          e.preventDefault();
-          await setBookmarkPost(postId);
-        });
+        e.stopPropagation();
+        e.preventDefault();
+        startServerTransition(setBookmarkPost(postId));
       }}
       {...props}
     >

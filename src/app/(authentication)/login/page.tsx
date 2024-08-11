@@ -2,14 +2,13 @@
 
 import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { animatedRouterPush, cn } from "@/lib/utils";
-import { useRouter, useSearchParams } from "next/navigation";
-import type { CSSProperties } from "react";
+import { usePageTransition } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
 import { TransitionLink } from "../_lib/components/TransitionLink";
-import { usePageTransition } from "../_lib/hooks";
 import { loginFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({

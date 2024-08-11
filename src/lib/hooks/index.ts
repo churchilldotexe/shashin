@@ -1,5 +1,18 @@
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { useEffect } from "react";
+
+export function useTransitionedServerAction<T extends Promise<void>>() {
+  const [isPending, startTransition] = useTransition();
+
+  const startServerTransition = (fn: T) => {
+    startTransition(async () => {
+      await fn;
+    });
+  };
+
+  return { isPending, startServerTransition };
+}
 
 export const wait = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));

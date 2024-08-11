@@ -161,7 +161,7 @@ export function PostImage({
 
       formRef.current?.reset();
 
-      router.push("/", { scroll: false });
+      router.replace("/", { scroll: false });
     }
   }, [state?.message, router]);
 

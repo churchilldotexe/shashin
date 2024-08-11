@@ -1,9 +1,9 @@
 "use client";
 
+import { usePageTransition } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import type { ComponentProps, MouseEvent as ReactMouseEvent } from "react";
-import { usePageTransition } from "../hooks";
 
 type TransitionLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
   href: string;
