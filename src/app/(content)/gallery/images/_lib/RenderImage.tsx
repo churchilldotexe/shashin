@@ -1,4 +1,3 @@
-import { Star } from "lucide-react";
 import Image from "next/image";
 import { FavoriteButton } from "../../_lib/components/FavoriteButton";
 
@@ -20,7 +19,10 @@ export default function RenderImage({ myImages }: RenderImageProps) {
       {myImages.map((image) => {
         const favoriteStatustus = image.isFavorited ? "favorited" : "unfavorited";
         return (
-          <figure key={image.fileKey} className="flex-grow basis-full md:basis-2/3 lg:basis-1/3 ">
+          <figure
+            key={image.fileKey}
+            className=" flex-grow basis-full md:basis-2/3 lg:basis-[33%] "
+          >
             <figcaption className="sr-only">{image.name}</figcaption>
             <div key={image.fileKey} className="relative aspect-video ">
               <Image
@@ -43,3 +45,15 @@ export default function RenderImage({ myImages }: RenderImageProps) {
     </>
   );
 }
+
+// lg
+// 20% - 4
+// 25% - 3
+// 33% - 2
+
+// md
+//  33% - 2
+// 25% - 3
+// 20% - 4
+
+// lower < md === none (mobile)

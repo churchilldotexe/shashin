@@ -19,11 +19,20 @@ import {
 } from "./tokenManagement";
 
 export async function hasAccess({ errorMsg }: { errorMsg: string }) {
-  const user = await getAuthenticatedId();
-  if (user === undefined) {
-    throw new Error(errorMsg);
+  try {
+    const user = await getAuthenticatedId();
+
+    if (user === undefined) {
+      throw new Error(errorMsg);
+    }
+    return user;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`${errorMsg}. ${error.name}: ${error.cause}. ${error.message}`);
+    }
+
+    throw new Error("unexpected error occured");
   }
-  return user;
 }
 
 export async function verifyUserInfo({

@@ -60,12 +60,6 @@ export async function updateDisplayName({
   }
 }
 
-// TODO:
-// [] - get the URLKEY first
-// [] - Proceed to update the avatar(MAKE SURE THIS SUCCEEDS)
-// [] - delete the image to UPDLOAD THING using the URLKEY //better do this in the server action
-//      - return the URL key
-
 export async function updateAvatarImage({
   url,
   urlKey,
