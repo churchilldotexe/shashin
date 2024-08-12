@@ -1,13 +1,14 @@
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { type ElementRef, useRef, useTransition } from "react";
 import { useEffect } from "react";
 
 export function useTransitionedServerAction<T extends Promise<void>>() {
   const [isPending, startTransition] = useTransition();
 
-  const startServerTransition = (fn: T) => {
+  const startServerTransition = (fn: T, optionalFn?: () => void) => {
     startTransition(async () => {
       await fn;
+      optionalFn;
     });
   };
 
@@ -36,4 +37,51 @@ export function usePageTransition() {
   };
 
   return { transitionedPush };
+}
+
+export function useDropDownControls() {
+  const detailsRef = useRef<ElementRef<"details">>(null);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+
+    document.addEventListener(
+      "mousedown",
+      (event: MouseEvent) => {
+        if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
+          detailsRef.current.open = false;
+        }
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+
+    document.addEventListener(
+      "keydown",
+      (event: KeyboardEvent) => {
+        if (detailsRef.current) {
+          if (event.key === "Escape" && detailsRef.current.open) {
+            detailsRef.current.open = false;
+          }
+        }
+      },
+      {
+        signal: abortController.signal,
+      }
+    );
+
+    return () => {
+      abortController.abort();
+    };
+  }, []);
+
+  const closeDropdown = () => {
+    if (detailsRef.current === null) {
+      return;
+    }
+    detailsRef.current.open = false;
+  };
+
+  return { detailsRef, closeDropdown };
 }

@@ -1,11 +1,10 @@
 "use client";
 
 import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
-/// <reference types="react/canary" />
+import { useDropDownControls, useTransitionedServerAction } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { type ElementRef, useEffect, useRef, useTransition } from "react";
 import { logoutAction } from "../Actions";
 
 export function UserContent({
@@ -17,49 +16,8 @@ export function UserContent({
   userName: string;
   avatar: string | null;
 }) {
-  const [isPending, setTransiton] = useTransition();
-  const detailsRef = useRef<ElementRef<"details">>(null);
-
-  useEffect(() => {
-    const abortController = new AbortController();
-
-    document.addEventListener(
-      "mousedown",
-      (event: MouseEvent) => {
-        if (detailsRef.current && !detailsRef.current.contains(event.target as Node)) {
-          detailsRef.current.open = false;
-        }
-      },
-      {
-        signal: abortController.signal,
-      }
-    );
-
-    document.addEventListener(
-      "keydown",
-      (event: KeyboardEvent) => {
-        if (detailsRef.current) {
-          if (event.key === "Escape" && detailsRef.current.open) {
-            detailsRef.current.open = false;
-          }
-        }
-      },
-      {
-        signal: abortController.signal,
-      }
-    );
-
-    return () => {
-      abortController.abort();
-    };
-  }, []);
-
-  const handleCloseModal = () => {
-    if (detailsRef.current === null) {
-      return;
-    }
-    detailsRef.current.open = false;
-  };
+  const { isPending, startServerTransition } = useTransitionedServerAction();
+  const { detailsRef, closeDropdown } = useDropDownControls();
 
   return (
     <details ref={detailsRef} className="group relative size-full ">
@@ -78,7 +36,7 @@ export function UserContent({
             <h3 className="cursor-default whitespace-nowrap capitalize">{displayName}</h3>
             <Link
               href={"/my-posts"}
-              onClick={() => handleCloseModal()}
+              onClick={() => closeDropdown()}
               className="text-sky-500 text-xs"
             >
               @{userName}
@@ -112,10 +70,7 @@ export function UserContent({
                 "bg-muted": isPending,
               })}
               onClick={async () => {
-                setTransiton(async () => {
-                  await logoutAction();
-                  handleCloseModal();
-                });
+                startServerTransition(logoutAction(), closeDropdown);
               }}
               disabled={isPending}
             >
@@ -127,7 +82,7 @@ export function UserContent({
               type="button"
               popovertarget="notification"
               popovertargetaction="hide"
-              onClick={() => handleCloseModal()}
+              onClick={() => closeDropdown()}
             >
               Back
             </button>
