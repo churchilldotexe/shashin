@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransitionedServerAction } from "@/lib/hooks";
-import { Star } from "lucide-react";
+import { FileHeart, Star } from "lucide-react";
 import type { ComponentProps } from "react";
 import { setFavoritePost, unFavoritePost } from "../action";
 
@@ -23,17 +23,32 @@ export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButto
       }}
       {...props}
     >
-      <abbr title="Favorite">{isPending ? <Star /> : <Star className="fill-primary" />}</abbr>
+      <abbr title="Favorite">
+        {isPending ? (
+          <Star className="drop-shadow-sm-double" />
+        ) : (
+          <Star className="fill-primary drop-shadow-sm-double" />
+        )}
+      </abbr>
     </button>
   ) : (
+    // drop-shadow-[0_1px_1px_hsl(var(--foreground))]
     <button
       type="button"
       onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
         startServerTransition(setFavoritePost(imageId));
       }}
       {...props}
     >
-      <abbr title="Favorite">{isPending ? <Star className="fill-primary" /> : <Star />}</abbr>
+      <abbr title="Favorite">
+        {isPending ? (
+          <Star className="fill-primary drop-shadow-sm-double" />
+        ) : (
+          <Star className="drop-shadow-sm-double" />
+        )}
+      </abbr>
     </button>
   );
 }

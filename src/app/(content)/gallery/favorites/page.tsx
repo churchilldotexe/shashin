@@ -1,10 +1,9 @@
 import { getAllMyFavoritedImages } from "@/server/use-cases/favorites-use-case";
 import Image from "next/image";
-import { Suspense } from "react";
+import { type CSSProperties, Suspense } from "react";
 import { FavoriteButton } from "../_lib/components/FavoriteButton";
 
 export default async function FavoritesPage() {
-  console.log("favorite page");
   const myFavoritedImages = await getAllMyFavoritedImages();
   return (
     <section className="flex flex-wrap gap-4">
@@ -12,10 +11,11 @@ export default async function FavoritesPage() {
         <div>no image yet</div>
       ) : (
         <Suspense>
-          {myFavoritedImages.map((image) => (
+          {myFavoritedImages.map((image, index) => (
             <div
               key={image.fileKey}
-              className="relative aspect-video flex-grow basis-full md:basis-2/3 lg:basis-1/3"
+              className="fade-in-image relative aspect-video flex-grow basis-full md:basis-2/3 lg:basis-1/3"
+              style={{ "--i": `${index}` } as CSSProperties}
             >
               <Image
                 src={image.url}

@@ -1,5 +1,12 @@
+"use client";
+
+import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+import type { CSSProperties } from "react";
 import { FavoriteButton } from "../../_lib/components/FavoriteButton";
+import type { SortStatusTypes } from "../../_lib/components/SortDropDown";
+import { VIEW_STATUS } from "../../_lib/constants";
 
 type myImages = {
   id: string;
@@ -14,14 +21,16 @@ type RenderImageProps = {
 };
 
 export default function RenderImage({ myImages }: RenderImageProps) {
+  const view = useSearchParams().get("view") as SortStatusTypes;
   return (
     <>
-      {myImages.map((image) => {
+      {myImages.map((image, index) => {
         const favoriteStatustus = image.isFavorited ? "favorited" : "unfavorited";
         return (
           <figure
             key={image.fileKey}
-            className=" flex-grow basis-full md:basis-2/3 lg:basis-[33%] "
+            className={cn("fade-in-image flex-grow basis-full md:basis-[33%] ", VIEW_STATUS[view])}
+            style={{ "--i": `${index}` } as CSSProperties}
           >
             <figcaption className="sr-only">{image.name}</figcaption>
             <div key={image.fileKey} className="relative aspect-video ">
@@ -34,7 +43,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
               <FavoriteButton
                 isFavorited={image.isFavorited}
                 imageId={image.id}
-                className="mydiv absolute top-0 right-0"
+                className="mydiv absolute top-0 left-0"
                 data-key={image.fileKey}
                 data-is-favorited={favoriteStatustus}
               />
@@ -45,15 +54,3 @@ export default function RenderImage({ myImages }: RenderImageProps) {
     </>
   );
 }
-
-// lg
-// 20% - 4
-// 25% - 3
-// 33% - 2
-
-// md
-//  33% - 2
-// 25% - 3
-// 20% - 4
-
-// lower < md === none (mobile)

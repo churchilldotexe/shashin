@@ -4,16 +4,17 @@ import Loading from "../../loading";
 import RenderImage from "./_lib/RenderImage";
 
 export default async function ImagesPage() {
-  console.log("images page");
   const myImages = await getMyImages();
   return (
-    <section className="flex flex-wrap gap-4">
+    <section className="relative flex flex-wrap gap-4">
       {myImages.length === 0 ? (
         <div>no image yet</div>
       ) : (
-        <Suspense fallback={<Loading />}>
-          <RenderImage myImages={myImages} />
-        </Suspense>
+        <>
+          <Suspense fallback={<Loading />}>
+            <RenderImage myImages={myImages} />
+          </Suspense>
+        </>
       )}
     </section>
   );

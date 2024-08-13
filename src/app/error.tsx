@@ -13,7 +13,6 @@ export default function ErrorPage({
     // Log the error to an error reporting service
     console.error(error);
   }, [error]);
-  console.log("error page");
   return (
     <div>
       <h2>Something went wrong!</h2>

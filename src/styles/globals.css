@@ -303,6 +303,7 @@
    transition-property: opacity;
    transition-duration: 1s;
    transition-delay: calc(150ms * var(--i));
+   transition-behavior: allow-discrete;
 
    @starting-style {
       opacity: 0;

@@ -51,6 +51,9 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      dropShadow: {
+        "sm-double": ["0 1px 1px hsl(var(--foreground))", "0 -1px 1px hsl(var(--background)) "],
+      },
       boxShadow: {
         "elevate-light": "0 8px 6px 0 rgba(0,0,0,.37), -6px -4px 10px white",
         "elevate-dark": "0 8px 6px 0 rgba(255,255,255,0.1), -6px -4px 10px black",

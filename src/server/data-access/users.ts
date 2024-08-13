@@ -161,8 +161,6 @@ export async function updateDisplayNameById({ userId, displayName }: UpdateDispl
     throw new ZodError(parsedUserInfo.error.errors);
   }
 
-  console.log(parsedUserInfo.data, userId, "user display name DB");
-
   await turso.execute({
     sql: `
          UPDATE users 
