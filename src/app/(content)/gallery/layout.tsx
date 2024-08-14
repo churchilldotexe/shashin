@@ -7,9 +7,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <nav className="relative flex size-full flex-col">
+    <>
       <GalleryNav />
       {children}
-    </nav>
+    </>
   );
 }

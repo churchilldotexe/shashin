@@ -4,6 +4,7 @@ export const RANGE_TO_SORT_VALUE = {
   3: "medium",
   4: "large",
 } as const;
+export type RangeToSortKeyType = keyof typeof RANGE_TO_SORT_VALUE;
 
 export const VIEW_STATUS = {
   large: "md:basis-full",
@@ -11,10 +12,10 @@ export const VIEW_STATUS = {
   small: "md:basis-[25%]",
   extraSmall: "md:basis-[20%]",
 } as const;
+export type SortStatusTypes = keyof typeof VIEW_STATUS;
 
-export const SORT_IMAGES = {
-  date: ["d-asec", "d-desc"],
-  namr: ["d-asec", "d-desc"],
-  createAt: ["d-asec", "d-desc"],
-  type: ["d-asec", "d-desc"],
-} as const;
+export const SORT_PROPERTIES = ["updatedAt", "name", "createdAt"] as const;
+export type SortPropertiesTypes = (typeof SORT_PROPERTIES)[number];
+
+export const SORT_OPTIONS = ["DESC", "ASC"] as const;
+export type SortOptionsTypes = (typeof SORT_OPTIONS)[number];

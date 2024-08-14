@@ -1,7 +1,9 @@
 import { getAllMyFavoritedImages } from "@/server/use-cases/favorites-use-case";
 import Image from "next/image";
 import { type CSSProperties, Suspense } from "react";
+import Loading from "../../loading";
 import { FavoriteButton } from "../_lib/components/FavoriteButton";
+import RenderImage from "../_lib/components/RenderImage";
 
 export default async function FavoritesPage() {
   const myFavoritedImages = await getAllMyFavoritedImages();
@@ -10,26 +12,8 @@ export default async function FavoritesPage() {
       {myFavoritedImages.length === 0 ? (
         <div>no image yet</div>
       ) : (
-        <Suspense>
-          {myFavoritedImages.map((image, index) => (
-            <div
-              key={image.fileKey}
-              className="fade-in-image relative aspect-video flex-grow basis-full md:basis-2/3 lg:basis-1/3"
-              style={{ "--i": `${index}` } as CSSProperties}
-            >
-              <Image
-                src={image.url}
-                alt={image.name}
-                className="object-cover object-center "
-                fill
-              />
-              <FavoriteButton
-                isFavorited={image.isFavorited}
-                imageId={image.id}
-                className="absolute top-0 right-0"
-              />
-            </div>
-          ))}
+        <Suspense fallback={<Loading />}>
+          <RenderImage myImages={myFavoritedImages} />
         </Suspense>
       )}
     </section>

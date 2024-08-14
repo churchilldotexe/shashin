@@ -2,25 +2,29 @@
 
 import { cn } from "@/lib/utils";
 import {
-  type ReadonlyURLSearchParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { useState } from "react";
-import { RANGE_TO_SORT_VALUE } from "../constants";
+  ALargeSmall,
+  ArrowDownNarrowWide,
+  ArrowUpWideNarrow,
+  CalendarClock,
+  CalendarDays,
+} from "lucide-react";
+import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
+import { type ChangeEvent, useState } from "react";
+import {
+  RANGE_TO_SORT_VALUE,
+  type RangeToSortKeyType,
+  type SortOptionsTypes,
+  type SortPropertiesTypes,
+} from "../constants";
 
-type RangeToSortKeyType = keyof typeof RANGE_TO_SORT_VALUE;
-
-const galleryUrl = ({
-  viewValue,
-  sortValue,
-  searchParams,
-}: {
-  sortValue?: string;
+type GetGalleryUrlType = {
+  sortValue?: SortPropertiesTypes;
+  sortOptions?: SortOptionsTypes;
   viewValue?: RangeToSortKeyType;
   searchParams: ReadonlyURLSearchParams;
-}) => {
+};
+
+const getGalleryUrl = ({ sortOptions, viewValue, sortValue, searchParams }: GetGalleryUrlType) => {
   const params = new URLSearchParams(searchParams.toString());
   if (viewValue) {
     params.set("view", RANGE_TO_SORT_VALUE[viewValue]);
@@ -28,6 +32,10 @@ const galleryUrl = ({
   }
   if (sortValue) {
     params.set("sort", sortValue.toString());
+    window.history.pushState(null, "", `?${params.toString()}`);
+  }
+  if (sortOptions) {
+    params.set("option", sortOptions.toString());
     window.history.pushState(null, "", `?${params.toString()}`);
   }
 
@@ -39,8 +47,24 @@ export default function GalleryNav() {
   const [rangeValue, setRangeValue] = useState<RangeToSortKeyType>(3);
   const searchParams = useSearchParams();
 
+  const handleSortValueChange = (e: ChangeEvent<HTMLInputElement>) => {
+    switch (e.target.value as SortPropertiesTypes) {
+      case "name":
+        getGalleryUrl({ searchParams, sortValue: "name" });
+        break;
+      case "createdAt":
+        getGalleryUrl({ searchParams, sortValue: "createdAt" });
+        break;
+      case "updatedAt":
+        getGalleryUrl({ searchParams, sortValue: "updatedAt" });
+        break;
+      default:
+        return;
+    }
+  };
+
   return (
-    <div className=" sticky top-0 z-10 p-4">
+    <nav className="sticky top-0 z-10 p-4">
       <input
         type="range"
         min="1"
@@ -52,7 +76,7 @@ export default function GalleryNav() {
         onChange={(e) => {
           const newRangeValue = Number(e.target.value) as RangeToSortKeyType;
           setRangeValue(newRangeValue);
-          galleryUrl({ viewValue: newRangeValue, searchParams });
+          getGalleryUrl({ viewValue: newRangeValue, searchParams });
         }}
       />
       <datalist id="view-value">
@@ -63,10 +87,72 @@ export default function GalleryNav() {
       </datalist>
       <div
         className={cn(
-          "-mt-3 hidden w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark",
+          "-mt-3 w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark",
           "css-border-animateInline"
         )}
       />
-    </div>
+      <ul className="flex items-center gap-4">
+        <li>
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              className="peer/created sr-only"
+              defaultChecked={true}
+              value="createdAt"
+              onChange={(e) => {
+                handleSortValueChange(e);
+              }}
+            />
+            <CalendarDays className="peer-checked/created:border" />
+          </label>
+        </li>
+        <li>
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              className="peer/updated sr-only"
+              value="updatedAt"
+              onChange={(e) => {
+                handleSortValueChange(e);
+              }}
+            />
+            <CalendarClock className="peer-checked/udpated:border" />
+          </label>
+        </li>
+        <li>
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              value="name"
+              className="peer/name sr-only"
+              onChange={(e) => {
+                handleSortValueChange(e);
+              }}
+            />
+            <ALargeSmall className="peer-checked/name:border" />
+          </label>
+        </li>
+      </ul>
+      <fieldset>
+        <label>
+          <input
+            type="checkbox"
+            className="peer/sort sr-only"
+            onChange={(e) => {
+              if (e.target.checked) {
+                getGalleryUrl({ searchParams, sortOptions: "ASC" });
+              } else {
+                getGalleryUrl({ searchParams, sortOptions: "DESC" });
+              }
+            }}
+          />
+          <ArrowDownNarrowWide className="peer-checked/sort:hidden " />
+          <ArrowUpWideNarrow className="hidden peer-checked/sort:block " />
+        </label>
+      </fieldset>
+    </nav>
   );
 }

@@ -1,6 +1,6 @@
 import "@/styles/globals.css";
 
-import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
+import { DisplayModeToggle } from "@/components/ui/DisplayModeToggle";
 import { Header } from "./_lib/_components/Header";
 
 export const metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
       </main>
       <aside className="sticky top-0 hidden h-dvh md:flex">
         <div>
-          <DisplayModeDropDown />
+          <DisplayModeToggle />
         </div>
         {overview}
       </aside>

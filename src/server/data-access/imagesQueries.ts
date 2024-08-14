@@ -107,6 +107,12 @@ const getMyImagesSchema = z.array(
     name: selectImageSchema.shape.name,
     fileKey: selectImageSchema.shape.fileKey,
     isFavorited: z.number().transform((val) => Boolean(val)),
+    createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
+    updatedAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
   })
 );
 
@@ -118,7 +124,9 @@ export async function getAllMyFavoritesFromDb(userId: string) {
          images.id as id,
          images.name as name,
          images.file_key as fileKey,
-         images.is_favorited as isFavorited
+         images.is_favorited as isFavorited,
+         datetime(images.created_at,'unixepoch') AS createdAt,
+         datetime(images.updated_at,'unixepoch') AS updatedAt
       FROM images
       WHERE user_id = :userId
          AND images.is_favorited = true
@@ -145,7 +153,9 @@ export async function getMyImagesFromDb(userId: string) {
          images.id as id,
          images.name as name,
          images.file_key as fileKey,
-         images.is_favorited as isFavorited
+         images.is_favorited as isFavorited,
+         datetime(images.created_at,'unixepoch') AS createdAt,
+         datetime(images.updated_at,'unixepoch') AS updatedAt
       FROM images
       WHERE user_id = :userId
          ORDER BY

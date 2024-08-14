@@ -1,7 +1,7 @@
 "use client";
 
 import Dialog from "@/components/ui/Dialog";
-import { DisplayModeDropDown } from "@/components/ui/DisplayModeToggle";
+import { DisplayModeToggle } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils";
 import {
   type Dispatch,
@@ -59,7 +59,7 @@ function MobileHeader({
           <Dialog.Trigger>User</Dialog.Trigger>
           <div className="justify-self-center">Shashin</div>
           <div className="justify-self-end">
-            <DisplayModeDropDown />
+            <DisplayModeToggle />
           </div>
         </div>
         <div className="flex items-center justify-evenly py-2 ">

@@ -1,7 +1,7 @@
 import { getMyImages } from "@/server/use-cases/images-use-cases";
 import { Suspense } from "react";
 import Loading from "../../loading";
-import RenderImage from "./_lib/RenderImage";
+import RenderImage from "../_lib/components/RenderImage";
 
 export default async function ImagesPage() {
   const myImages = await getMyImages();
