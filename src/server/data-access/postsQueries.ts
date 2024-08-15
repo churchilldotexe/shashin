@@ -96,6 +96,7 @@ export async function getMyPostFromDb(userId: string) {
   });
 
   const dbResult = post.rows;
+  console.log(dbResult, "dbresult");
   const parsedResult = getPostSchema.safeParse(dbResult);
   if (parsedResult.success === false) {
     throw new ZodError(parsedResult.error.errors);

@@ -138,7 +138,8 @@ export function PostImage({
     return false;
   });
   const router = useRouter();
-  const albumParams = useSearchParams().get("a");
+  const searchParams = useSearchParams();
+  const albumParams = searchParams.get("a");
 
   const formRef = useRef<ElementRef<"form">>(null);
   const textAreaRef = useRef<ElementRef<"textarea">>(null);
@@ -338,7 +339,7 @@ export function PostImage({
                   }}
                   name="albumName"
                   className=" bg-background"
-                  defaultValue={albumParams ?? ""}
+                  defaultValue={albumParams || ""}
                   required
                 >
                   <option value="">Select an Album</option>
@@ -349,7 +350,7 @@ export function PostImage({
                     </option>
                   ))}
 
-                  {!albumParams ? null : <option value={albumParams}>{albumParams}</option>}
+                  {albumParams === null ? null : <option value={albumParams}>{albumParams}</option>}
 
                   <option value="add_Album" className=" font-bold text-green-500">
                     Add Album
@@ -370,9 +371,9 @@ export function PostImage({
                     handleBackToSelect={handleBackToSelect}
                     albums={albums}
                     handleAddAlbum={() => {
-                      router.push(`/?a=${albumInputRef.current?.value}`, {
-                        scroll: false,
-                      });
+                      const params = new URLSearchParams(searchParams.toString());
+                      params.set("a", albumInputRef.current?.value ?? "");
+                      window.history.pushState(null, "", `?${params.toString()}`);
                       setIsSelectOpen((prev) => !prev);
                     }}
                   />

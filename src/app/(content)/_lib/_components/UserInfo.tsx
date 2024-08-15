@@ -73,7 +73,7 @@ export function UserInfo({
           <button
             className="hocus-visible:scale-105 rounded-md bg-secondary p-2 active:scale-90"
             type="button"
-            popovertarget="notification"
+            popovertarget={popoverId}
             popovertargetaction="hide"
             onClick={handleCloseDropdown}
           >

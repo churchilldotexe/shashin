@@ -1,7 +1,7 @@
 "use client";
 
 import { useTransitionedServerAction } from "@/lib/hooks";
-import { FileHeart, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import type { ComponentProps } from "react";
 import { setFavoritePost, unFavoritePost } from "../action";
 

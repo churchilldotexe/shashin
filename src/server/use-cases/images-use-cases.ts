@@ -1,6 +1,11 @@
 import "server-only";
 
-import { getMyImagesFromDb, insertImage } from "../data-access/imagesQueries";
+import {
+  deleteImageFromDb,
+  getImageFileKeyFromDb,
+  getMyImagesFromDb,
+  insertImage,
+} from "../data-access/imagesQueries";
 import { hasAccess } from "./auth/authentication";
 import type { CreateImageType } from "./images-use-cases-TypesAndSchema";
 
@@ -23,6 +28,23 @@ export async function getMyImages() {
     const myImages = await getMyImagesFromDb(userId);
     // will return empty array if no images
     return myImages;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`An Error Occured ${error.name}: ${error.message}`);
+    }
+    throw new Error("Unexpected Error Occured");
+  }
+}
+
+export async function removeImageUseCase(imageId: string) {
+  const { userId } = await hasAccess({
+    errorMsg: "You're not authorize to delete this Image. Please login",
+  });
+
+  try {
+    const imageFileKey = await getImageFileKeyFromDb(imageId);
+    await deleteImageFromDb({ id: imageId, userId });
+    return imageFileKey;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`An Error Occured ${error.name}: ${error.message}`);

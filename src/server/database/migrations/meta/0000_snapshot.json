@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5cd42719-8eea-4d65-b5c5-45961081c19b",
+  "id": "b3042346-7f97-42a1-a82a-825f9e888f82",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "albums": {
@@ -69,6 +69,11 @@
           "name": "albums_post_id_idx",
           "columns": ["post_id"],
           "isUnique": false
+        },
+        "albums_id_user_id_idx": {
+          "name": "albums_id_user_id_idx",
+          "columns": ["id", "user_id"],
+          "isUnique": false
         }
       },
       "foreignKeys": {
@@ -78,7 +83,7 @@
           "tableTo": "users",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "albums_image_id_images_id_fk": {
@@ -87,7 +92,7 @@
           "tableTo": "images",
           "columnsFrom": ["image_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "albums_post_id_posts_id_fk": {
@@ -96,7 +101,7 @@
           "tableTo": "posts",
           "columnsFrom": ["post_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -151,7 +156,7 @@
           "tableTo": "posts",
           "columnsFrom": ["post_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -316,6 +321,11 @@
           "name": "image_post_id_idx",
           "columns": ["post_id"],
           "isUnique": false
+        },
+        "image_id_post_id_idx": {
+          "name": "image_id_post_id_idx",
+          "columns": ["post_id", "id"],
+          "isUnique": false
         }
       },
       "foreignKeys": {
@@ -325,7 +335,7 @@
           "tableTo": "users",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "images_post_id_posts_id_fk": {
@@ -334,7 +344,7 @@
           "tableTo": "posts",
           "columnsFrom": ["post_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -388,6 +398,11 @@
           "columns": ["user_id"],
           "isUnique": false
         },
+        "posts_id_user_id_idx": {
+          "name": "posts_id_user_id_idx",
+          "columns": ["id", "user_id"],
+          "isUnique": false
+        },
         "created_at_idx": {
           "name": "created_at_idx",
           "columns": ["created_at"],
@@ -401,7 +416,7 @@
           "tableTo": "users",
           "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

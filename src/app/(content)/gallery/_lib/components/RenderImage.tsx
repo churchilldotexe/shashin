@@ -11,6 +11,7 @@ import {
   type SortStatusKeysTypes,
   VIEW_STATUS,
 } from "../../_lib/constants";
+import { DeleteImageButton } from "./DeleteImageButton";
 
 type myImages = {
   id: string;
@@ -83,12 +84,16 @@ export default function RenderImage({ myImages }: RenderImageProps) {
                 className=" object-cover object-center "
                 fill
               />
+              <DeleteImageButton
+                className="absolute top-0 left-0 p-2"
+                url={image.url}
+                imageId={image.id}
+                imageName={image.name}
+              />
               <FavoriteButton
                 isFavorited={image.isFavorited}
                 imageId={image.id}
-                className="mydiv absolute top-0 right-0 p-2"
-                data-key={image.fileKey}
-                data-is-favorited={favoriteStatustus}
+                className="absolute top-0 right-0 p-2"
               />
             </div>
           </figure>

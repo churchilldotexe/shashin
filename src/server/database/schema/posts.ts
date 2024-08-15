@@ -14,7 +14,7 @@ export const posts = sqliteTable(
       .$defaultFn(() => randomUUID()),
     description: text("description", { length: 255 }),
     userId: text("user_id")
-      .references(() => users.id)
+      .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
@@ -26,6 +26,7 @@ export const posts = sqliteTable(
   (table) => {
     return {
       userIdIdx: index("user_id_idx").on(table.userId),
+      postsIdUserIdIdx: index("posts_id_user_id_idx").on(table.id, table.userId),
       createdIdx: index("created_at_idx").on(table.createdAt),
     };
   }

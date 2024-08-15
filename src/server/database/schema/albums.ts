@@ -13,13 +13,13 @@ const albums = sqliteTable(
     name: text("name", { length: 255 }).notNull(),
     userId: text("user_id")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     imageId: text("image_id")
       .notNull()
-      .references(() => images.id),
+      .references(() => images.id, { onDelete: "cascade" }),
     postId: text("post_id")
       .notNull()
-      .references(() => posts.id),
+      .references(() => posts.id, { onDelete: "cascade" }),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`STRFTIME('%s','NOW')`),
@@ -35,6 +35,7 @@ const albums = sqliteTable(
         table.createdAt
       ),
       albumsPostIdIdx: index("albums_post_id_idx").on(table.postId),
+      albumsIdUserIdIdx: index("albums_id_user_id_idx").on(table.id, table.userId),
     };
   }
 );

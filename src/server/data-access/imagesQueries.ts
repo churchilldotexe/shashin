@@ -76,6 +76,55 @@ export async function deleteFavoriteFromDb(rawData: { id: string }) {
   });
 }
 
+const deleteImageDataSchema = insertImageSchema.pick({ id: true, userId: true }).required();
+
+export async function deleteImageFromDb({
+  userId,
+  id,
+}: {
+  userId: string;
+  id: string;
+}) {
+  const parsedImageData = deleteImageDataSchema.safeParse({ id, userId });
+
+  if (parsedImageData.success === false) {
+    throw new ZodError(parsedImageData.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         DELETE FROM images
+         WHERE id = :imageId 
+            AND user_id = :userId
+         `,
+    args: {
+      imageId: parsedImageData.data.id,
+      userId: parsedImageData.data.userId,
+    },
+  });
+}
+
+export async function getImageFileKeyFromDb(imageId: string) {
+  const rawImageFileKey = await turso.execute({
+    sql: `
+         SELECT images.file_key as fileKey
+         FROM images
+         WHERE images.id = :imageId
+         `,
+    args: { imageId },
+  });
+
+  const parsedImageFileKey = selectImageSchema
+    .pick({ fileKey: true })
+    .safeParse(rawImageFileKey.rows[0]);
+
+  if (parsedImageFileKey.success === false) {
+    throw new ZodError(parsedImageFileKey.error.errors);
+  }
+
+  return parsedImageFileKey.data;
+}
+
 const getFavoritedImageSchema = selectImageSchema
   .pick({ url: true })
   .transform((val) => JSON.parse(val.url))
