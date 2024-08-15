@@ -15,6 +15,7 @@ export function UserContent({
   avatar: string | null;
 }) {
   const { detailsRef, closeDropdown } = useDropDownControls();
+  const { isPending, startServerTransition } = useTransitionedServerAction();
 
   return (
     <details ref={detailsRef} className="group relative size-full ">
@@ -28,7 +29,12 @@ export function UserContent({
           " popover-transition "
         )}
       >
-        <UserInfo displayName={displayName} userName={userName} closeDropdown={closeDropdown} />
+        <UserInfo
+          popoverId="logout-notif"
+          displayName={displayName}
+          userName={userName}
+          closeDropdown={closeDropdown}
+        />
       </div>
     </details>
   );

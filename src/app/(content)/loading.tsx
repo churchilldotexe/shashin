@@ -2,10 +2,8 @@ import { PageSection } from "@/components/PageSection";
 
 export default function Loading() {
   return (
-    <PageSection>
-      <div>Loading....</div>
+    <PageSection className="min-h-[100dvh]">
+      <div className="loader" />
     </PageSection>
   );
 }
-
-// TODO: provide a better loading state

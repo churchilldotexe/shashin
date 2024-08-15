@@ -4,6 +4,7 @@ import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 import Dialog from "@/components/ui/Dialog";
 import { DisplayModeToggle } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import {
   type ComponentProps,
   type Dispatch,
@@ -67,15 +68,15 @@ function MobileHeader({
           </div>
         </div>
         <div className="flex items-center justify-evenly py-2 ">
-          <div>Home</div>
+          <Link href={"/"}>Home</Link>
           <span className=" h-6 border border-border shadow-inner " />
-          <div>Gallery</div>
+          <Link href={"/gallery/albums"}>Gallery</Link>
         </div>
         <Dialog.Content className={cn("mt-0 ml-0 h-fit w-1/2 overflow-x-clip", "slide-from-left")}>
           <div className="flex flex-col gap-6 py-4">
             <div className="flex flex-col items-center gap-2">
               <AvatarWithFallBack avatar={avatar} displayName={displayName} />
-              <UserInfo userName={userName} displayName={displayName} />
+              <UserInfo popoverId="mobile-logout" userName={userName} displayName={displayName} />
             </div>
             <Nav />
           </div>

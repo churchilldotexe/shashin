@@ -14,7 +14,12 @@ export type UserInfoType = {
   closeDropdown?: () => void;
 };
 
-export function UserInfo({ userName, displayName, closeDropdown }: Omit<UserInfoType, "avatar">) {
+export function UserInfo({
+  userName,
+  displayName,
+  closeDropdown,
+  popoverId,
+}: { popoverId: string } & Omit<UserInfoType, "avatar">) {
   const { isPending, startServerTransition } = useTransitionedServerAction();
 
   const handleCloseDropdown = () => {
@@ -34,14 +39,14 @@ export function UserInfo({ userName, displayName, closeDropdown }: Omit<UserInfo
         <button
           type="button"
           className="w-full hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
-          popovertarget="notification"
+          popovertarget={popoverId}
         >
           Logout
         </button>
       </div>
 
       <div
-        id="notification"
+        id={popoverId}
         className={cn(
           "space-y-2 rounded-md bg-background p-4 font-medium text-foreground shadow-elevate-light dark:shadow-elevate-dark",
           "popover-transition backdrop:bg-neutral-50/20 backdrop:backdrop-blur-[3px] backdrop:dark:bg-neutral-950/20 "
