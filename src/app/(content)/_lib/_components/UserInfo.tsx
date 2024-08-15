@@ -1,9 +1,9 @@
 "use client";
 
+/// <reference types="react/canary" />
 import { useTransitionedServerAction } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-/// <reference types="react/canary" />
 import Link from "next/link";
 import { logoutAction } from "../Actions";
 
