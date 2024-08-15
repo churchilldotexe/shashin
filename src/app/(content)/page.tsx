@@ -29,7 +29,7 @@ export default async function HomePage() {
   );
 
   return (
-    <PageSection className="space-y-8 px-8">
+    <PageSection className="space-y-8 md:px-8">
       <PostImage
         albums={myAlbums}
         className=" rounded-lg p-4 shadow-elevate-light dark:shadow-elevate-dark "

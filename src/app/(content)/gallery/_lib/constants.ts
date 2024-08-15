@@ -12,7 +12,7 @@ export const VIEW_STATUS = {
   small: "md:basis-[25%]",
   extraSmall: "md:basis-[20%]",
 } as const;
-export type SortStatusTypes = keyof typeof VIEW_STATUS;
+export type SortStatusKeysTypesypes = keyof typeof VIEW_STATUS;
 
 export const SORT_PROPERTIES = ["updatedAt", "name", "createdAt"] as const;
 export type SortPropertiesTypes = (typeof SORT_PROPERTIES)[number];

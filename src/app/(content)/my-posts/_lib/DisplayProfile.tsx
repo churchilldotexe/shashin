@@ -97,7 +97,10 @@ export default function DisplayProfile({
 
           <label
             htmlFor="editImage"
-            className="absolute right-0 bottom-0 z-10 size-fit cursor-pointer rounded-lg hocus-visible:opacity-100 opacity-0 backdrop-blur group-hover/avatar:opacity-100"
+            className={cn(
+              "absolute right-0 bottom-0 z-10 size-fit cursor-pointer rounded-lg hocus-visible:opacity-100 opacity-0 group-hover/avatar:opacity-100",
+              { "cursor-not-allowed": isImagePending }
+            )}
           >
             <Input
               ref={inputFileRef}
@@ -108,13 +111,14 @@ export default function DisplayProfile({
               onChange={(e) => {
                 handleImageChange(e.target.files);
               }}
+              disabled={isImagePending}
             />
             <ErrorMessage name="images" useDefaultStyling={false}>
               {displayError.images || null}
             </ErrorMessage>
 
             <abbr title="Edit Profile Picture">
-              <CameraIcon className="" />
+              <CameraIcon className="text-primary-foreground drop-shadow-sm-double " />
             </abbr>
           </label>
 
@@ -236,7 +240,6 @@ export default function DisplayProfile({
             </div>
           )}
         </div>
-        {/* <input type="text" className="bg-transparent" /> */}
         <div
           className={cn(
             "-mt-3 w-full rounded-lg p-4 shadow-[0_8px_6px_0_rgba(0,0,0,0.37),-6px_-4px_10px_white] dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black]",

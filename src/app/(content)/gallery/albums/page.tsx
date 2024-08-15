@@ -1,3 +1,4 @@
+import { NoFile } from "@/components/EmptyFile";
 import { ImageSlider } from "@/components/ImageSlider";
 import { PageSection } from "@/components/PageSection";
 import { cn } from "@/lib/utils";
@@ -8,10 +9,15 @@ import Loading from "../../loading";
 export default async function AlbumsPage() {
   const myAlbums = await getAllMyAlbums();
   return (
-    <PageSection className="space-y-4 p-4">
+    <PageSection className="space-y-4 md:p-4">
       <Suspense fallback={<Loading />}>
         {myAlbums.length === 0 ? (
-          <div>no album yet</div>
+          <div className=" h-full ">
+            <NoFile
+              title="No Albums Yet"
+              description="There is no Album to display this time. Try Posting some and add to album"
+            />
+          </div>
         ) : (
           myAlbums.map((album, index) => {
             return (

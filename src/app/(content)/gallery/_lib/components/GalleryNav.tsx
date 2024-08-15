@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, createTooltipClasses } from "@/lib/utils";
 import {
   ALargeSmall,
   ArrowDownNarrowWide,
@@ -9,7 +9,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, type ReactNode, useState } from "react";
 import {
   RANGE_TO_SORT_VALUE,
   type RangeToSortKeyType,
@@ -24,7 +24,12 @@ type GetGalleryUrlType = {
   searchParams: ReadonlyURLSearchParams;
 };
 
-const getGalleryUrl = ({ sortOptions, viewValue, sortValue, searchParams }: GetGalleryUrlType) => {
+const updatedGalleryUrlParams = ({
+  sortOptions,
+  viewValue,
+  sortValue,
+  searchParams,
+}: GetGalleryUrlType) => {
   const params = new URLSearchParams(searchParams.toString());
   if (viewValue) {
     params.set("view", RANGE_TO_SORT_VALUE[viewValue]);
@@ -42,7 +47,44 @@ const getGalleryUrl = ({ sortOptions, viewValue, sortValue, searchParams }: GetG
   return params.toString();
 };
 
-export default function GalleryNav() {
+function SortOptions({
+  handleSortChange,
+  isDefaultChecked = false,
+  children,
+  tooltipContent,
+}: {
+  handleSortChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  isDefaultChecked?: boolean;
+  children: ReactNode;
+  tooltipContent: "hover:after:content-['content_here']" | (string & {});
+}) {
+  return (
+    <li>
+      <label className="cursor-pointer">
+        <input
+          type="radio"
+          name="sort"
+          className="peer/created sr-only"
+          defaultChecked={isDefaultChecked}
+          value="createdAt"
+          onChange={(e) => {
+            handleSortChange(e);
+          }}
+        />
+        <div
+          className={cn(
+            "transition-all peer-checked/created:scale-105 peer-checked/created:border peer-checked/created:shadow-elevate-light peer-checked/created:backdrop-blur-lg peer-checked/created:dark:shadow-elevate-dark",
+            createTooltipClasses(tooltipContent)
+          )}
+        >
+          {children}
+        </div>
+      </label>
+    </li>
+  );
+}
+
+export default function GallerySortingControls() {
   // for indicator render //large,small,
   const [rangeValue, setRangeValue] = useState<RangeToSortKeyType>(3);
   const searchParams = useSearchParams();
@@ -50,13 +92,13 @@ export default function GalleryNav() {
   const handleSortValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     switch (e.target.value as SortPropertiesTypes) {
       case "name":
-        getGalleryUrl({ searchParams, sortValue: "name" });
+        updatedGalleryUrlParams({ searchParams, sortValue: "name" });
         break;
       case "createdAt":
-        getGalleryUrl({ searchParams, sortValue: "createdAt" });
+        updatedGalleryUrlParams({ searchParams, sortValue: "createdAt" });
         break;
       case "updatedAt":
-        getGalleryUrl({ searchParams, sortValue: "updatedAt" });
+        updatedGalleryUrlParams({ searchParams, sortValue: "updatedAt" });
         break;
       default:
         return;
@@ -64,19 +106,19 @@ export default function GalleryNav() {
   };
 
   return (
-    <nav className="sticky top-0 z-10 p-4">
+    <nav className="-mt-3 top-0 z-10 my-4 flex w-full items-center justify-center rounded-lg p-4 shadow-elevate-light backdrop-blur md:sticky md:my-0 dark:shadow-elevate-dark ">
       <input
         type="range"
         min="1"
         max="4"
         step="1"
-        className="w-full bg-primary "
+        className="hidden w-full bg-primary md:block"
         value={rangeValue}
         list="view-value"
         onChange={(e) => {
           const newRangeValue = Number(e.target.value) as RangeToSortKeyType;
           setRangeValue(newRangeValue);
-          getGalleryUrl({ viewValue: newRangeValue, searchParams });
+          updatedGalleryUrlParams({ viewValue: newRangeValue, searchParams });
         }}
       />
       <datalist id="view-value">
@@ -87,70 +129,66 @@ export default function GalleryNav() {
       </datalist>
       <div
         className={cn(
-          "-mt-3 w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark",
-          "css-border-animateInline"
+          "-mt-3 hidden w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark"
         )}
       />
       <ul className="flex items-center gap-4">
-        <li>
-          <label>
-            <input
-              type="radio"
-              name="sort"
-              className="peer/created sr-only"
-              defaultChecked={true}
-              value="createdAt"
-              onChange={(e) => {
-                handleSortValueChange(e);
-              }}
-            />
-            <CalendarDays className="peer-checked/created:border" />
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              type="radio"
-              name="sort"
-              className="peer/updated sr-only"
-              value="updatedAt"
-              onChange={(e) => {
-                handleSortValueChange(e);
-              }}
-            />
-            <CalendarClock className="peer-checked/udpated:border" />
-          </label>
-        </li>
-        <li>
-          <label>
-            <input
-              type="radio"
-              name="sort"
-              value="name"
-              className="peer/name sr-only"
-              onChange={(e) => {
-                handleSortValueChange(e);
-              }}
-            />
-            <ALargeSmall className="peer-checked/name:border" />
-          </label>
-        </li>
+        <SortOptions
+          tooltipContent="hover:after:content-['Sort_By_Creation_Date']"
+          isDefaultChecked={true}
+          handleSortChange={handleSortValueChange}
+        >
+          <CalendarDays />
+        </SortOptions>
+
+        <SortOptions
+          handleSortChange={handleSortValueChange}
+          tooltipContent="hover:after:content-['Sort_By_Last_Update']"
+        >
+          <CalendarClock />
+        </SortOptions>
+
+        <SortOptions
+          handleSortChange={handleSortValueChange}
+          tooltipContent="hover:after:content-['Sort_By_Name']"
+        >
+          <ALargeSmall />
+        </SortOptions>
       </ul>
       <fieldset>
-        <label>
+        <label className={cn("cursor-pointer")}>
           <input
             type="checkbox"
             className="peer/sort sr-only"
             onChange={(e) => {
               if (e.target.checked) {
-                getGalleryUrl({ searchParams, sortOptions: "ASC" });
+                updatedGalleryUrlParams({ searchParams, sortOptions: "ASC" });
               } else {
-                getGalleryUrl({ searchParams, sortOptions: "DESC" });
+                updatedGalleryUrlParams({ searchParams, sortOptions: "DESC" });
               }
             }}
           />
-          <ArrowDownNarrowWide className="peer-checked/sort:hidden " />
-          <ArrowUpWideNarrow className="hidden peer-checked/sort:block " />
+
+          <div
+            className={cn(
+              "peer-checked/sort:hidden ",
+              createTooltipClasses("hover:after:content-['Descending']")
+            )}
+            aria-label="Sort Descending"
+          >
+            <ArrowDownNarrowWide />
+          </div>
+
+          <div
+            className={cn(
+              "hidden peer-checked/sort:block ",
+
+              createTooltipClasses("hover:after:content-['Ascending']")
+            )}
+            aria-label="Sort Ascending "
+          >
+            <ArrowUpWideNarrow />
+          </div>
         </label>
       </fieldset>
     </nav>

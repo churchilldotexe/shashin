@@ -1,3 +1,4 @@
+import { NoFile } from "@/components/EmptyFile";
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
 import { checkBookmarkBypostId, getAllMyBookmarks } from "@/server/use-cases/bookmarks-use-case";
@@ -8,10 +9,13 @@ import Loading from "../loading";
 export default async function BookmarksPage() {
   const myBookmarks = await getAllMyBookmarks();
   return (
-    <PageSection className=" space-y-8 p-8">
+    <PageSection className=" space-y-8 md:p-8">
       {myBookmarks.length === 0 ? (
         // TODO: handle this
-        <div>no bookmarks</div>
+        <NoFile
+          title="No Bookmarks Yet"
+          description="There is no bookmarked post to display this time. Bookmarks some post"
+        />
       ) : (
         <Suspense fallback={<Loading />}>
           <div className="m-auto flex size-full grow flex-col gap-4">

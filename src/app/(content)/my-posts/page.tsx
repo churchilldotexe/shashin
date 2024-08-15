@@ -1,4 +1,5 @@
 import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
+import { NoFile } from "@/components/EmptyFile";
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
 import { cn } from "@/lib/utils";
@@ -15,11 +16,13 @@ export default async function HomePage() {
   const myPost = await getMyPost();
   const myProfile = await getUserInfo();
   return (
-    <PageSection className="justify-start space-y-8 px-8 py-4 ">
+    <PageSection className="justify-start space-y-8 py-4 md:px-8 ">
       <DisplayProfile displayName={myProfile.displayName} avatar={myProfile.avatar} />
       {myPost.length === 0 ? (
-        //TODO: handle this
-        <div className="text-foreground">post something </div>
+        <NoFile
+          title="No Post Yet"
+          description="There is no Post to display this time. Try posting some."
+        />
       ) : (
         <Suspense fallback={<Loading />}>
           <div className="m-auto flex size-full grow flex-col gap-4">

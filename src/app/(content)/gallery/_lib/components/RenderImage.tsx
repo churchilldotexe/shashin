@@ -5,8 +5,12 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import type { CSSProperties } from "react";
 import { FavoriteButton } from "../../_lib/components/FavoriteButton";
-import type { SortStatusTypes } from "../../_lib/components/SortDropDown";
-import { type SortOptionsTypes, type SortPropertiesTypes, VIEW_STATUS } from "../../_lib/constants";
+import {
+  type SortOptionsTypes,
+  type SortPropertiesTypes,
+  type SortStatusKeysTypes,
+  VIEW_STATUS,
+} from "../../_lib/constants";
 
 type myImages = {
   id: string;
@@ -34,7 +38,6 @@ const sortMyArray = <T extends Record<string, string | Date | boolean | number>>
   return arr.sort((a, b) => {
     const aValue = a[sortReference];
     const bValue = b[sortReference];
-    console.log(aValue, bValue, "zxc");
 
     if (typeof aValue === "string" && typeof bValue === "string") {
       if (order === "ASC") {
@@ -52,7 +55,7 @@ const sortMyArray = <T extends Record<string, string | Date | boolean | number>>
 };
 
 export default function RenderImage({ myImages }: RenderImageProps) {
-  const view = useSearchParams().get("view") as SortStatusTypes;
+  const view = useSearchParams().get("view") as SortStatusKeysTypes;
   const sortValue = useSearchParams().get("sort") as SortPropertiesTypes;
   const sortOption = useSearchParams().get("option") as SortOptionsTypes;
 
@@ -61,7 +64,6 @@ export default function RenderImage({ myImages }: RenderImageProps) {
     sortReference: sortValue ?? "createdAt",
     arr: myImages,
   });
-  console.log(sortedImages);
 
   return (
     <>

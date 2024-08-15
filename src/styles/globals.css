@@ -323,22 +323,42 @@
 
 /*Nav animation for mobile layout*/
 .slide-from-left {
-   transition-property: transform display opacity;
    display: none;
-   transition-duration: 3s;
-   transition-timing-function: ease-out;
+   transition-property: overlay display opacity;
+   transition-duration: .5s;
+   transition-timing-function: ease-in-out;
    transition-behavior: allow-discrete;
-   transform: translateX(-100%);
+   translate: -100% 0;
    opacity: 0;
 }
 
 .slide-from-left[open] {
    display: block;
-   transform: translateX(0);
+   translate: 0 0;
    opacity: 1;
 
    @starting-style {
-      transform: translateX(-100%);
+      translate: -100% 0;
+      opacity: 0;
+   }
+}
+
+.slide-from-left::backdrop {
+   background-color: rgba(0, 0, 0, .5);
+   opacity: 0;
+   transition-property: opacity overlay display;
+   transition-duration: .5s;
+   transition-timing-function: ease-in-out;
+   transition-behavior: allow-discrete;
+}
+
+.slide-from-left[open]::backdrop {
+   opacity: 1;
+   backdrop-filter: blur(1px);
+}
+
+@starting-style {
+   .slide-from-left[open]::backdrop {
       opacity: 0;
    }
 }

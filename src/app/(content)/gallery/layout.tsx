@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import GalleryNav from "./_lib/components/GalleryNav";
+import GallerySortingControls from "./_lib/components/GalleryNav";
 
 export default function RootLayout({
   children,
@@ -8,7 +8,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <GalleryNav />
+      <GallerySortingControls />
       {children}
     </>
   );

@@ -6,7 +6,7 @@ import type { CSSProperties, ReactNode } from "react";
 
 export default function AuthComponent({ children }: { children: ReactNode }) {
   return (
-    <PageSection>
+    <PageSection className="min-h-[100dvh]">
       <div
         id="auth-layout"
         className="grid size-full place-items-center rounded-lg px-2 sm:px-6 md:grid-cols-2 md:px-0"
