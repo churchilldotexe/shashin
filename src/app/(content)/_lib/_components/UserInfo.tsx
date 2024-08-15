@@ -11,23 +11,29 @@ export type UserInfoType = {
   displayName: string;
   userName: string;
   avatar: string | null;
+  closeDropdown?: () => void;
 };
 
-export function UserInfo({ userName, displayName }: UserInfoType) {
+export function UserInfo({ userName, displayName, closeDropdown }: Omit<UserInfoType, "avatar">) {
   const { isPending, startServerTransition } = useTransitionedServerAction();
+
+  const handleCloseDropdown = () => {
+    if (closeDropdown === undefined) return;
+    closeDropdown();
+  };
   return (
     <>
       <div className="flex flex-col justify-center gap-4 ">
         <div>
           <h3 className="cursor-default whitespace-nowrap capitalize">{displayName}</h3>
-          <Link href={"/my-posts"} className="text-sky-500 text-xs">
+          <Link href={"/my-posts"} className="text-sky-500 text-xs" onClick={handleCloseDropdown}>
             @{userName}
           </Link>
         </div>
         <hr className="" />
         <button
           type="button"
-          className="hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
+          className="w-full hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
           popovertarget="notification"
         >
           Logout
@@ -52,7 +58,7 @@ export function UserInfo({ userName, displayName }: UserInfoType) {
               "bg-muted": isPending,
             })}
             onClick={async () => {
-              startServerTransition(logoutAction());
+              startServerTransition(logoutAction(), closeDropdown);
             }}
             disabled={isPending}
           >
@@ -64,6 +70,7 @@ export function UserInfo({ userName, displayName }: UserInfoType) {
             type="button"
             popovertarget="notification"
             popovertargetaction="hide"
+            onClick={handleCloseDropdown}
           >
             Back
           </button>

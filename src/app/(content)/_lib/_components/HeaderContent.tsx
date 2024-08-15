@@ -1,24 +1,28 @@
 "use client";
 
+import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
 import Dialog from "@/components/ui/Dialog";
 import { DisplayModeToggle } from "@/components/ui/DisplayModeToggle";
 import { cn } from "@/lib/utils";
 import {
+  type ComponentProps,
   type Dispatch,
-  type HTMLAttributes,
-  type ReactNode,
   type SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
 import { Nav } from "./Nav";
+import { UserInfo, type UserInfoType } from "./UserInfo";
 
 function MobileHeader({
   setScrollDirection,
+  displayName,
+  avatar,
+  userName,
 }: {
   setScrollDirection: Dispatch<SetStateAction<"down" | "up">>;
-}) {
+} & UserInfoType) {
   const [currentScrollPosition, setCurrentScrollPosition] = useState<number>(0);
   const isMobileRef = useRef<boolean>(false);
 
@@ -67,19 +71,30 @@ function MobileHeader({
           <span className=" h-6 border border-border shadow-inner " />
           <div>Gallery</div>
         </div>
-        <Dialog.Content className={cn("mt-0 ml-0 size-fit overflow-x-clip", "slide-from-left")}>
-          <Nav />
+        <Dialog.Content className={cn("mt-0 ml-0 h-fit w-1/2 overflow-x-clip", "slide-from-left")}>
+          <div className="flex flex-col gap-6 py-4">
+            <div className="flex flex-col items-center gap-2">
+              <AvatarWithFallBack avatar={avatar} displayName={displayName} />
+              <UserInfo userName={userName} displayName={displayName} />
+            </div>
+            <Nav />
+          </div>
         </Dialog.Content>
       </Dialog>
     </div>
   );
 }
 
+type HeaderContentsProps = UserInfoType & ComponentProps<"header">;
+
 export function HeaderContents({
   className,
   children,
+  avatar,
+  userName,
+  displayName,
   ...props
-}: { children?: ReactNode } & HTMLAttributes<HTMLElement>) {
+}: HeaderContentsProps) {
   const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
 
   return (
@@ -97,7 +112,12 @@ export function HeaderContents({
       )}
       {...props}
     >
-      <MobileHeader setScrollDirection={setScrollDirection} />
+      <MobileHeader
+        setScrollDirection={setScrollDirection}
+        displayName={displayName}
+        userName={userName}
+        avatar={avatar}
+      />
       {children}
     </header>
   );
