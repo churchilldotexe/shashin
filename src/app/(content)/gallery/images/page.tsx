@@ -7,7 +7,7 @@ import RenderImage from "../_lib/components/RenderImage";
 export default async function ImagesPage() {
   const myImages = await getMyImages();
   return (
-    <section className="relative flex flex-wrap gap-4">
+    <section className="relative flex flex-wrap gap-4 md:p-4">
       {myImages.length === 0 ? (
         <div className="flex size-full flex-col items-center justify-center gap-4 p-8">
           <NoImage

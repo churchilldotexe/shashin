@@ -6,9 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function createTooltipClasses(
-  content: "hover:after:content-['content_here']" | (string & {})
+  content: "hover:after:content-['content_here']" | (string & {}),
+  opts: string[] = [""]
 ) {
-  return [
+  return cn(
     // Positioning and visibility
     "relative hover:after:absolute hover:after:top-[105%] hover:after:left-1/2 hover:after:-translate-x-1/2",
     "after:opacity-0 hover:after:opacity-100",
@@ -27,7 +28,8 @@ export function createTooltipClasses(
     "hover:before:border-8 hover:before:border-transparent hover:before:border-b-secondary",
     "hover:before:transition-opacity hover:before:delay-500",
     "hover:before:content-['_']",
-  ];
+    ...opts
+  );
 }
 
 const getIntlDateFormat = (date: Date, options: Intl.DateTimeFormatOptions) => {

@@ -7,9 +7,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="space-y-4 py-4">
       <GallerySortingControls />
       {children}
-    </>
+    </div>
   );
 }

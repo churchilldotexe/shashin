@@ -7,6 +7,10 @@ import {
   ArrowUpWideNarrow,
   CalendarClock,
   CalendarDays,
+  CaseSensitive,
+  CaseUpper,
+  MoveDown,
+  MoveUp,
 } from "lucide-react";
 import { type ReadonlyURLSearchParams, useSearchParams } from "next/navigation";
 import { type ChangeEvent, type ReactNode, useState } from "react";
@@ -73,7 +77,7 @@ function SortOptions({
         />
         <div
           className={cn(
-            "transition-all peer-checked/created:scale-105 peer-checked/created:border peer-checked/created:shadow-elevate-light peer-checked/created:backdrop-blur-lg peer-checked/created:dark:shadow-elevate-dark",
+            "size-full transition-all peer-checked/created:scale-110 peer-checked/created:text-primary peer-checked/created:drop-shadow-sm-double dark:peer-checked/created:drop-shadow-md ",
             createTooltipClasses(tooltipContent)
           )}
         >
@@ -88,6 +92,7 @@ export default function GallerySortingControls() {
   // for indicator render //large,small,
   const [rangeValue, setRangeValue] = useState<RangeToSortKeyType>(3);
   const searchParams = useSearchParams();
+  const view = searchParams.get("view");
 
   const handleSortValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     switch (e.target.value as SortPropertiesTypes) {
@@ -106,33 +111,38 @@ export default function GallerySortingControls() {
   };
 
   return (
-    <nav className="-mt-3 top-0 z-10 my-4 flex w-full items-center justify-center rounded-lg p-4 shadow-elevate-light backdrop-blur md:sticky md:my-0 dark:shadow-elevate-dark ">
-      <input
-        type="range"
-        min="1"
-        max="4"
-        step="1"
-        className="hidden w-full bg-primary md:block"
-        value={rangeValue}
-        list="view-value"
-        onChange={(e) => {
-          const newRangeValue = Number(e.target.value) as RangeToSortKeyType;
-          setRangeValue(newRangeValue);
-          updatedGalleryUrlParams({ viewValue: newRangeValue, searchParams });
-        }}
-      />
-      <datalist id="view-value">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-      </datalist>
+    <nav className="-mt-3 top-0 z-10 flex w-full items-center justify-center rounded-lg p-4 shadow-elevate-light backdrop-blur md:sticky md:my-0 dark:shadow-elevate-dark ">
+      <fieldset className="relative size-full ">
+        <legend className="-translate-x-1/2 absolute bottom-[90%] left-1/2 capitalize">{`View: ${view ?? "medium"}`}</legend>
+        <input
+          type="range"
+          min="1"
+          max="4"
+          step="1"
+          className="hidden w-full bg-primary md:block"
+          value={rangeValue}
+          list="view-value"
+          onChange={(e) => {
+            const newRangeValue = Number(e.target.value) as RangeToSortKeyType;
+            setRangeValue(newRangeValue);
+            updatedGalleryUrlParams({ viewValue: newRangeValue, searchParams });
+          }}
+        />
+        <datalist id="view-value">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </datalist>
+      </fieldset>
+
       <div
         className={cn(
           "-mt-3 hidden w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark"
         )}
       />
-      <ul className="flex items-center gap-4">
+
+      <ul className="flex items-center gap-4 rounded-sm px-4">
         <SortOptions
           tooltipContent="hover:after:content-['Sort_By_Creation_Date']"
           isDefaultChecked={true}
@@ -152,11 +162,12 @@ export default function GallerySortingControls() {
           handleSortChange={handleSortValueChange}
           tooltipContent="hover:after:content-['Sort_By_Name']"
         >
-          <ALargeSmall />
+          <CaseUpper />
         </SortOptions>
       </ul>
+
       <fieldset>
-        <label className={cn("cursor-pointer")}>
+        <label className={cn("flex cursor-pointer items-center")}>
           <input
             type="checkbox"
             className="peer/sort sr-only"
@@ -171,23 +182,32 @@ export default function GallerySortingControls() {
 
           <div
             className={cn(
-              "peer-checked/sort:hidden ",
-              createTooltipClasses("hover:after:content-['Descending']")
+              " -mr-2 z-10 text-primary peer-checked/sort:z-0 peer-checked/sort:text-foreground",
+              createTooltipClasses("hover:after:content-['Descending']", [
+                "after:block",
+                "before:block",
+                "peer-checked/sort:after:hidden",
+                "peer-checked/sort:before:hidden",
+              ])
             )}
             aria-label="Sort Descending"
           >
-            <ArrowDownNarrowWide />
+            <MoveDown />
           </div>
-
           <div
             className={cn(
-              "hidden peer-checked/sort:block ",
+              " -ml-2 peer-checked/sort:z-10 peer-checked/sort:text-primary",
 
-              createTooltipClasses("hover:after:content-['Ascending']")
+              createTooltipClasses("hover:after:content-['Ascending']", [
+                "after:hidden",
+                "before:hidden",
+                "peer-checked/sort:after:block",
+                "peer-checked/sort:before:block",
+              ])
             )}
             aria-label="Sort Ascending "
           >
-            <ArrowUpWideNarrow />
+            <MoveUp />
           </div>
         </label>
       </fieldset>
