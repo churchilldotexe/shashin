@@ -10,8 +10,6 @@ type SortToggleProps = ComponentProps<"li"> & {
   initialChecked: boolean;
 };
 
-// FIX:  make this a COMPOUNT COMPONENT
-
 const SortToggle = ({
   onToggle,
   onUnToggle,

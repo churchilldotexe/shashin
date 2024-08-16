@@ -27,12 +27,11 @@ export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButto
         {isPending ? (
           <Star className="drop-shadow-sm-double" />
         ) : (
-          <Star className="fill-primary drop-shadow-sm-double" />
+          <Star className="fill-primary hocus-visible:fill-transparent drop-shadow-sm-double " />
         )}
       </abbr>
     </button>
   ) : (
-    // drop-shadow-[0_1px_1px_hsl(var(--foreground))]
     <button
       type="button"
       onClick={(e) => {
@@ -46,7 +45,7 @@ export function FavoriteButton({ isFavorited, imageId, ...props }: FavoriteButto
         {isPending ? (
           <Star className="fill-primary drop-shadow-sm-double" />
         ) : (
-          <Star className="drop-shadow-sm-double" />
+          <Star className="hocus-visible:fill-primary drop-shadow-sm-double" />
         )}
       </abbr>
     </button>

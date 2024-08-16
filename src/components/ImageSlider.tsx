@@ -79,7 +79,6 @@ export const ImageSlider = forwardRef<
       {Boolean(url.length > 1) && (
         <div className="absolute bottom-0 my-4 flex w-full items-center justify-center gap-4 ">
           {url.map((urlInfo, index) => (
-            // NOTE: fix the Key attribute later to a database data ID
             <button
               type="button"
               key={urlInfo}

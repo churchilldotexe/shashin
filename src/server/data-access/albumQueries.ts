@@ -78,11 +78,14 @@ export async function getAlbumsFromDB(userId: string) {
 
 const getAllMyAlbumsFromDBSchema = z.array(
   z.object({
-    albumName: getAlbumsSchema.shape.name,
+    name: getAlbumsSchema.shape.name,
     url: selectImageSchema.shape.url
       .transform((val) => JSON.parse(val))
       .pipe(z.array(z.string().url())),
     createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
+    updatedAt: z.string().transform((val) => {
       return new Date(`${val}Z`);
     }),
   })
@@ -92,12 +95,13 @@ export async function getAllMyAlbumsFromDB(userId: string) {
   const rawAlbumData = await turso.execute({
     sql: `
       SELECT 
-         a.name AS albumName,
+         a.name AS name,
          (SELECT json_group_array(DISTINCT url)
             FROM images
             WHERE post_id IN (SELECT post_id FROM albums WHERE user_id = :userId AND name = a.name)
             ) as url,
-         datetime(a.created_at, 'unixepoch') AS createdAt
+         datetime(a.created_at, 'unixepoch') AS createdAt,
+         datetime(a.updated_at, 'unixepoch') AS updatedAt
       FROM
          albums a
       WHERE 

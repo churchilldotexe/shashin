@@ -26,7 +26,10 @@ export function DeleteImageButton({
     <>
       <button
         type="button"
-        className={cn("text-destructive drop-shadow-sm-double", className)}
+        className={cn(
+          "hocus-visible:scale-110 text-destructive drop-shadow-sm-double active:scale-95",
+          className
+        )}
         popovertarget={url}
         {...props}
       >

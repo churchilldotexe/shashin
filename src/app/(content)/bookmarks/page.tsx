@@ -11,7 +11,6 @@ export default async function BookmarksPage() {
   return (
     <PageSection className=" space-y-8 md:p-8">
       {myBookmarks.length === 0 ? (
-        // TODO: handle this
         <NoFile
           title="No Bookmarks Yet"
           description="There is no bookmarked post to display this time. Bookmarks some post"

@@ -11,6 +11,7 @@ import {
   type SortStatusKeysTypes,
   VIEW_STATUS,
 } from "../../_lib/constants";
+import { sortMyArray } from "../utils";
 import { DeleteImageButton } from "./DeleteImageButton";
 
 type myImages = {
@@ -27,34 +28,6 @@ type RenderImageProps = {
   myImages: myImages[];
 };
 
-const sortMyArray = <T extends Record<string, string | Date | boolean | number>>({
-  arr,
-  sortReference,
-  order,
-}: {
-  arr: T[];
-  sortReference: keyof T;
-  order: "ASC" | "DESC";
-}) => {
-  return arr.sort((a, b) => {
-    const aValue = a[sortReference];
-    const bValue = b[sortReference];
-
-    if (typeof aValue === "string" && typeof bValue === "string") {
-      if (order === "ASC") {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      }
-      return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-    }
-    if (aValue instanceof Date && bValue instanceof Date) {
-      return order === "ASC"
-        ? aValue.getTime() - bValue.getTime()
-        : bValue.getTime() - aValue.getTime();
-    }
-    return 0;
-  });
-};
-
 export default function RenderImage({ myImages }: RenderImageProps) {
   const view = useSearchParams().get("view") as SortStatusKeysTypes;
   const sortValue = useSearchParams().get("sort") as SortPropertiesTypes;
@@ -67,13 +40,13 @@ export default function RenderImage({ myImages }: RenderImageProps) {
   });
 
   return (
-    <>
+    <div className={cn("grid size-full grid-cols-2 gap-2", VIEW_STATUS[view])}>
       {sortedImages.map((image, index) => {
         const favoriteStatustus = image.isFavorited ? "favorited" : "unfavorited";
         return (
           <figure
             key={image.fileKey}
-            className={cn(" fade-in-image flex-grow basis-full md:basis-[33%] ", VIEW_STATUS[view])}
+            className="fade-in-image"
             style={{ "--i": `${index}` } as CSSProperties}
           >
             <figcaption className="sr-only">{image.name}</figcaption>
@@ -81,7 +54,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
               <Image
                 src={image.url}
                 alt={image.name}
-                className=" object-cover object-center "
+                className=" rounded object-cover object-center"
                 fill
               />
               <DeleteImageButton
@@ -99,6 +72,6 @@ export default function RenderImage({ myImages }: RenderImageProps) {
           </figure>
         );
       })}
-    </>
+    </div>
   );
 }

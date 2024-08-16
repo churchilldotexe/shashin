@@ -27,11 +27,3 @@ export default async function ImagesPage() {
     </section>
   );
 }
-
-// NOTE: FEAT: be able to have a view options (large, extra large, details/list) // can control with flex-basis
-// add feature to delete post, image,album
-
-// NOTE: implementation for Performant eventlistener
-// [x] - instead of itteration over the images pass the Array itself to the component (client)
-// [x] -  the client component will now take these array and use useEffect without dependencies for eventlistener
-// [] - add DELETE button and other feature needed like View Options (transitioned)

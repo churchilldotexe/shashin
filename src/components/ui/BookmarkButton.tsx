@@ -29,7 +29,7 @@ export function BookmarkButton({
         {isPending ? (
           <Bookmark className="drop-shadow-sm-double" />
         ) : (
-          <Bookmark className="fill-primary drop-shadow-sm-double " />
+          <Bookmark className="fill-primary hocus-visible:fill-transparent drop-shadow-sm-double" />
         )}
       </abbr>
     </button>
@@ -47,7 +47,7 @@ export function BookmarkButton({
         {isPending ? (
           <Bookmark className="fill-primary drop-shadow-sm-double" />
         ) : (
-          <Bookmark className="drop-shadow-sm-double" />
+          <Bookmark className="hocus-visible:fill-primary drop-shadow-sm-double" />
         )}
       </abbr>
     </button>
