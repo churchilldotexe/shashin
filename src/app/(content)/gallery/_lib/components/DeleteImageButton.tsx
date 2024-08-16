@@ -41,9 +41,9 @@ export function DeleteImageButton({
         )}
         popover=""
       >
-        <p className="line-clamp-2 max-w-[30ch] ">
-          You're about to Delete the image named:{" "}
-          <strong className="text-destructive">{imageName}</strong> . Do you want to proceed?
+        <p className="max-w-[30ch]">
+          Delete image: <strong className="text-destructive">{imageName}</strong>? <br /> This may
+          delete the post if it's the only image. Proceed?
         </p>
         <div className="flex items-center justify-between">
           <button
@@ -72,24 +72,6 @@ export function DeleteImageButton({
           </button>
         </div>
       </div>
-
-      {/* <button */}
-      {/*   type="button" */}
-      {/*   onClick={(e) => { */}
-      {/*     e.stopPropagation(); */}
-      {/*     e.preventDefault(); */}
-      {/*     startServerTransition(deleteImageAction(imageId)); */}
-      {/*   }} */}
-      {/*   {...props} */}
-      {/* > */}
-      {/*   <abbr title="Favorite"> */}
-      {/*     {isPending ? ( */}
-      {/*       <Star className="fill-primary drop-shadow-sm-double" /> */}
-      {/*     ) : ( */}
-      {/*       <Star className="drop-shadow-sm-double" /> */}
-      {/*     )} */}
-      {/*   </abbr> */}
-      {/* </button> */}
     </>
   );
 }

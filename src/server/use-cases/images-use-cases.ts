@@ -3,9 +3,11 @@ import "server-only";
 import {
   deleteImageFromDb,
   getImageFileKeyFromDb,
+  getImagePostCountFromDb,
   getMyImagesFromDb,
   insertImage,
 } from "../data-access/imagesQueries";
+import { deletePostFromDb } from "../data-access/postsQueries";
 import { hasAccess } from "./auth/authentication";
 import type { CreateImageType } from "./images-use-cases-TypesAndSchema";
 
@@ -43,6 +45,11 @@ export async function removeImageUseCase(imageId: string) {
 
   try {
     const imageFileKey = await getImageFileKeyFromDb(imageId);
+    const { postCount } = await getImagePostCountFromDb(imageFileKey.postId);
+    if (postCount === 1) {
+      await deletePostFromDb({ postId: imageFileKey.postId, userId });
+    }
+
     await deleteImageFromDb({ id: imageId, userId });
     return imageFileKey;
   } catch (error) {

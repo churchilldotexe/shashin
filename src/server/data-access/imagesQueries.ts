@@ -107,7 +107,9 @@ export async function deleteImageFromDb({
 export async function getImageFileKeyFromDb(imageId: string) {
   const rawImageFileKey = await turso.execute({
     sql: `
-         SELECT images.file_key as fileKey
+         SELECT 
+            images.file_key as fileKey,
+            images.post_id as postId
          FROM images
          WHERE images.id = :imageId
          `,
@@ -115,7 +117,7 @@ export async function getImageFileKeyFromDb(imageId: string) {
   });
 
   const parsedImageFileKey = selectImageSchema
-    .pick({ fileKey: true })
+    .pick({ fileKey: true, postId: true })
     .safeParse(rawImageFileKey.rows[0]);
 
   if (parsedImageFileKey.success === false) {
@@ -123,6 +125,29 @@ export async function getImageFileKeyFromDb(imageId: string) {
   }
 
   return parsedImageFileKey.data;
+}
+
+const postCountSchema = z.object({
+  postCount: z.number(),
+});
+
+export async function getImagePostCountFromDb(postId: string) {
+  const rawImgPostCount = await turso.execute({
+    sql: `
+      SELECT
+         COUNT(images.post_id) as postCount
+      FROM
+         images
+      WHERE images.post_id = :postId
+      `,
+    args: { postId },
+  });
+
+  const parsedPostCount = postCountSchema.safeParse(rawImgPostCount.rows[0]);
+  if (parsedPostCount.success === false) {
+    throw new ZodError(parsedPostCount.error.errors);
+  }
+  return parsedPostCount.data;
 }
 
 const getFavoritedImageSchema = selectImageSchema

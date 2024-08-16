@@ -68,6 +68,34 @@ const getPostSchema = z.array(
   })
 );
 
+const deletePostSchema = selectPostSchema.pick({ id: true, userId: true });
+
+export async function deletePostFromDb({
+  userId,
+  postId,
+}: {
+  postId: string;
+  userId: string;
+}) {
+  const parsedPostDate = deletePostSchema.safeParse({ id: postId, userId });
+
+  if (parsedPostDate.success === false) {
+    throw new ZodError(parsedPostDate.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         DELETE FROM posts
+         WHERE id = :postId 
+            AND user_id = :userId
+         `,
+    args: {
+      postId: parsedPostDate.data.id,
+      userId: parsedPostDate.data.userId,
+    },
+  });
+}
+
 export async function getMyPostFromDb(userId: string) {
   const post = await turso.execute({
     sql: `
