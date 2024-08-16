@@ -15,6 +15,22 @@ import DisplayProfile from "./_lib/DisplayProfile";
 export default async function HomePage() {
   const myPost = await getMyPost();
   const myProfile = await getUserInfo();
+
+  const postContent = await Promise.allSettled(
+    myPost.map(async (post, index) => {
+      const { type, ...restPost } = post;
+      const unoptimize = (type === "image/webp" || type === "image/gif") && false;
+      const isBookmarked = await checkBookmarkBypostId(post.id);
+      const postContent = {
+        ...restPost,
+        unoptimize,
+        index,
+        isBookmarked,
+      };
+      return postContent;
+    })
+  );
+
   return (
     <PageSection className="justify-start space-y-8 py-4 md:px-8 ">
       <DisplayProfile displayName={myProfile.displayName} avatar={myProfile.avatar} />
@@ -24,32 +40,20 @@ export default async function HomePage() {
           description="There is no Post to display this time. Try posting some."
         />
       ) : (
-        <Suspense fallback={<Loading />}>
-          <div className="m-auto flex size-full grow flex-col gap-4">
-            {myPost?.map(async (post, index) => {
-              const { type, ...restPost } = post;
-              const unoptimize = (type === "image/webp" || type === "image/gif") && false;
-              const isBookmarked = await checkBookmarkBypostId(post.id);
-              const postContent = {
-                ...restPost,
-                unoptimize,
-                index,
-                isBookmarked,
-              };
-
+        <div className="m-auto flex size-full grow flex-col gap-4">
+          {postContent
+            .filter((result) => result.status === "fulfilled")
+            .map((content) => {
               return (
-                <Link href={`/img/${post.id}`} key={post.id} scroll={false}>
-                  <PostContent postContent={postContent} />
-                </Link>
+                <Suspense key={content.value.id} fallback={<Loading />}>
+                  <Link href={`/img/${content.value.id}`} scroll={false}>
+                    <PostContent postContent={content.value} />
+                  </Link>
+                </Suspense>
               );
             })}
-          </div>
-        </Suspense>
+        </div>
       )}
     </PageSection>
   );
 }
-
-// FIX: work on this
-// NOTE: have an optional render where Userid === userId (if it is the user) when viewing the post it will also render the album it assoc to
-// option : be able to sort the post (not priority )

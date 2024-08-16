@@ -77,7 +77,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
             style={{ "--i": `${index}` } as CSSProperties}
           >
             <figcaption className="sr-only">{image.name}</figcaption>
-            <div key={image.fileKey} className="relative aspect-video ">
+            <div key={image.fileKey} className="group/img relative aspect-video">
               <Image
                 src={image.url}
                 alt={image.name}
@@ -85,7 +85,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
                 fill
               />
               <DeleteImageButton
-                className="absolute top-0 left-0 p-2"
+                className="absolute top-0 left-0 hidden p-2 group-hover/img:block"
                 url={image.url}
                 imageId={image.id}
                 imageName={image.name}
@@ -93,7 +93,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
               <FavoriteButton
                 isFavorited={image.isFavorited}
                 imageId={image.id}
-                className="absolute top-0 right-0 p-2"
+                className=" absolute top-0 right-0 hidden p-2 group-hover/img:block"
               />
             </div>
           </figure>
