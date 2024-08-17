@@ -30,6 +30,7 @@ export function DeleteImageButton({
           "hocus-visible:scale-110 text-destructive drop-shadow-sm-double active:scale-95",
           className
         )}
+        //@ts-ignore as per react github implemented react/canary for ignore
         popovertarget={url}
         {...props}
       >
@@ -68,6 +69,7 @@ export function DeleteImageButton({
           <button
             className="hocus-visible:scale-105 rounded-md bg-secondary p-2 active:scale-90"
             type="button"
+            //@ts-ignore as per react github implemented react/canary for ignore
             popovertarget={url}
             popovertargetaction="hide"
           >

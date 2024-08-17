@@ -39,6 +39,7 @@ export function UserInfo({
         <button
           type="button"
           className="w-full hocus-visible:scale-105 rounded-md bg-primary p-2 active:scale-95 "
+          //@ts-ignore as per react github implemented react/canary for ignore
           popovertarget={popoverId}
         >
           Logout
@@ -73,6 +74,7 @@ export function UserInfo({
           <button
             className="hocus-visible:scale-105 rounded-md bg-secondary p-2 active:scale-90"
             type="button"
+            //@ts-ignore as per react github implemented react/canary for ignore
             popovertarget={popoverId}
             popovertargetaction="hide"
             onClick={handleCloseDropdown}
