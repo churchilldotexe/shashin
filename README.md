@@ -1,35 +1,68 @@
-Shashin - An image storage and Social Gallery
+![Camera SVG for Sahshin logo](/camera.svg)
 
-Note:
+# [Shashin](https://shashin-five.vercel.app/)
 
-- pnpm is locked at 9.0.6 or higher
+Shashin is an image storage and social gallery where you can share your uploaded images and create albums to organize them. This project uses Next.js app router, Tailwind CSS, and SQLite database. Authorization is implemented using JSON Web Tokens with jose. The project is created with minimal dependencies.
 
-##### lint staged
+## Features
 
-there will be a linting and typescript check every commit to ensure a type safe codebase before pushing the code to github or before deploying it
+- Create and share posts with images
+- Assign posts to existing albums or create new ones
+- Share posts publicly or keep them private
+- Bookmark other users' posts
+- Favorite your own images for quick access
 
-##### about commits
+## Requirements
 
-commits is following the [commit lint package.](https://www.npmjs.com/package/@commitlint/)
-this is the [conventional commits docs](https://www.conventionalcommits.org/en/v1.0.0/#summary) where you can only pass the values:
+- Node.js 18.0 or higher
+- pnpm 9.0.6 or higher
 
-(case sensitive)
+## Installation
 
-```
-  'build',
-  'chore',
-  'ci',
-  'docs',
-  'feat',
-  'fix',
-  'perf',
-  'refactor',
-  'revert',
-  'style',
-  'test'
-```
+1. Clone the repository
+2. Run `pnpm install` to install dependencies
+3. [Add any additional setup steps here]
 
-example:
+## Usage
+
+[Provide more detailed instructions on how to use the application]
+
+## Development
+### stacked and dependencies used:
+- [ React ](https://react.dev/)
+- [ Nextjs ](https://nextjs.org/)
+- [ server-only ](https://www.npmjs.com/package/server-only)
+- [ tailwindcss ](https://tailwindcss.com/)
+- [ turso database ](https://turso.tech/)
+- [ drizzle orm (for schema and migration) ](https://orm.drizzle.team/)
+- [ jose ](https://www.npmjs.com/package/jose)
+- [ zod ](https://zod.dev/)
+- [ uploadthing (image storage) ](https://uploadthing.com/)
+- [ biomejs (for formatting and linting) ](https://biomejs.dev/)
+- [ next-theme(dark mode theming) ](https://www.npmjs.com/package/next-themes)
+
+
+### Lint Staged
+
+A lint check is performed on every commit to ensure a type-safe codebase before pushing to GitHub or deploying.
+
+### Commit Guidelines
+
+This project follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) specification. Commit messages must start with one of the following types (case-sensitive):
+
+- build
+- chore
+- ci
+- docs
+- feat
+- fix
+- perf
+- refactor
+- revert
+- style
+- test
+
+Example:
 
 ```
 echo "foo: some message" # fails

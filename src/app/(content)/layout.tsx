@@ -31,7 +31,6 @@ export default function RootLayout({
         </div>
         {overview}
       </aside>
-      {/* TODO: footer: can be shown in the bottom (grow the children) */}
     </div>
   );
 }
