@@ -112,7 +112,7 @@ export default function GallerySortingControls() {
 
   return (
     <nav className="-mt-3 top-0 z-10 flex w-full items-center justify-center rounded-lg p-4 shadow-elevate-light backdrop-blur md:sticky md:my-0 dark:shadow-elevate-dark ">
-      <fieldset className="relative size-full ">
+      <fieldset className="relative hidden size-full md:block">
         <legend className="-translate-x-1/2 absolute bottom-[90%] left-1/2 capitalize">{`View: ${view ?? "medium"}`}</legend>
         <input
           type="range"
