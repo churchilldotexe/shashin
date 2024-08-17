@@ -35,7 +35,7 @@ export default function RenderAlbums({ myAlbums }: RenderAlbumsProps) {
   });
 
   return (
-    <div className={cn("grid size-full grid-cols-2 gap-4", VIEW_STATUS[view])}>
+    <div className={cn("grid size-full grid-cols-1 gap-4 md:grid-cols-2", VIEW_STATUS[view])}>
       {sortedAlbums.map((album, index) => {
         return (
           <Suspense key={album.name} fallback={<Loading />}>

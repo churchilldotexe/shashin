@@ -40,7 +40,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
   });
 
   return (
-    <div className={cn("grid size-full grid-cols-2 gap-2", VIEW_STATUS[view])}>
+    <div className={cn("grid size-full grid-cols-1 gap-2 md:grid-cols-2", VIEW_STATUS[view])}>
       {sortedImages.map((image, index) => {
         const favoriteStatustus = image.isFavorited ? "favorited" : "unfavorited";
         return (
