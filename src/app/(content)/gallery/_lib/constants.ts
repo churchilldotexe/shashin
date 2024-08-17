@@ -7,10 +7,10 @@ export const RANGE_TO_SORT_VALUE = {
 export type RangeToSortKeyType = keyof typeof RANGE_TO_SORT_VALUE;
 
 export const VIEW_STATUS = {
-  large: "grid-cols-1",
-  medium: "grid-cols-2",
-  small: "grid-cols-3",
-  extraSmall: "grid-cols-4",
+  large: "md:grid-cols-1",
+  medium: "md:grid-cols-2",
+  small: "md:grid-cols-3",
+  extraSmall: "md:grid-cols-4",
 } as const;
 export type SortStatusKeysTypes = keyof typeof VIEW_STATUS;
 
