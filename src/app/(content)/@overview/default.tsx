@@ -6,7 +6,7 @@ import Link from "next/link";
 const hrefLookup = {
   images: "/gallery/images",
   posts: "/my-posts",
-  favorites: "/favorites",
+  favorites: "/gallery/favorites",
   bookmarks: "/bookmarks",
   albums: "/gallery/albums",
 };
@@ -22,7 +22,7 @@ export default async function Default() {
         {Object.entries(userStats).map(([key, value]) => (
           <Link
             href={hrefLookup[key as keyof typeof hrefLookup]}
-            className="flex gap-2 border bg-background p-2 transition-transform active:scale-95"
+            className="hover-custom flex gap-2 border bg-background p-2 transition-transform active:scale-95"
             key={key}
           >
             <h3 className="capitalize">{key}:</h3>
