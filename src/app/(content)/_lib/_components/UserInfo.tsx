@@ -1,6 +1,6 @@
 "use client";
 
-/// <reference types="react/canary" />
+///<reference types="react/canary" />
 import { useTransitionedServerAction } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
