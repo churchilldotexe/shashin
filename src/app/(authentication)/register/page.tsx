@@ -4,7 +4,8 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { usePageTransition } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
-import { type CSSProperties, useRef, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { type CSSProperties, useReducer, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { registerFormActions } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -15,6 +16,31 @@ const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: registerUserFormSchema,
 });
 
+type PasswordVisibilityAction = { type: "TOGGLE_VERIFIED_PASSWORD" } | { type: "TOGGLE_PASSWORD" };
+type PasswordVisibilityState = {
+  showPassword: boolean;
+  showVerifiedPassword: boolean;
+};
+
+const initialState: PasswordVisibilityState = {
+  showPassword: false,
+  showVerifiedPassword: false,
+};
+
+const passwordVisibilityReducer = (
+  state: PasswordVisibilityState,
+  action: PasswordVisibilityAction
+): PasswordVisibilityState => {
+  switch (action.type) {
+    case "TOGGLE_VERIFIED_PASSWORD":
+      return { ...state, showVerifiedPassword: !state.showVerifiedPassword };
+    case "TOGGLE_PASSWORD":
+      return { ...state, showPassword: !state.showPassword };
+    default:
+      return state;
+  }
+};
+
 export default function RegisterPage() {
   const [state, action] = useFormState(registerFormActions, {
     email: "",
@@ -24,6 +50,7 @@ export default function RegisterPage() {
   });
   const [isMatched, setIsMatched] = useState<boolean>(true);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const [reducerState, dispatch] = useReducer(passwordVisibilityReducer, initialState);
 
   const { transitionedPush } = usePageTransition();
   if (state.message === "success") {
@@ -91,7 +118,7 @@ export default function RegisterPage() {
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
-            type="password"
+            type={reducerState.showPassword ? "text" : "password"}
             placeholder="password"
             required
           />
@@ -105,6 +132,17 @@ export default function RegisterPage() {
           >
             Password
           </label>
+
+          <button
+            type="button"
+            className="-translate-y-1/2 absolute top-1/2 right-2 peer-placeholder-shown:hidden"
+            onClick={() => {
+              dispatch({ type: "TOGGLE_PASSWORD" });
+            }}
+          >
+            {reducerState.showPassword ? <Eye /> : <EyeOff />}
+          </button>
+
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
             {state?.password}
           </ErrorMessage>
@@ -115,7 +153,7 @@ export default function RegisterPage() {
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="verifiedPassword"
             id="verifiedPassword"
-            type="password"
+            type={reducerState.showVerifiedPassword ? "text" : "password"}
             placeholder="Verify password"
             required
             onBlur={(e) => {
@@ -129,16 +167,28 @@ export default function RegisterPage() {
               }
             }}
           />
+
           <label
             className={cn(
               "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
               "peer-focus:-top-2.5 peer-focus:left-1.5 peer-focus:text-foreground peer-focus:text-lg peer-focus:leading-none peer-focus:backdrop-blur-sm ",
               "peer-placeholder-shown:top-2 peer-placeholder-shown:left-1.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:backdrop-blur-none"
             )}
-            htmlFor="password"
+            htmlFor="verifiedPassword"
           >
             Verify Password
           </label>
+
+          <button
+            type="button"
+            className="-translate-y-1/2 absolute top-1/2 right-2 peer-placeholder-shown:hidden"
+            onClick={() => {
+              dispatch({ type: "TOGGLE_VERIFIED_PASSWORD" });
+            }}
+          >
+            {reducerState.showVerifiedPassword ? <Eye /> : <EyeOff />}
+          </button>
+
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
             {isMatched ? null : "Passwords didn't match. Please reverify."}
             {state?.verifiedPassword}

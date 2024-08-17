@@ -4,7 +4,9 @@ import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
 import { usePageTransition } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
+import { Eye, EyeOff } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { useFormState } from "react-dom";
 import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
@@ -21,6 +23,7 @@ export default function LoginPage() {
     userName: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const searchParamsValue = useSearchParams().get("callbackUrl");
 
@@ -63,10 +66,11 @@ export default function LoginPage() {
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Password"
             required
           />
+
           <label
             className={cn(
               "-top-2.5 absolute left-1.5 cursor-text px-1 text-lg leading-none backdrop-blur-sm transition-all ",
@@ -77,6 +81,17 @@ export default function LoginPage() {
           >
             Password
           </label>
+
+          <button
+            type="button"
+            className="-translate-y-1/2 absolute top-1/2 right-2 z-10 peer-placeholder-shown:hidden "
+            onClick={() => {
+              setShowPassword((prev) => !prev);
+            }}
+          >
+            {showPassword ? <Eye /> : <EyeOff />}
+          </button>
+
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
             {state?.password || ""}
           </ErrorMessage>
