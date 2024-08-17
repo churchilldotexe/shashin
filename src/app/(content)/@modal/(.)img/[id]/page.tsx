@@ -19,6 +19,8 @@ export default async function PhotoModal({
     unoptimize,
     ...restPost,
   };
+
+  console.log(specificPublicPost);
   return (
     <Modal>
       <PostContent postContent={postContent} />

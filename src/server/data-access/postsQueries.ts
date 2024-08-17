@@ -191,6 +191,7 @@ export async function selectPublicPosts(postId: string) {
     sql: `
         SELECT
             u.display_name as name,
+            u.avatar AS avatarUrl,
             p.id AS id,
             p.description AS description,
             json_group_array(i.url) AS url,
