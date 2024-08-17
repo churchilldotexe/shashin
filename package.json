@@ -8,7 +8,7 @@
     "build": "next build",
     "dev": "next dev",
     "test": "vitest",
-    "lint": "next lint",
+    "lint": "biome lint",
     "start": "next start",
     "prepare": "husky install",
     "db:generate": "drizzle-kit generate",
