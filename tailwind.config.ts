@@ -51,6 +51,27 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      dropShadow: {
+        "sm-double": ["0 1px 1px hsl(var(--foreground))", "0 -1px 1px hsl(var(--background)) "],
+      },
+      boxShadow: {
+        "elevate-light": "0 8px 6px 0 rgba(0,0,0,.37), -6px -4px 10px white",
+        "elevate-dark": "0 8px 6px 0 rgba(255,255,255,0.1), -6px -4px 10px black",
+      },
+      animation: {
+        fadeIn: "fadeIn 1s ease-in forwards",
+        slideFromLeft: "slideFromLeft 5s ease-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        slideFromLeft: {
+          "0": { transform: "translateX(-100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "100" },
+        },
+      },
     },
   },
   plugins: [

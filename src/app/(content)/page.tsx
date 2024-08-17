@@ -1,34 +1,53 @@
-import { ImageSlider } from "@/components/ImageSlider";
 import { PageSection } from "@/components/PageSection";
-import { getPost } from "@/server/data-access/postsQueries";
+import { getMyAlbumsList } from "@/server/use-cases/albums-use-cases";
+import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
+import { getPublicPosts } from "@/server/use-cases/post-use-case";
+import Link from "next/link";
+import { Suspense, lazy } from "react";
 import { PostImage } from "./_lib/_components/PostImage";
+import Loading from "./loading";
+
+const PostContent = lazy(() => import("@/components/PostContent"));
 
 export default async function HomePage() {
-  const allPost = await getPost();
+  const allPost = await getPublicPosts();
+  const myAlbums = await getMyAlbumsList();
+
+  const postContent = await Promise.allSettled(
+    allPost.map(async (post, index) => {
+      const { type, ...restPost } = post;
+      const unoptimize = (type === "image/webp" || type === "image/gif") && false;
+      const isBookmarked = await checkBookmarkBypostId(post.id);
+      const postContent = {
+        ...restPost,
+        unoptimize,
+        index,
+        isBookmarked,
+      };
+      return postContent;
+    })
+  );
+
   return (
-    <PageSection>
-      <PostImage />
-      <div className="grow">
-        {allPost?.map((post) => {
-          return (
-            <article key={post.id} className="size-full border border-border p-6">
-              <header className=" flex items-center justify-between">
-                <h1>AZKi</h1>
-                <time dateTime={new Date(post.createdAt).toISOString()}>
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </time>
-              </header>
-              <figure>
-                <figcaption>{post.description}</figcaption>
-                <ImageSlider url={post.url} />
-              </figure>
-            </article>
-          );
-        })}
+    <PageSection className="space-y-8 md:px-8">
+      <PostImage
+        albums={myAlbums}
+        className=" rounded-lg p-4 shadow-elevate-light dark:shadow-elevate-dark "
+      />
+
+      <div className="flex size-full grow flex-col gap-4">
+        {postContent
+          .filter((result) => result.status === "fulfilled")
+          .map((content) => {
+            return (
+              <Suspense key={content.value.id} fallback={<Loading />}>
+                <Link href={`/img/${content.value.id}`} scroll={false}>
+                  <PostContent postContent={content.value} />
+                </Link>
+              </Suspense>
+            );
+          })}
       </div>
     </PageSection>
   );
 }
-
-// NOTE: have an optional render where Userid === userId (if it is the user) when viewing the post it will also render the album it assoc to
-// When the Image/post is clicked the PostsId must be the one that will register in the Link as params not the allPostsId

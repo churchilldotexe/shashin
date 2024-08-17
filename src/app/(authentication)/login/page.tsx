@@ -1,44 +1,41 @@
 "use client";
 
+import { PostButton } from "@/components/ui/PostButton";
 import { GenerateFormComponents } from "@/components/ui/formAndInput";
-import { TransitionLink } from "@/components/utils/TransitionLink";
-import { cn } from "@/lib/utils/cn";
-import Link from "next/link";
+import { usePageTransition } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
-import { useFormState, useFormStatus } from "react-dom";
-import { loginFormAction } from "../_lib/actions/login-actions";
+import { useFormState } from "react-dom";
+import { loginFormAction } from "../_lib/actions/actions";
 import AuthComponent from "../_lib/components/AuthComponent";
+import { TransitionLink } from "../_lib/components/TransitionLink";
 import { loginFormSchema } from "../_lib/schema";
 
 const { Form, Input, ErrorMessage } = GenerateFormComponents({
   schema: loginFormSchema,
 });
 
-function LoginButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      className="w-full rounded-md bg-primary py-1 text-primary-foreground"
-      type="submit"
-      disabled={pending}
-    >
-      {pending ? "loading..." : "Log In"}
-    </button>
-  );
-}
-
 export default function LoginPage() {
-  const [state, action] = useFormState(loginFormAction, {});
+  const [state, action] = useFormState(loginFormAction, {
+    callbackUrl: "",
+    userName: "",
+    password: "",
+  });
 
   const searchParamsValue = useSearchParams().get("callbackUrl");
+
   const callbackUrl = searchParamsValue ?? "/";
+
+  const { transitionedPush } = usePageTransition();
+  if (state.message === "success") {
+    transitionedPush(callbackUrl);
+  }
+
   return (
     <AuthComponent>
       <Form className="w-full space-y-4 " action={action}>
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="userName"
             id="username"
@@ -57,17 +54,16 @@ export default function LoginPage() {
             Username
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="userName">
-            {state.userName}
+            {state?.userName || ""}
           </ErrorMessage>
         </fieldset>
 
         <fieldset className="relative ">
           <Input
-            showErrors={false}
             className="peer w-full rounded border p-2 placeholder-transparent outline-none "
             name="password"
             id="password"
-            type="text"
+            type="password"
             placeholder="Password"
             required
           />
@@ -82,11 +78,11 @@ export default function LoginPage() {
             Password
           </label>
           <ErrorMessage useDefaultStyling={false} position="bottomMiddle" name="password">
-            {state.password}
+            {state?.password || ""}
           </ErrorMessage>
         </fieldset>
 
-        <LoginButton />
+        <PostButton className="w-full">Log In</PostButton>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <fieldset className="flex gap-2">
             <Input id="rememberMe" type="checkbox" name="rememberMe" value="true" />

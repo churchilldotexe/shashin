@@ -2,80 +2,19 @@
 import { randomUUID } from "crypto";
 import "server-only";
 import { ZodError, z } from "zod";
-import { turso } from "../turso";
+import { selectImageSchema } from "../database/schema/images";
+import {
+  type InsertPostSchemaTypes,
+  insertPostSchema,
+  selectPostSchema,
+} from "../database/schema/posts";
+import { getUserSchema } from "../database/schema/users";
+import { turso } from "../database/turso";
 
-// NOTE: add new column to the table.. create a public and private post.. private post make the images private
-
-// export const isAuthenticated = () => {
-//   const user = auth();
-//   if (user.userId === null) {
-//     return null;
-//   }
-//   return user;
-// };
-
-const getPostSchema = z.array(
-  z.object({
-    description: z.string(),
-    id: z.string(),
-    url: z
-      .string()
-      .transform((val) => JSON.parse(val) as string)
-      .pipe(z.array(z.string().url())),
-    createdAt: z.string().pipe(z.coerce.date()),
-  })
-);
-
-//TODO: make a similar table for this but instead the private one (try to figure out how to separate them
-//1. add boolean to the post table to toggle private/public(easier)
-// 2. when toggled add a foreign key to new table for public post)
-export async function getPost() {
-  // isAuthenticated();
-
-  const post = await turso.execute({
-    sql: `SELECT 
-            p.description as description,
-            p.id as id, 
-            json_group_array(i.url) as url,
-            p.created_at as createdAt
-          FROM
-            images i, posts p 
-          WHERE 
-            i.post_id = p.id 
-          GROUP BY 
-            p.id
-          ORDER BY
-            p.created_at DESC
-          `,
-    args: [],
-  });
-
-  const dbResult = post.rows;
-  const parsedResult = getPostSchema.safeParse(dbResult);
-  if (parsedResult.success === false) {
-    throw new ZodError(parsedResult.error.errors);
-  }
-  return parsedResult.data;
-}
-
-const createPostSchema = z.object({
-  id: z.string().optional(),
-  description: z.string().max(250).optional(),
-  createdAt: z.string().optional(),
-  updatedAt: z.string().optional(),
-});
-
-export type createPostSchemaType = z.infer<typeof createPostSchema>;
-
-export async function createPost(postsValue: createPostSchemaType) {
-  // const user = auth();
-  // if (user === null) {
-  //   throw new Error("no Authorization. Must be logged in to post");
-  // }
-
+export async function insertNewPost(postsValue: InsertPostSchemaTypes) {
   const uuid = randomUUID();
 
-  const parsedPostValue = createPostSchema.safeParse({
+  const parsedPostValue = insertPostSchema.safeParse({
     ...postsValue,
     id: uuid,
   });
@@ -83,18 +22,198 @@ export async function createPost(postsValue: createPostSchemaType) {
     throw new ZodError(parsedPostValue.error.errors);
   }
 
-  const { description, id } = parsedPostValue.data;
+  const { description, id, userId } = parsedPostValue.data;
 
   await turso.execute({
     sql: `
-      INSERT INTO 
+      INSERT INTO
         posts
-          (id, description)
-      VALUES 
-          (:id, :description)
-`,
-    args: { id: id as string, description: description as string },
+          (id, description, user_id)
+      VALUES
+          (:id, :description, :userId)
+      `,
+    args: { id: id as string, description: description as string, userId },
   });
 
   return { id };
+}
+
+export async function createPublicPost(postId: string) {
+  const allPostId = await turso.execute({
+    sql: `
+      INSERT INTO
+        all_posts
+          (post_id)
+      VALUES
+          (:postId)
+`,
+    args: { postId },
+  });
+}
+
+const getPostSchema = z.array(
+  z.object({
+    avatarUrl: getUserSchema.shape.avatar,
+    name: getUserSchema.shape.displayName,
+    description: selectPostSchema.shape.description,
+    id: selectPostSchema.shape.id,
+    type: selectImageSchema.shape.type,
+    url: z
+      .string()
+      .transform((val) => JSON.parse(val) as string)
+      .pipe(z.array(z.string().url())),
+    createdAt: z.string().transform((val) => {
+      return new Date(`${val}Z`);
+    }),
+  })
+);
+
+const deletePostSchema = selectPostSchema.pick({ id: true, userId: true });
+
+export async function deletePostFromDb({
+  userId,
+  postId,
+}: {
+  postId: string;
+  userId: string;
+}) {
+  const parsedPostDate = deletePostSchema.safeParse({ id: postId, userId });
+
+  if (parsedPostDate.success === false) {
+    throw new ZodError(parsedPostDate.error.errors);
+  }
+
+  await turso.execute({
+    sql: `
+         DELETE FROM posts
+         WHERE id = :postId 
+            AND user_id = :userId
+         `,
+    args: {
+      postId: parsedPostDate.data.id,
+      userId: parsedPostDate.data.userId,
+    },
+  });
+}
+
+export async function getMyPostFromDb(userId: string) {
+  const post = await turso.execute({
+    sql: `
+         SELECT
+            u.avatar AS avatarUrl,
+            u.display_name AS name,
+            p.description as description,
+            p.id as id,
+            i.type as type,
+            json_group_array(i.url) as url,
+            datetime(p.created_at,'unixepoch') AS createdAt
+         FROM
+            posts p
+         JOIN
+            users u ON p.user_id = u.id
+         LEFT JOIN
+            images i ON p.id = i.post_id
+         WHERE
+            p.user_id = :userId
+         GROUP BY
+         p.id
+         ORDER BY
+         p.created_at DESC
+`,
+    args: { userId },
+  });
+
+  const dbResult = post.rows;
+  console.log(dbResult, "dbresult");
+  const parsedResult = getPostSchema.safeParse(dbResult);
+  if (parsedResult.success === false) {
+    throw new ZodError(parsedResult.error.errors);
+  }
+  return parsedResult.data;
+}
+
+const getPublicPostsSchema = z.object({
+  name: z.string(),
+  avatarUrl: z.string().nullish(),
+  description: z.string(),
+  id: z.string(),
+  type: selectImageSchema.shape.type,
+  url: z
+    .string()
+    .transform((val) => JSON.parse(val) as string)
+    .pipe(z.array(z.string().url())),
+  createdAt: z.string().transform((val) => {
+    return new Date(`${val}Z`);
+  }),
+});
+
+const getAllPublicPostsSchema = z.array(getPublicPostsSchema);
+
+export async function getAllPublicPosts() {
+  const post = await turso.execute({
+    sql: `
+        SELECT
+            u.display_name AS name,
+            u.avatar AS avatarUrl,
+            p.id AS id,
+            p.description AS description,
+            json_group_array(i.url) AS url,
+            datetime(p.created_at,'unixepoch') AS createdAt,
+            i.type AS type
+        FROM
+            all_posts ap
+        JOIN
+            posts p ON ap.post_id = p.id
+        LEFT JOIN
+            images i ON p.id = i.post_id
+        JOIN
+            users u ON p.user_id = u.id
+          WHERE
+            i.post_id = p.id
+        GROUP BY
+            p.id
+        ORDER BY
+            p.created_at DESC;
+        `,
+    args: [],
+  });
+
+  const dbResult = post.rows;
+  const parsedResult = getAllPublicPostsSchema.safeParse(dbResult);
+  if (parsedResult.success === false) {
+    throw new ZodError(parsedResult.error.errors);
+  }
+  return parsedResult.data;
+}
+
+export async function selectPublicPosts(postId: string) {
+  const post = await turso.execute({
+    sql: `
+        SELECT
+            u.display_name as name,
+            p.id AS id,
+            p.description AS description,
+            json_group_array(i.url) AS url,
+            datetime(p.created_at,'unixepoch') AS createdAt,
+            i.type AS type
+        FROM
+            all_posts ap
+        JOIN
+            posts p ON ap.post_id = p.id
+        LEFT JOIN
+            images i ON p.id = i.post_id,
+            users u ON p.user_id = u.id
+          WHERE
+             ap.post_id =  :postId
+
+        `,
+    args: { postId },
+  });
+
+  const dbResult = post.rows[0];
+  const parsedResult = getPublicPostsSchema.safeParse(dbResult);
+  if (parsedResult.success === false) {
+    throw new ZodError(parsedResult.error.errors);
+  }
+  return parsedResult.data;
 }

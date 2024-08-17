@@ -1,23 +1,29 @@
-import { getMyImages } from "@/server/data-access/imagesQueries";
-import Image from "next/image";
+import { NoImage } from "@/components/EmptyFile";
+import { getMyImages } from "@/server/use-cases/images-use-cases";
+import { Suspense } from "react";
+import Loading from "../../loading";
+import RenderImage from "../_lib/components/RenderImage";
 
 export default async function ImagesPage() {
   const myImages = await getMyImages();
   return (
-    <section>
-      {myImages?.map((image) => (
-        <div key={image.url + 1} className="relative aspect-video size-full ">
-          <Image
-            src={image.url}
-            className="size-full rounded-lg object-contain object-center transition-all duration-300 ease-linear "
-            alt={`${image.url}  image`}
-            fill
+    <section className="relative flex flex-wrap gap-4 md:p-4">
+      {myImages.length === 0 ? (
+        <div className="flex size-full flex-col items-center justify-center gap-4 p-8">
+          <NoImage
+            title="No Image Yet"
+            description="There is no Image to display this time. Try Posting to add more Image."
+            href="/"
+            linkDescription="Go To Home"
           />
         </div>
-      ))}
+      ) : (
+        <>
+          <Suspense fallback={<Loading />}>
+            <RenderImage myImages={myImages} />
+          </Suspense>
+        </>
+      )}
     </section>
   );
 }
-
-// NOTE: show all the images regardless of the albums BUT must only show per User ==> integrate to user,
-// FEAT: be able to have a view options (large, extra large, details/list)

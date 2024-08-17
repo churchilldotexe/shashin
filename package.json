@@ -13,7 +13,8 @@
     "prepare": "husky install",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "biome:fix": "biome lint --write"
   },
   "dependencies": {
     "@libsql/client": "^0.7.0",
@@ -31,6 +32,7 @@
     "react-dom": "^18.3.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^2.3.0",
+    "tsx": "^4.17.0",
     "uploadthing": "^6.13.2",
     "zod": "^3.23.3"
   },
@@ -48,10 +50,10 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@testing-library/react": "^16.0.0",
     "@types/node": "^20.11.20",
-    "@types/react": "^18.2.57",
+    "@types/react": "^18.3.3",
     "@types/react-dom": "^18.2.19",
     "@vitejs/plugin-react": "^4.3.1",
-    "drizzle-kit": "^0.22.7",
+    "drizzle-kit": "^0.22.8",
     "husky": "^9.0.11",
     "jsdom": "^24.1.0",
     "lint-staged": "^15.2.7",

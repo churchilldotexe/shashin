@@ -1,16 +1,22 @@
 "use server";
 
-import { removeTokenInfoFromDB } from "@/server/data-access/authentication";
-import { createImage, type createImageType } from "@/server/data-access/imagesQueries";
-import { createPost } from "@/server/data-access/postsQueries";
+import { createAlbum } from "@/server/use-cases/albums-use-cases";
+import { removeTokenInfoFromDB } from "@/server/use-cases/auth/tokenManagement";
+import { createNewBookmark, removeBookmark } from "@/server/use-cases/bookmarks-use-case";
+import { createImage } from "@/server/use-cases/images-use-cases";
+import type { CreateImageType } from "@/server/use-cases/images-use-cases-TypesAndSchema";
+import { createPost } from "@/server/use-cases/post-use-case";
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { UTApi } from "uploadthing/server";
+import type { z } from "zod";
 import { formSchema } from "./formschema";
 
+type formSchemaTypes = z.infer<typeof formSchema>;
 type PostImageActionInitType = {
-  message?: string;
-};
+  [K in keyof formSchemaTypes]?: string;
+} & { message?: "success" | "failed" };
 
 const utapi = new UTApi();
 
@@ -22,20 +28,25 @@ export async function postImageAction(
   const images = formData.getAll("images");
   const parsedFormData = formSchema.safeParse({ ...formEntries, images });
   if (parsedFormData.success === false) {
-    // throw new Error("invalid form data");
-    return { message: "invalid form data" };
+    const { images, description, shareToPublic } = parsedFormData.error.formErrors.fieldErrors;
+    return {
+      description: description?.[0] ?? undefined,
+      images: images?.[0] ?? undefined,
+      shareToPublic: shareToPublic?.[0] ?? undefined,
+    };
   }
-  const { description } = parsedFormData.data;
+  const { description, shareToPublic, albumName } = parsedFormData.data;
 
-  const post = await createPost({ description });
+  const post = await createPost(description, shareToPublic);
+  if (post.id === undefined) {
+    throw new Error("unable to retrieve the post");
+  }
+
   const utImages = await utapi.uploadFiles(parsedFormData.data.images);
 
   const imageData = utImages.map((image) => {
     if (image.data === null) {
       throw new Error(image.error.message);
-    }
-    if (post.id === undefined) {
-      throw new Error("unable to retrieve the post");
     }
     const { url, key, type, name } = image.data;
 
@@ -46,14 +57,32 @@ export async function postImageAction(
       type,
       fileKey: key,
       postId: post.id,
-    } as createImageType;
+    } as CreateImageType;
   });
+
   await createImage(imageData);
+  await createAlbum({ postId: post.id, name: albumName });
   revalidatePath("/");
-  redirect("/");
+
+  return { message: "success" };
 }
 
 export async function logoutAction() {
-  await removeTokenInfoFromDB();
-  redirect("/login");
+  const isTokenRemovedFromDB = await removeTokenInfoFromDB();
+  if (isTokenRemovedFromDB === false) {
+    redirect("/login");
+  } else {
+    cookies().delete("accessToken");
+    redirect("/login");
+  }
+}
+
+export async function unBookmarkPost(postId: string) {
+  await removeBookmark(postId);
+  revalidatePath("/");
+}
+
+export async function setBookmarkPost(postId: string) {
+  await createNewBookmark(postId);
+  revalidatePath("/");
 }

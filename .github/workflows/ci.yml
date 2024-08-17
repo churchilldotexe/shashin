@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+  env:
+    DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    DATABASE_AUTH_TOKEN: ${{ secrets.DATABASE_AUTH_TOKEN }}
+    UPLOADTHING_SECRET: ${{ secrets.UPLOADTHING_SECRET }}
+    UPLOADTHING_APP_ID: ${{ secrets.UPLOADTHING_APP_ID }}
+    ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+    REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.4
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Run biome fix
+        run: pnpm run biome:fix
+
+      - name: Run linter
+        run: pnpm run lint
+        
+      - name: Build project
+        run: pnpm run build

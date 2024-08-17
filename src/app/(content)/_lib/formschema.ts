@@ -1,14 +1,5 @@
+import { ACCEPTED_FILE_TYPE, MAX_FILE_SIZE } from "@/lib/constants";
 import { z } from "zod";
-
-export const MAX_FILE_SIZE = 4 * 1024 * 1024;
-export const ACCEPTED_FILE_TYPE = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/gif",
-  "image/webp",
-  "image/bmp",
-];
 
 export const formSchema = z.object({
   description: z.string().max(250, "exceeded the limit, try to shorten it").optional(),
@@ -27,4 +18,6 @@ export const formSchema = z.object({
       (files) => Array.from(files).every((file) => ACCEPTED_FILE_TYPE.includes(file.type)),
       "Can only Accept an Image file"
     ),
+  shareToPublic: z.string().default("").pipe(z.coerce.boolean()),
+  albumName: z.string().min(1),
 });

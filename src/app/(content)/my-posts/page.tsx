@@ -1,35 +1,59 @@
-import { ImageSlider } from "@/components/ImageSlider";
+import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
+import { NoFile } from "@/components/EmptyFile";
 import { PageSection } from "@/components/PageSection";
-import { getPost } from "@/server/data-access/postsQueries";
-import { PostImage } from "../_lib/_components/PostImage";
+import PostContent from "@/components/PostContent";
+import { cn } from "@/lib/utils";
+import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
+import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
+import { getMyPost } from "@/server/use-cases/post-use-case";
+import { getUserInfo } from "@/server/use-cases/user-use-cases";
+import Link from "next/link";
+import { Suspense } from "react";
+import Loading from "../loading";
+import DisplayProfile from "./_lib/DisplayProfile";
 
 export default async function HomePage() {
-  const myPost = await getPost();
+  const myPost = await getMyPost();
+  const myProfile = await getUserInfo();
+
+  const postContent = await Promise.allSettled(
+    myPost.map(async (post, index) => {
+      const { type, ...restPost } = post;
+      const unoptimize = (type === "image/webp" || type === "image/gif") && false;
+      const isBookmarked = await checkBookmarkBypostId(post.id);
+      const postContent = {
+        ...restPost,
+        unoptimize,
+        index,
+        isBookmarked,
+      };
+      return postContent;
+    })
+  );
+
   return (
-    <PageSection>
-      <PostImage />
-      <div className="grow">
-        {myPost?.map((post) => {
-          return (
-            <article key={post.id} className="size-full border border-border p-6">
-              <header className="flex items-center justify-between">
-                <h1>AZKi</h1>
-                <time dateTime={new Date(post.createdAt).toISOString()}>
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </time>
-              </header>
-              <figure>
-                <figcaption>{post.description}</figcaption>
-                <ImageSlider url={post.url} />
-              </figure>
-            </article>
-          );
-        })}
-      </div>
+    <PageSection className="justify-start space-y-8 py-4 md:px-8 ">
+      <DisplayProfile displayName={myProfile.displayName} avatar={myProfile.avatar} />
+      {myPost.length === 0 ? (
+        <NoFile
+          title="No Post Yet"
+          description="There is no Post to display this time. Try posting some."
+        />
+      ) : (
+        <div className="m-auto flex size-full grow flex-col gap-4">
+          {postContent
+            .filter((result) => result.status === "fulfilled")
+            .map((content) => {
+              return (
+                <Suspense key={content.value.id} fallback={<Loading />}>
+                  <Link href={`/img/${content.value.id}`} scroll={false}>
+                    <PostContent postContent={content.value} />
+                  </Link>
+                </Suspense>
+              );
+            })}
+        </div>
+      )}
     </PageSection>
   );
 }
-
-// NOTE: this will display (query) all posts of the user and display
-// FEAT: DEFAULT is sorted by post date
-// option : be able to sort the post (not priority )

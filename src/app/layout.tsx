@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="container mx-auto flex flex-col justify-center md:flex-row">
+      <body className="container mx-auto flex flex-col justify-center md:flex-row ">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

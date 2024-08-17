@@ -1,7 +1,0 @@
-import { migrate } from "drizzle-orm/libsql/migrator";
-import config from "drizzle.config";
-import { connection, db } from ".";
-
-await migrate(db, { migrationsFolder: config.out as string });
-
-connection.close();
