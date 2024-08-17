@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import PostContent from "@/components/PostContent";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
 import { getSpecificPublicPost } from "@/server/use-cases/post-use-case";

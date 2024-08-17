@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { userStatsUseCase } from "@/server/use-cases/user-use-cases";
 import Link from "next/link";
 

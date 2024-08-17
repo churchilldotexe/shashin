@@ -1,10 +1,9 @@
-import { AvatarWithFallBack } from "@/components/AvatarWithFallBack";
+export const dynamic = "force-dynamic";
+
 import { NoFile } from "@/components/EmptyFile";
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
-import { cn } from "@/lib/utils";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";
-import { checkFavoriteBypostId } from "@/server/use-cases/favorites-use-case";
 import { getMyPost } from "@/server/use-cases/post-use-case";
 import { getUserInfo } from "@/server/use-cases/user-use-cases";
 import Link from "next/link";

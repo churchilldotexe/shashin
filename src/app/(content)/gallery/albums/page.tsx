@@ -1,12 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import { NoFile } from "@/components/EmptyFile";
-import { ImageSlider } from "@/components/ImageSlider";
 import { PageSection } from "@/components/PageSection";
-import { cn } from "@/lib/utils";
 import { getAllMyAlbums } from "@/server/use-cases/albums-use-cases";
-import { type CSSProperties, Suspense } from "react";
+import { Suspense } from "react";
 import Loading from "../../loading";
 import RenderAlbums from "../_lib/components/RenderAlbum";
-import { SortStatusKeysTypes, VIEW_STATUS } from "../_lib/constants";
 
 export default async function AlbumsPage({
   searchParams: { view },

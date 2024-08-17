@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";
 import { checkBookmarkBypostId } from "@/server/use-cases/bookmarks-use-case";

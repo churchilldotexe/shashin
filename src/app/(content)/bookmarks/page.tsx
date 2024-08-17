@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NoFile } from "@/components/EmptyFile";
 import { PageSection } from "@/components/PageSection";
 import PostContent from "@/components/PostContent";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NoImage } from "@/components/EmptyFile";
 import { getMyImages } from "@/server/use-cases/images-use-cases";
 import { Suspense } from "react";

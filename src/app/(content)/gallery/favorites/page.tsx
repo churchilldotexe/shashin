@@ -1,9 +1,9 @@
+export const dynamic = "force-dynamic";
+
 import { NoImage } from "@/components/EmptyFile";
 import { getAllMyFavoritedImages } from "@/server/use-cases/favorites-use-case";
-import Image from "next/image";
-import { type CSSProperties, Suspense } from "react";
+import { Suspense } from "react";
 import Loading from "../../loading";
-import { FavoriteButton } from "../_lib/components/FavoriteButton";
 import RenderImage from "../_lib/components/RenderImage";
 
 export default async function FavoritesPage() {
