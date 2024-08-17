@@ -155,7 +155,7 @@ export default function DisplayProfile({
           )}
         </fieldset>
 
-        <div className="-translate-x-1/2 absolute bottom-5 left-1/2 w-fit text-5xl capitalize ">
+        <div className="lg:-translate-x-1/2 absolute right-2 bottom-5 w-fit text-5xl capitalize lg:left-1/2 ">
           {showNameEdit ? (
             <fieldset className="relative w-fit">
               <legend className="sr-only">Change Profile Name</legend>
@@ -165,7 +165,9 @@ export default function DisplayProfile({
                 ref={inputRef}
                 id="profileName"
                 type="text"
-                className={cn("w-[20ch] bg-transparent text-center capitalize outline-none")}
+                className={cn(
+                  "w-[20ch] bg-transparent text-end capitalize outline-none lg:text-center"
+                )}
                 defaultValue={displayName}
                 autoFocus
                 autoComplete="off"
@@ -229,7 +231,7 @@ export default function DisplayProfile({
               <abbr title="Edit Name">
                 <button
                   type="button"
-                  className="-right-4 absolute bottom-0 z-10 rounded-lg leading-none opacity-0 backdrop-blur group-hover/display:opacity-100"
+                  className="-right-4 absolute bottom-0 z-10 rounded-lg leading-none opacity-0 backdrop-blur group-hover/display:opacity-100 group-focus-visible:/display:opacity-100 group-active:/display:opacity-100 "
                   onClick={() => {
                     setShowNameEdit((prev) => !prev);
                   }}

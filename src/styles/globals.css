@@ -428,3 +428,42 @@
       transform: translateY(-24px)
    }
 }
+
+/* Overview page */
+.hover-custom:has(+*+*:hover),
+.hover-custom:has(+*+*:focus-visible) {
+   transform: scaleX(1.02) scaleY(1.02);
+   filter: grayscale(50%);
+   background-color: hsl(var(--background) / 0.25);
+   color: hsl(var(--foreground) / 0.5);
+}
+
+.hover-custom:has(+*:hover),
+.hover-custom:has(+*:focus-visible) {
+   transform: scaleX(1.05) scaleY(1.05);
+   filter: grayscale(75%);
+   background-color: hsl(var(--background) / 0.5);
+   color: hsl(var(--foreground) / 0.75);
+}
+
+.hover-custom:hover,
+.hover-custom:focus-visible {
+   transform: scaleX(1.10) scaleY(1.10);
+   backdrop-filter: blur(10px);
+}
+
+.hover-custom:hover+*,
+.hover-custom:focus-visible+* {
+   transform: scaleX(1.05) scaleY(1.05);
+   filter: grayscale(75%);
+   background-color: hsl(var(--background) / 0.5);
+   color: hsl(var(--foreground) / 0.75);
+}
+
+.hover-custom:hover+*+*,
+.hover-custom:focus-visible+*+* {
+   transform: scaleX(1.02) scaleY(1.02);
+   filter: grayscale(50%);
+   background-color: hsl(var(--background) / 0.25);
+   color: hsl(var(--foreground) / 0.5);
+}

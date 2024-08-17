@@ -1,8 +1,9 @@
 import "server-only";
 
 import type { Row } from "@libsql/client";
+import { sql } from "drizzle-orm";
 import { Update } from "next/dist/build/swc";
-import { ZodError, type z } from "zod";
+import { ZodError, z } from "zod";
 import { type CreateUserTypes, createUserSchema, getUserSchema } from "../database/schema/users";
 import { turso } from "../database/turso";
 
@@ -339,4 +340,42 @@ export async function updateTokensFromDB(id: string) {
   } catch (error) {
     throw new Error("no user found with this ID, unable to remove the tokens");
   }
+}
+
+const userStatsSchema = z.object({
+  images: z.number(),
+  posts: z.number(),
+  favorites: z.number(),
+  bookmarks: z.number(),
+  albums: z.number(),
+});
+
+export async function getUserStatsFromDb(userId: string) {
+  const rawusersStats = await turso.execute({
+    sql: `
+         SELECT
+         COUNT(DISTINCT images.id) AS images,
+         COUNT(DISTINCT p.id) AS posts,
+         COUNT(DISTINCT CASE WHEN images.is_favorited = TRUE THEN images.id END) AS favorites,
+         COUNT(DISTINCT b.id) AS bookmarks,
+         COUNT(DISTINCT a.id) AS albums
+         FROM
+         users u
+         LEFT JOIN images ON images.user_id = u.id
+         LEFT JOIN posts p ON p.user_id = u.id
+         LEFT JOIN albums a ON a.user_id = u.id
+         LEFT JOIN bookmarks b ON b.user_id = u.id
+         WHERE
+         u.id = :userId
+         `,
+    args: { userId },
+  });
+
+  const parsedUserStats = userStatsSchema.safeParse(rawusersStats.rows[0]);
+
+  if (parsedUserStats.success === false) {
+    throw new ZodError(parsedUserStats.error.errors);
+  }
+
+  return parsedUserStats.data;
 }

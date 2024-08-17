@@ -24,10 +24,9 @@ export default function RootLayout({
       <main className="size-full max-w-5xl px-2 md:px-0">
         {children}
         {modal}
-        {/* <div id="modal-root" /> */}
       </main>
-      <aside className="sticky top-0 hidden h-dvh md:flex">
-        <div>
+      <aside className="sticky top-0 hidden h-dvh md:flex md:gap-2">
+        <div className="py-2">
           <DisplayModeToggle />
         </div>
         {overview}

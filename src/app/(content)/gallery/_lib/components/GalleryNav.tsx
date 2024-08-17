@@ -77,7 +77,7 @@ function SortOptions({
         />
         <div
           className={cn(
-            "size-full transition-all peer-checked/created:scale-110 peer-checked/created:text-primary peer-checked/created:drop-shadow-sm-double dark:peer-checked/created:drop-shadow-md ",
+            "size-full filter transition-all peer-checked/created:scale-110 peer-checked/created:text-primary peer-checked/created:drop-shadow-sm-double dark:peer-checked/created:drop-shadow-md ",
             createTooltipClasses(tooltipContent)
           )}
         >
@@ -135,12 +135,6 @@ export default function GallerySortingControls() {
           <option value="4">4</option>
         </datalist>
       </fieldset>
-
-      <div
-        className={cn(
-          "-mt-3 hidden w-full rounded-lg p-4 shadow-elevate-light backdrop-blur dark:shadow-elevate-dark"
-        )}
-      />
 
       <ul className="flex items-center gap-4 rounded-sm px-4">
         <SortOptions

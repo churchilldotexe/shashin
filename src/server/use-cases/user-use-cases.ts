@@ -3,6 +3,7 @@ import "server-only";
 import {
   getAvatarImgKeyFromDB,
   getUserInfoById,
+  getUserStatsFromDb,
   updateAvatarFromDB,
   updateDisplayNameById,
   updateUserInfoById,
@@ -81,5 +82,22 @@ export async function updateAvatarImage({
       throw new Error(`An Error Occured ${error.name}: ${error.cause}. ${error.message}`);
     }
     throw new Error("an error Occured while getting the users Info ");
+  }
+}
+
+export async function userStatsUseCase() {
+  const { userId } = await hasAccess({
+    errorMsg: "Unable to get your Stats, No user Found. Please login",
+  });
+  try {
+    const userStats = await getUserStatsFromDb(userId);
+    return userStats;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error);
+      throw new Error(`An Error Occured: ${error.message}`);
+    }
+    console.error(error);
+    throw new Error("Unexpected Error Occured");
   }
 }

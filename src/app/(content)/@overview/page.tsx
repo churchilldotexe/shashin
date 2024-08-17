@@ -1,25 +1,33 @@
-export default function StatsPage() {
+import { userStatsUseCase } from "@/server/use-cases/user-use-cases";
+import Link from "next/link";
+
+const hrefLookup = {
+  images: "/gallery/images",
+  posts: "/my-posts",
+  favorites: "/gallery/favorites",
+  bookmarks: "/bookmarks",
+  albums: "/gallery/albums",
+};
+
+export default async function StatsPage() {
+  const userStats = await userStatsUseCase();
   return (
-    <div>
-      <div className="scale-105 rounded-md border bg-gradient-to-br from-natural/10 to-natural/0 p-2 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ">
+    <aside className="flex h-fit flex-col justify-center gap-4 rounded-md shadow-elevate-light dark:shadow-elevate-dark">
+      <h2 className="size-full scale-105 rounded-md border bg-gradient-to-br from-natural/10 to-natural/0 p-2 text-center shadow-elevate-light backdrop-blur-sm transition-all dark:shadow-elevate-dark ">
         Your Stats
+      </h2>
+      <div>
+        {Object.entries(userStats).map(([key, value]) => (
+          <Link
+            href={hrefLookup[key as keyof typeof hrefLookup]}
+            className="hover-custom flex gap-2 border bg-background p-2 transition-transform active:scale-95"
+            key={key}
+          >
+            <h3 className="capitalize">{key}:</h3>
+            <p> {value}</p>
+          </Link>
+        ))}
       </div>
-      users stats here
-    </div>
+    </aside>
   );
 }
-
-// FIX: work on this
-// [] - posted photos
-// [] - bookmarked
-// [] - album count
-// [] - favorited
-// [] - TRY a this month stats
-
-// className={cn(
-//   "rounded-md border border-white/0 hocus-visible:border-border p-2 active:scale-95 ",
-//   {
-//     " scale-105 border-border bg-gradient-to-br from-natural/10 to-natural/0 shadow-[0_8px_6px_0_rgba(0,0,0,.37),-6px_-4px_10px_white] backdrop-blur-sm transition-all dark:shadow-[0_8px_6px_0_rgba(255,255,255,0.1),-6px_-4px_10px_black] ":
-//       pathname === `${route}`,
-//   },
-// )}

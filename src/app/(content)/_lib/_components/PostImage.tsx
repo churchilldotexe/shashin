@@ -365,6 +365,7 @@ export function PostImage({
                     placeholder="Add an Album"
                     required
                     className="peer rounded-sm border hocus-visible:border-foreground bg-white active:border-foreground dark:bg-black"
+                    autoFocus
                   />
 
                   <ConfirmationButton

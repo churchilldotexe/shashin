@@ -58,7 +58,7 @@ export default function RenderImage({ myImages }: RenderImageProps) {
                 fill
               />
               <DeleteImageButton
-                className="absolute top-0 left-0 hidden p-2 group-hover/img:block"
+                className="absolute top-0 left-0 hidden p-2 group-hover/img:block group-focus-visible:/img:block"
                 url={image.url}
                 imageId={image.id}
                 imageName={image.name}
@@ -66,8 +66,11 @@ export default function RenderImage({ myImages }: RenderImageProps) {
               <FavoriteButton
                 isFavorited={image.isFavorited}
                 imageId={image.id}
-                className=" absolute top-0 right-0 hidden p-2 group-hover/img:block"
+                className=" absolute top-0 right-0 hidden p-2 group-hover/img:block group-focus-visible:/img:block"
               />
+              <h3 className="absolute bottom-0 hidden w-full text-center font-semibold text-gray-950 backdrop-blur first-letter:capitalize group-hover/img:block group-focus-visible:/img:block ">
+                {image.name}
+              </h3>
             </div>
           </figure>
         );
